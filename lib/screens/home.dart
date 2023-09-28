@@ -18,13 +18,12 @@ class _HomeState extends State<Home> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/location.png', // Chemin vers l'image dans le répertoire assets
-                width: 20.0, // Ajustez la largeur de l'image selon vos besoins
-                height: 20.0, // Ajustez la hauteur de l'image selon vos besoins
-                color: Color(0xFF0081CF), // Couleur de l'image
+                'assets/location.png',
+                width: 20.0,
+                height: 20.0,
+                color: Color(0xFF0081CF),
               ),
-              SizedBox(
-                  width: 8.0), // Ajoute un espace entre l'image et le texte
+              SizedBox(width: 8.0),
               Text(
                 "Paris",
                 style: TextStyle(color: Color(0xFF000000)),
@@ -32,24 +31,63 @@ class _HomeState extends State<Home> {
             ],
           ),
         ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu,
-            color: Color(0xFF6D7D95),
-            size: 27.0,
-          ),
-          onPressed: () {},
-        ),
+        iconTheme: IconThemeData(color: Color(0xFF6D7D95)),
         actions: [
           Padding(
-            padding: EdgeInsets.only(
-                right: 16.0), // Ajustez la valeur selon vos besoins
-            child: CircleAvatar(
-              backgroundImage: AssetImage('assets/logo.png'),
-              radius: 16, // Ajustez le rayon selon vos besoins
-            ),
-          )
+              padding: EdgeInsets.only(
+                  right: 16.0), // Ajustez la valeur selon vos besoins
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Color(0xFFFFFFFF), // Couleur de la bordure
+                    width: 2.0, // Largeur de la bordure
+                  ),
+                ),
+                child: CircleAvatar(
+                  backgroundImage: AssetImage('assets/profil.png'),
+                  radius: 16, // Ajustez le rayon selon vos besoins
+                ),
+              ))
         ],
+      ),
+      drawer: Drawer(
+          child: Container(
+        color: Colors.white,
+        child: ListView(
+          children: [
+            UserAccountsDrawerHeader(
+              accountName: Text("Votre nom"),
+              accountEmail: Text(""),
+              currentAccountPicture: Padding(
+                  padding: EdgeInsets.only(
+                      right: 16.0), // Ajustez la valeur selon vos besoins
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Color(0xFFFFFFFF), // Couleur de la bordure
+                        width: 3.0, // Largeur de la bordure
+                      ),
+                    ),
+                    child: CircleAvatar(
+                      backgroundImage: AssetImage('assets/profil.png'),
+                      radius: 50.0, // Ajustez le rayon selon vos besoins
+                    ),
+                  )),
+              decoration: BoxDecoration(
+                // Définissez votre image de fond ici
+                image: DecorationImage(
+                  image: AssetImage('assets/drawerHeader.png'),
+                  fit: BoxFit.cover, // Ajustez le mode d'ajustement
+                ),
+              ),
+            ),
+          ],
+        ),
+      )),
+      body: Center(
+        child: Text('Contenu de l\'application'),
       ),
     );
   }
