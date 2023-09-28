@@ -1,0 +1,4 @@
+#Thu Sep 28 09:40:04 CEST 2023
+base.0=C\:\\Users\\nihel\\OneDrive\\Bureau\\MBA 2\\MyDigitalStartUp\\Viami-Front\\build\\app\\intermediates\\dex\\debug\\mergeDexDebug\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
