@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:viami/screens/secondPage.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -83,6 +84,72 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
+            ListTile(
+              leading: Icon(Icons.home),
+              title: Text(
+                "page1",
+                style: TextStyle(fontSize: 20),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SecondPage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.payment),
+              title: Text(
+                "page1",
+                style: TextStyle(fontSize: 20),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SecondPage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.notifications),
+              title: Text(
+                "page1",
+                style: TextStyle(fontSize: 20),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SecondPage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.card_giftcard),
+              title: Text(
+                "page1",
+                style: TextStyle(fontSize: 20),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SecondPage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.settings),
+              title: Text(
+                "page1",
+                style: TextStyle(fontSize: 20),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SecondPage()));
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.logout),
+              title: Text(
+                "page1",
+                style: TextStyle(fontSize: 20),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => SecondPage()));
+              },
+            )
           ],
         ),
       )),
