@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:front/screens/home.dart';
+import 'package:viami/screens/home.dart';
 
 void main() {
   runApp(const MyApp());
