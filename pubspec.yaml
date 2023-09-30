@@ -12,6 +12,9 @@ dependencies:
     sdk: flutter
   cupertino_icons: ^1.0.2
 
+  # animated drawer
+  flutter_zoom_drawer: ^2.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -20,6 +23,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
 
 # Custom splash screen
 flutter_native_splash:
