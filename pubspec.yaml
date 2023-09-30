@@ -11,6 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
+  # curved navigation bar
+  curved_navigation_bar : ^1.0.1
+
 
 dev_dependencies:
   flutter_test:

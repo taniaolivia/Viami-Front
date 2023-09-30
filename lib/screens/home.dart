@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../components/NavigationBarComponent.dart';
+
 class Home extends StatefulWidget {
   const Home({super.key});
   @override
@@ -10,6 +12,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Color(0xFFFAFAFA),
@@ -24,6 +27,7 @@ class _HomeState extends State<Home> {
             onPressed: () {}),
         actions: [IconButton(onPressed: () {}, icon: Icon(Icons.person))],
       ),
+      bottomNavigationBar: NavigationBarComponent(),
     );
   }
 }
