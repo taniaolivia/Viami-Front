@@ -76,6 +76,28 @@ class MenuPage extends StatelessWidget {
                     Spacer(),
                     ...MenuItems.all.map(buildMenuItem).toList(),
                     Spacer(flex: 2),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          // Handle logout logic
+                        },
+                        icon: Icon(Icons.logout,
+                            color: Colors.white), // Set icon color
+                        label: Text(
+                          "Logout",
+                          style:
+                              TextStyle(color: Colors.white), // Set text color
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          side: BorderSide(color: Colors.white),
+                        ),
+                      ),
+                    ),
+                    Spacer(),
                   ],
                 ),
               ),
