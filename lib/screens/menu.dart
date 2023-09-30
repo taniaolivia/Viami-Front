@@ -5,7 +5,7 @@ class MenuItems {
   static const payment = MenuItem('Payment', Icons.payment);
   static const notification = MenuItem('Notifications', Icons.notifications);
   static const friends = MenuItem('Invite Friends', Icons.card_giftcard);
-  static const settings = MenuItem('Home', Icons.settings);
+  static const settings = MenuItem('Settings', Icons.settings);
   //static const logout = MenuItem('Logout', Icons.logout);
 
   static const all = <MenuItem>[

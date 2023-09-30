@@ -22,7 +22,7 @@ class NotificationPage extends StatelessWidget {
               ),
               SizedBox(width: 8.0),
               Text(
-                "Paris",
+                "N",
                 style: TextStyle(color: Color(0xFF000000)),
               ),
             ],
