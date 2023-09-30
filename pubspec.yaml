@@ -15,6 +15,9 @@ dependencies:
   curved_navigation_bar : ^1.0.1
 
 
+  # animated drawer
+  flutter_zoom_drawer: ^2.1.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -23,6 +26,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
 
 # Custom splash screen
 flutter_native_splash:
