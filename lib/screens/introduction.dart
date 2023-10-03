@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:viami/components/introductionTemplate.dart';
+import 'package:viami/screens/register.dart';
 
 class IntroductionPage extends StatefulWidget {
 
@@ -75,7 +76,10 @@ class _IntroductionPageState extends State<IntroductionPage> {
                           fontSize: 18, fontWeight: FontWeight.bold)),
                   child: const Text("SUIVANT"),
                   onPressed: () {
-                    
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const RegisterPage()),
+                    );
                   },
                 ) : const SizedBox(height: 20),
                 page == 3 ? const SizedBox(height: 40) : const SizedBox(height: 85),
