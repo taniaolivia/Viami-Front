@@ -2,3 +2,6 @@
 .flutter-plugins-dependencies
 .dart_tool
 build
+pubspec.lock
+.vscode
+.idea
