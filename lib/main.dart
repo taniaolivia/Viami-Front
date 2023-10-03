@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
+import 'package:viami/screens/register.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: IntroductionPage(),
-      initialRoute: "/",
+      initialRoute: "/register",
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
       ),
       routes: {
         "/home": (context) => const DrawerPage(),
+        "/register": (context) => const RegisterPage(),
       }
     );
   }
