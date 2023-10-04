@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:viami/components/generalTemplate.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 class RegisterPage extends StatefulWidget {
 
@@ -45,21 +46,23 @@ class _RegisterPageState extends State<RegisterPage> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
-                          padding: EdgeInsets.fromLTRB(25, 25, 25, 25),
-                          fixedSize: Size.fromWidth(MediaQuery.of(context).size.width / 2.23),
+                          padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 17 , 25, MediaQuery.of(context).size.width / 17 , 25),
+                          fixedSize: Size.fromWidth(MediaQuery.of(context).size.width / 2.35),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(topLeft: Radius.circular(10), bottomLeft: Radius.circular(10))
                           )
                         ),
                         onPressed: () {},
                         child: Column(children: <Widget> [
-                            const Text(
+                            const AutoSizeText(
                               "S'inscrire",
                               style: TextStyle(
-                                fontSize: 22,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold
                               ),
+                              maxLines: 1,
+                              minFontSize: 17,
+                              maxFontSize: 22,
                             ),
                             const SizedBox(height: 10),
                             LinearPercentIndicator(
@@ -75,21 +78,28 @@ class _RegisterPageState extends State<RegisterPage> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.white,
-                          padding: EdgeInsets.fromLTRB(25, 25, 25, 25),
-                          fixedSize: Size.fromWidth(MediaQuery.of(context).size.width / 2.23),
+                          padding: EdgeInsets.fromLTRB(MediaQuery.of(context).size.width / 15 , 25, MediaQuery.of(context).size.width / 15 , 25),
+                          fixedSize: Size.fromWidth(MediaQuery.of(context).size.width / 2.35),
+                          side: const BorderSide(
+                            color: Colors.white
+                          ),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(topRight: Radius.circular(10), bottomRight: Radius.circular(10))
                           )
                         ),
                         onPressed: () {},
-                        child: Column(children: <Widget> [
-                            const Text(
+                        child: 
+                          Column(children: <Widget> [
+                            const AutoSizeText(
                               "Se connecter",
                               style: TextStyle(
-                                fontSize: 22,
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold
                               ),
+                              maxLines: 1,
+                              minFontSize: 17,
+                              maxFontSize: 22,
+                              overflow: TextOverflow.fade
                             ),
                             const SizedBox(height: 10),
                             LinearPercentIndicator(
@@ -114,22 +124,46 @@ class _RegisterPageState extends State<RegisterPage> {
                           TextField(
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "Email"
+                              labelText: "Email",
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(12),
                             ),
                           ),
                           SizedBox(height: 20),
                           TextField(
                             decoration: InputDecoration(
                               border: OutlineInputBorder(),
-                              labelText: "Mot de passe"
+                              labelText: "Mot de passe",
+                              isDense: true,
+                              contentPadding: EdgeInsets.all(12),  
                             ),
                           ),
                         ],
                       )
                     ), 
-                  )  
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.fromLTRB(40, 12, 40, 12),
+                        backgroundColor: const Color(0xFF0081CF),
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.bold)),
+                    child: const AutoSizeText(
+                      "Valider",
+                      maxLines: 1,
+                      minFontSize: 17,
+                      maxFontSize: 22,
+                      overflow: TextOverflow.fade
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const RegisterPage()),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20), 
                 ],
-            
           )),
         );
   }

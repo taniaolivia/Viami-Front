@@ -29,6 +29,8 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
               Positioned(
                 top: 0,
                 child: Container(
+                    alignment: Alignment.topCenter,
+                    padding: EdgeInsets.fromLTRB(0, MediaQuery.of(context).size.width / 5, 0, MediaQuery.of(context).size.width / 5),
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height / widget.imageHeight,
                     decoration: const BoxDecoration(
@@ -56,19 +58,29 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
                       borderRadius: BorderRadius.circular(20)),
                 )),
               Positioned(
-                top: MediaQuery.of(context).size.height / 2.5,
+                top: MediaQuery.of(context).size.height / 3,
                 child: Container(
                   margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                   alignment: Alignment.bottomCenter,
-                  width: MediaQuery.of(context).size.width / 1.1,
-                  height: MediaQuery.of(context).size.height / widget.containerHeight,
+                  width: MediaQuery.of(context).size.width / 1.15,
                   decoration: BoxDecoration(
-                      color: Colors.blue,
+                      color: Colors.white,
                       border: Border.all(
                         width: 2,
-                        color:  Colors.blue,
+                        color:  Colors.white,
                       ),
-                      borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.grey,
+                          blurRadius: 15.0,
+                          spreadRadius: 5.0,
+                          offset: Offset(
+                            5.0,
+                            5.0,
+                          ),
+                        )]
+                    ),
                   child: widget.content
                 )),
           ],
