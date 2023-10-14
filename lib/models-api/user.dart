@@ -39,6 +39,39 @@ class User {
   final bool? connected;
 }
 
+Future<User> register(
+    String firstName,
+    String lastName,
+    String email,
+    String passsword,
+    String? interest,
+    String? description,
+    String phoneNumber,
+    num age,
+    String sex) async {
+  final response =
+      await http.post(Uri.parse("http://localhost:3333/user/register"),
+          body: jsonEncode(<String?, dynamic>{
+            "firstName": firstName,
+            "lastName": lastName,
+            "email": email,
+            "password": passsword,
+            "interest": interest,
+            "description": description,
+            "phoneNumber": phoneNumber,
+            "age": age,
+            "sex": sex
+          }));
+
+  if (response.statusCode == 200) {
+    var res = json.decode(response.body);
+
+    return User.fromJson(res);
+  } else {
+    throw Exception("Failed to create user");
+  }
+}
+
 Future<User> getUserById(String id, String token) async {
   final response = await http.get(
     Uri.parse('http://localhost:3333/users/$id'),
