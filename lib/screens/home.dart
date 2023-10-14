@@ -51,7 +51,6 @@ class Home extends StatelessWidget {
           )
         ],
       ),
-      bottomNavigationBar: NavigationBarComponent(),
     );
   }
 }
