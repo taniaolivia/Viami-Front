@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:percent_indicator/percent_indicator.dart';
-import 'package:viami/components/generalTemplate.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:viami/components/connectionTemplate.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -11,148 +10,176 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  int page = 1;
-  String image = "";
-  String text1 = "";
-  String text2 = "";
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController firstNameController = TextEditingController();
+  TextEditingController lastNameController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    if (page == 1) {
-      image = "assets/logo.png";
-      text1 = "Tu ne veux pas voyager seul ?";
-      text2 = "Par obligation ou par choix";
-    } else {
-      image = "";
-      text1 = "Tu ne veux pas voyager seul ?";
-      text2 = "Par obligation ou par choix";
-    }
-
     return Scaffold(
-      body: GeneralTemplate(
-          imageHeight: 2,
-          containerHeight: 2,
-          image: image,
-          content: Column(
-            children: <Widget>[
-              Row(
+      body: ConnectionTemplate(
+          title: "Monter à bord !",
+          subtitle: "Créez votre compte pour commencer votre voyage",
+          form: Container(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+                key: _formKey,
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            padding: EdgeInsets.fromLTRB(
-                                MediaQuery.of(context).size.width / 17,
-                                25,
-                                MediaQuery.of(context).size.width / 17,
-                                25),
-                            fixedSize: Size.fromWidth(
-                                MediaQuery.of(context).size.width / 2.35),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(10),
-                                    bottomLeft: Radius.circular(10)))),
-                        onPressed: () {},
-                        child: Column(children: <Widget>[
-                          const AutoSizeText(
-                            "S'inscrire",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold),
-                            maxLines: 1,
-                            minFontSize: 17,
-                            maxFontSize: 22,
+                    const SizedBox(height: 20),
+                    Row(children: <Widget>[
+                      Expanded(
+                          child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez remplir votre prénom';
+                          }
+                          return null;
+                        },
+                        controller: firstNameController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Prénom*',
+                          prefixIcon: Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.grey,
+                            size: 30.0,
                           ),
-                          const SizedBox(height: 10),
-                          LinearPercentIndicator(
-                              width: MediaQuery.of(context).size.width / 6.5,
-                              lineHeight: 6,
-                              percent: 1,
-                              progressColor: const Color(0xFF0081CF),
-                              barRadius: const Radius.circular(10),
-                              alignment: MainAxisAlignment.center)
-                        ])),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
-                            padding: EdgeInsets.fromLTRB(
-                                MediaQuery.of(context).size.width / 15,
-                                25,
-                                MediaQuery.of(context).size.width / 15,
-                                25),
-                            fixedSize: Size.fromWidth(
-                                MediaQuery.of(context).size.width / 2.35),
-                            side: const BorderSide(color: Colors.white),
-                            shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(10),
-                                    bottomRight: Radius.circular(10)))),
-                        onPressed: () {},
-                        child: Column(children: <Widget>[
-                          const AutoSizeText("Se connecter",
-                              style: TextStyle(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                              maxLines: 1,
-                              minFontSize: 17,
-                              maxFontSize: 22,
-                              overflow: TextOverflow.fade),
-                          const SizedBox(height: 10),
-                          LinearPercentIndicator(
-                              width: MediaQuery.of(context).size.width / 6.5,
-                              lineHeight: 6,
-                              percent: 1,
-                              progressColor: const Color(0xFF0081CF),
-                              barRadius: const Radius.circular(10),
-                              alignment: MainAxisAlignment.center)
-                        ]))
-                  ]),
-              Container(
-                padding: const EdgeInsets.all(20),
-                child: Form(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const <Widget>[
-                    SizedBox(height: 20),
-                    TextField(
-                      decoration: InputDecoration(
+                        ),
+                      )),
+                      const SizedBox(width: 10),
+                      Expanded(
+                          child: TextFormField(
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez remplir votre nom';
+                          }
+                          return null;
+                        },
+                        controller: lastNameController,
+                        decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: 'Nom*',
+                        ),
+                      ))
+                    ]),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez remplir votre email';
+                        }
+                        return null;
+                      },
+                      controller: emailController,
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: "Email",
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(12),
+                        labelText: 'Email*',
+                        hintText: ' Ex: example@gmail.com',
+                        prefixIcon: Icon(
+                          Icons.email_outlined,
+                          color: Colors.grey,
+                          size: 30.0,
+                        ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    TextField(
-                      decoration: InputDecoration(
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez remplir votre numéro de téléphone';
+                        }
+                        return null;
+                      },
+                      controller: phoneController,
+                      decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: "Mot de passe",
-                        isDense: true,
-                        contentPadding: EdgeInsets.all(12),
+                        labelText: 'Numéro de téléphone*',
+                        prefixIcon: Icon(
+                          Icons.phone_android_outlined,
+                          color: Colors.grey,
+                          size: 30.0,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez remplir votre mot de passe';
+                        }
+                        return null;
+                      },
+                      controller: passwordController,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Mot de passe*',
+                        prefixIcon: Icon(
+                          Icons.fingerprint,
+                          color: Colors.grey,
+                          size: 30.0,
+                        ),
                       ),
                     ),
                   ],
                 )),
+          ),
+          button: Container(
+              margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              child: SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
+                        backgroundColor: const Color(0xFF0081CF),
+                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                        shape: const RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10)))),
+                    child: const AutoSizeText("S'inscrire",
+                        maxLines: 1,
+                        minFontSize: 20,
+                        maxFontSize: 22,
+                        overflow: TextOverflow.fade),
+                    onPressed: () async {
+                      if (_formKey.currentState!.validate()) {
+                        var firstName = firstNameController.text;
+                        var lastName = firstNameController.text;
+                        var phone = firstNameController.text;
+                        var email = emailController.text;
+                        var password = passwordController.text;
+
+                        Navigator.pushNamed(context, "/register/complete",
+                            arguments: {
+                              firstName,
+                              lastName,
+                              phone,
+                              email,
+                              password
+                            });
+                      }
+                    },
+                  ))),
+          option: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const AutoSizeText(
+                "Vous avez déjà un compte ?",
+                minFontSize: 20,
+                maxFontSize: 25,
               ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.fromLTRB(40, 12, 40, 12),
-                    backgroundColor: const Color(0xFF0081CF),
-                    textStyle: const TextStyle(fontWeight: FontWeight.bold)),
-                child: const AutoSizeText("Valider",
-                    maxLines: 1,
-                    minFontSize: 17,
-                    maxFontSize: 22,
-                    overflow: TextOverflow.fade),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const RegisterPage()),
-                  );
-                },
-              ),
-              const SizedBox(height: 20),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/login");
+                  },
+                  child: const AutoSizeText("Se connecter",
+                      minFontSize: 20,
+                      maxFontSize: 25,
+                      style: TextStyle(decoration: TextDecoration.underline))),
             ],
           )),
     );
