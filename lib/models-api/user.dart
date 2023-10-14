@@ -38,3 +38,20 @@ class User {
   final String? lastConnection;
   final bool? connected;
 }
+
+Future<User> getUserById(String id, String token) async {
+  final response = await http.get(
+    Uri.parse('http://localhost:3333/users/$id'),
+    headers: <String, String>{
+      'Authorization': token,
+    },
+  );
+
+  if (response.statusCode == 200) {
+    var res = json.decode(response.body);
+
+    return User.fromJson(res);
+  } else {
+    throw Exception('Failed to load user');
+  }
+}
