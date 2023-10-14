@@ -24,7 +24,7 @@ class _RegisterPageState extends State<RegisterPage> {
           title: "Monter à bord !",
           subtitle: "Créez votre compte pour commencer votre voyage",
           form: Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
             child: Form(
                 key: _formKey,
                 child: Column(
@@ -44,6 +44,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Prénom*',
+                          labelStyle: TextStyle(fontFamily: 'Poppins'),
                           prefixIcon: Icon(
                             Icons.account_circle_outlined,
                             color: Colors.grey,
@@ -64,6 +65,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: const InputDecoration(
                           border: OutlineInputBorder(),
                           labelText: 'Nom*',
+                          labelStyle: TextStyle(fontFamily: 'Poppins'),
                         ),
                       ))
                     ]),
@@ -80,6 +82,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         border: OutlineInputBorder(),
                         labelText: 'Email*',
                         hintText: ' Ex: example@gmail.com',
+                        labelStyle: TextStyle(fontFamily: 'Poppins'),
                         prefixIcon: Icon(
                           Icons.email_outlined,
                           color: Colors.grey,
@@ -99,6 +102,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Numéro de téléphone*',
+                        labelStyle: TextStyle(fontFamily: 'Poppins'),
                         prefixIcon: Icon(
                           Icons.phone_android_outlined,
                           color: Colors.grey,
@@ -118,6 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Mot de passe*',
+                        labelStyle: TextStyle(fontFamily: 'Poppins'),
                         prefixIcon: Icon(
                           Icons.fingerprint,
                           color: Colors.grey,
@@ -129,22 +134,30 @@ class _RegisterPageState extends State<RegisterPage> {
                 )),
           ),
           button: Container(
-              margin: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+              margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: SizedBox(
                   width: MediaQuery.of(context).size.width,
                   child: ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.fromLTRB(40, 20, 40, 20),
+                        padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
                         backgroundColor: const Color(0xFF0081CF),
-                        textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                        textStyle: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontFamily: 'Poppins',
+                        ),
                         shape: const RoundedRectangleBorder(
                             borderRadius:
                                 BorderRadius.all(Radius.circular(10)))),
-                    child: const AutoSizeText("S'inscrire",
-                        maxLines: 1,
-                        minFontSize: 20,
-                        maxFontSize: 22,
-                        overflow: TextOverflow.fade),
+                    child: const AutoSizeText(
+                      "S'inscrire",
+                      maxLines: 1,
+                      minFontSize: 20,
+                      maxFontSize: 22,
+                      overflow: TextOverflow.fade,
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                      ),
+                    ),
                     onPressed: () async {
                       if (_formKey.currentState!.validate()) {
                         var firstName = firstNameController.text;
@@ -167,19 +180,22 @@ class _RegisterPageState extends State<RegisterPage> {
           option: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              const AutoSizeText(
-                "Vous avez déjà un compte ?",
-                minFontSize: 20,
-                maxFontSize: 25,
-              ),
+              const AutoSizeText("Vous avez déjà un compte ?",
+                  minFontSize: 16,
+                  maxFontSize: 20,
+                  style: TextStyle(
+                    fontFamily: 'Poppins',
+                  )),
               TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, "/login");
                   },
                   child: const AutoSizeText("Se connecter",
-                      minFontSize: 20,
-                      maxFontSize: 25,
-                      style: TextStyle(decoration: TextDecoration.underline))),
+                      minFontSize: 16,
+                      maxFontSize: 20,
+                      style: TextStyle(
+                          fontFamily: 'Poppins',
+                          decoration: TextDecoration.underline))),
             ],
           )),
     );
