@@ -43,14 +43,14 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                             alignment: Alignment.topLeft,
                             child: Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(10, 40, 0, 0),
+                                    const EdgeInsets.fromLTRB(10, 20, 0, 0),
                                 child: Image.asset(
                                   "assets/logo.png",
                                   width:
                                       MediaQuery.of(context).size.width / 1.5,
                                 )),
                           ),
-                          const SizedBox(height: 30),
+                          const SizedBox(height: 20),
                           Align(
                             alignment: Alignment.topLeft,
                             child: Padding(
@@ -58,6 +58,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                 child: AutoSizeText(
                                   widget.title,
                                   style: const TextStyle(
+                                      fontFamily: 'Poppins',
                                       fontWeight: FontWeight.bold,
                                       color: Colors.white),
                                   minFontSize: 30,
@@ -72,22 +73,26 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                     const EdgeInsets.fromLTRB(20, 20, 0, 0),
                                 child: AutoSizeText(
                                   widget.subtitle,
-                                  minFontSize: 20,
-                                  maxFontSize: 25,
+                                  minFontSize: 17,
+                                  maxFontSize: 20,
                                   textAlign: TextAlign.left,
-                                  style: const TextStyle(color: Colors.white),
+                                  style: const TextStyle(
+                                      fontFamily: 'Poppins',
+                                      color: Colors.white),
                                 )),
                           ),
-                          const SizedBox(height: 50),
+                          const SizedBox(height: 40),
                         ])),
                     widget.form,
                     widget.button,
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 30),
                     const AutoSizeText("OU",
-                        minFontSize: 20,
-                        maxFontSize: 25,
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
+                        minFontSize: 18,
+                        maxFontSize: 20,
+                        style: TextStyle(
+                            fontFamily: 'Poppins',
+                            fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
                     widget.option
                   ],
                 ))));
