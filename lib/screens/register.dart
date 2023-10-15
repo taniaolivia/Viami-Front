@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:viami/components/connectionTemplate.dart';
+import 'package:viami/screens/completeRegister.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -166,14 +167,16 @@ class _RegisterPageState extends State<RegisterPage> {
                         var email = emailController.text;
                         var password = passwordController.text;
 
-                        Navigator.pushNamed(context, "/register/complete",
-                            arguments: {
-                              firstName,
-                              lastName,
-                              phone,
-                              email,
-                              password
-                            });
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => CompleteRegisterPage(
+                                  firstName: firstName,
+                                  lastName: lastName,
+                                  phone: phone,
+                                  email: email,
+                                  password: password)),
+                        );
                       }
                     },
                   ))),
