@@ -11,13 +11,13 @@ class User {
       required this.lastName,
       required this.email,
       required this.password,
-      this.interest,
-      this.description,
+      required this.interest,
+      required this.description,
       required this.location,
       required this.phoneNumber,
       required this.age,
       required this.sex,
-      this.lastConnection});
+      required this.lastConnection});
 
   factory User.fromJson(Map<String?, dynamic> json) => _$UserFromJson(json);
   Map<String?, dynamic> toJson() => _$UserToJson(this);
@@ -52,6 +52,8 @@ Future<User> register(
             "lastName": lastName,
             "email": email,
             "password": passsword,
+            "interest": "",
+            "description": "",
             "location": location,
             "phoneNumber": phoneNumber,
             "age": age,
@@ -62,7 +64,7 @@ Future<User> register(
   if (response.statusCode == 200) {
     var res = json.decode(response.body);
 
-    return User.fromJson(res);
+    return User.fromJson(res['user']);
   } else {
     throw Exception("Failed to load user");
   }
@@ -77,6 +79,7 @@ Future<User> getUserById(String id, String token) async {
   if (response.statusCode == 200) {
     var res = json.decode(response.body);
 
+    print(res);
     return User.fromJson(res);
   } else {
     throw Exception('Failed to load user');
