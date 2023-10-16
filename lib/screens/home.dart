@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-
+import '../components/NavigationBarComponent.dart';
 import '../widgets/menu_widget.dart';
 
 class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue,
       appBar: AppBar(
         leading: MenuWidget(),
         elevation: 0,
