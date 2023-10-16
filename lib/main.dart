@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/home.dart';
 import 'package:viami/screens/introduction.dart';
+import 'package:viami/screens/notifications_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         routes: {
-          "/home": (context) => DrawerPage(),
+          "/home": (context) => const DrawerPage(),
+          "/notif": (context) => const NotificationPage()
         });
   }
 }
