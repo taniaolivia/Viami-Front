@@ -110,7 +110,36 @@ class _SettingsPage extends State<SettingsPage> {
     return GestureDetector(
         onTap: () {
           if (index == 0) {
-            Navigator.pushNamed(context, '/home');
+            showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                      actions: [
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text('Non')),
+                        ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green),
+                            onPressed: () {
+                              // Write code to delete item
+                            },
+                            child: const Text(
+                              'Oui',
+                            )),
+                      ],
+                      title: Text("Suppression du compte"),
+                      content: Text(
+                          "Êtes-vous sûr de vouloir supprimer votre compte ?"),
+                    ));
+            //Navigator.pushNamed(context, '/home');
+
+            //Navigator.pop(context);
+
+            //Navigator.pushNamed(context, '/home');
           }
         },
         child: AnimatedContainer(
