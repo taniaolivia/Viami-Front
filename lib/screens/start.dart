@@ -14,13 +14,16 @@ class StartPage extends StatelessWidget {
               color: Color(0xFF0081CF),
             ),
             child: Column(children: <Widget>[
-              const SizedBox(
-                height: 220,
+              SizedBox(
+                height: MediaQuery.of(context).size.height / 3.5,
               ),
               Expanded(
                   child: Align(
                       alignment: Alignment.center,
-                      child: Image.asset("assets/logo.png"))),
+                      child: Image.asset(
+                        "assets/logo.png",
+                        width: MediaQuery.of(context).size.width / 1.1,
+                      ))),
               Expanded(
                   child: Align(
                 alignment: Alignment.bottomCenter,
@@ -46,11 +49,9 @@ class StartPage extends StatelessWidget {
                       },
                       child: const AutoSizeText("Se connecter",
                           style: TextStyle(
-                              fontFamily: 'Poppins',
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold),
+                              color: Colors.white, fontWeight: FontWeight.bold),
                           maxLines: 1,
-                          minFontSize: 18,
+                          minFontSize: 11,
                           maxFontSize: 20,
                           overflow: TextOverflow.fade),
                     ),
@@ -73,11 +74,10 @@ class StartPage extends StatelessWidget {
                       },
                       child: const AutoSizeText("S'inscrire",
                           style: TextStyle(
-                              fontFamily: 'Poppins',
                               color: Color(0xFF0081CF),
                               fontWeight: FontWeight.bold),
                           maxLines: 1,
-                          minFontSize: 18,
+                          minFontSize: 11,
                           maxFontSize: 20,
                           overflow: TextOverflow.fade),
                     ),
