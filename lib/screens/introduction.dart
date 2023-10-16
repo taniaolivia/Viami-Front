@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:swipe_to/swipe_to.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -46,35 +47,21 @@ class _IntroductionPageState extends State<IntroductionPage> {
           content: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                Text(text1,
-                    style: const TextStyle(
-                        fontSize: 30, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center),
+                AutoSizeText(
+                  text1,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                  minFontSize: 25,
+                  maxFontSize: 30,
+                ),
                 const SizedBox(height: 20),
-                Text(text2,
-                    style: const TextStyle(fontSize: 18),
-                    textAlign: TextAlign.center),
+                AutoSizeText(
+                  text2,
+                  textAlign: TextAlign.center,
+                  minFontSize: 15,
+                  maxFontSize: 20,
+                ),
                 const SizedBox(height: 30),
-                page == 3
-                    ? ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.fromLTRB(40, 12, 40, 12),
-                            backgroundColor: const Color(0xFF0081CF),
-                            textStyle: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold)),
-                        child: const Text("SUIVANT"),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const StartPage()),
-                          );
-                        },
-                      )
-                    : const SizedBox(height: 20),
-                page == 3
-                    ? const SizedBox(height: 40)
-                    : const SizedBox(height: 85),
                 LinearPercentIndicator(
                     width: MediaQuery.of(context).size.width / 2.5,
                     lineHeight: 8,
@@ -97,7 +84,10 @@ class _IntroductionPageState extends State<IntroductionPage> {
           if (page >= 1 && page < 3) {
             page++;
           } else {
-            page = 3;
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const StartPage()),
+            );
           }
         });
       },
