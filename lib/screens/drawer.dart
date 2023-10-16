@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:viami/screens/notifications_page.dart';
 import 'package:viami/screens/home.dart';
+import 'package:viami/screens/settings.dart';
 
 import 'menu.dart';
 
@@ -38,7 +39,9 @@ class _DrawerPageState extends State<DrawerPage> {
   Widget getScreen() {
     switch (cuurentItem) {
       case MenuItems.notification:
-        return NotificationsPage();
+        return NotificationPage();
+      case MenuItems.settings:
+        return SettingsPage();
       default:
         return Home();
     }

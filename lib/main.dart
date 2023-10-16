@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/home.dart';
 import 'package:viami/screens/introduction.dart';
+import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
 
 void main() {
@@ -24,6 +25,7 @@ class MyApp extends StatelessWidget {
         ),
         routes: {
           "/home": (context) => const DrawerPage(),
+          "/settings": (context) => const SettingsPage()
           "/notif": (context) => const NotificationPage()
         });
   }
