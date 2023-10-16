@@ -12,7 +12,8 @@ User _$UserFromJson(Map<String?, dynamic> json) => User(
     phoneNumber: json['phoneNumber'],
     age: json['age'],
     sex: json['sex'],
-    lastConnection: json['lastConnection']);
+    lastConnection: json['lastConnection'],
+    message: json["message"]);
 
 Map<String?, dynamic> _$UserToJson(User instance) => <String?, dynamic>{
       'id': instance.id,
