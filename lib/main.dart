@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:viami/screens/drawer.dart';
+import 'package:viami/screens/home.dart';
 import 'package:viami/screens/introduction.dart';
 
 void main() {
@@ -13,16 +14,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: IntroductionPage(),
-      initialRoute: "/",
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      routes: {
-        "/home": (context) => const DrawerPage(),
-      }
-    );
+        home: IntroductionPage(),
+        initialRoute: "/",
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        routes: {
+          "/home": (context) => DrawerPage(),
+        });
   }
 }
