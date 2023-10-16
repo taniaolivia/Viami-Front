@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:viami/screens/notifications_page.dart';
 import 'package:viami/screens/home.dart';
+import 'package:viami/screens/settings.dart';
 
 import 'menu.dart';
 
 class DrawerPage extends StatefulWidget {
-  const DrawerPage({Key? key}) : super(key: key);
   @override
   State<DrawerPage> createState() => _DrawerPageState();
 }
@@ -40,6 +40,8 @@ class _DrawerPageState extends State<DrawerPage> {
     switch (cuurentItem) {
       case MenuItems.notification:
         return NotificationPage();
+      case MenuItems.settings:
+        return SettingsPage();
       default:
         return Home();
     }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../services/auth_service.dart';
+
 class MenuItems {
   static const home = MenuItem('Home', Icons.home);
   static const payment = MenuItem('Payment', Icons.payment);
@@ -79,8 +81,9 @@ class MenuPage extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: OutlinedButton.icon(
-                        onPressed: () {
-                          // Handle logout logic
+                        onPressed: () async {
+                          await AuthService().logout();
+                          Navigator.pushNamed(context, '/home');
                         },
                         icon: Icon(Icons.logout,
                             color: Colors.white), // Set icon color

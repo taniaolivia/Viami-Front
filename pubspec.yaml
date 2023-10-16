@@ -10,7 +10,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+    
   cupertino_icons: ^1.0.2
+  curved_navigation_bar : ^1.0.1
   flutter_zoom_drawer: ^2.1.1
   swipe_to: ^1.0.2
   percent_indicator: ^4.0.1
@@ -94,6 +96,7 @@ flutter_native_splash:
   ios: true
   android: true
 
+# Custom icon launcher
 flutter_icons:
   ios: true
   android: true
