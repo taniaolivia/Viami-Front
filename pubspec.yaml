@@ -11,14 +11,21 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.2
-
-  # animated drawer
   flutter_zoom_drawer: ^2.1.1
   swipe_to: ^1.0.2
   percent_indicator: ^4.0.1
   auto_size_text: ^3.0.0
   http: ^0.13.6
   json_annotation: ^4.8.1
+  flutter_secure_storage: ^8.1.0
+  bottom_picker: ^2.1.1
+  intl: ^0.18.1
+  gender_picker: ^1.1.0
+  age_calculator: ^1.0.0
+  intl_phone_field: ^3.2.0
+  geolocator: ^8.2.0
+  geocoding: ^2.0.4
+  flutter_launcher_icons: "^0.13.1"
 
 dev_dependencies:
   flutter_test:
@@ -31,6 +38,54 @@ flutter:
   assets:
     - assets/
     - assets/introduction/
+  fonts:
+     - family: Poppins
+       fonts:
+         - asset: assets/fonts/Poppins-Thin.ttf
+           weight: 100
+         - asset: assets/fonts/Poppins-ThinItalic.ttf
+           style: italic
+           weight: 100
+         - asset: assets/fonts/Poppins-ExtraLight.ttf
+           weight: 200
+         - asset: assets/fonts/Poppins-ExtraLightItalic.ttf
+           style: italic
+           weight: 200
+         - asset: assets/fonts/Poppins-Light.ttf
+           weight: 300
+         - asset: assets/fonts/Poppins-LightItalic.ttf
+           style: italic
+           weight: 300
+         - asset: assets/fonts/Poppins-Regular.ttf
+           weight: 400
+         - asset: assets/fonts/Poppins-Italic.ttf
+           style: italic
+           weight: 400
+         - asset: assets/fonts/Poppins-Medium.ttf
+           weight: 500
+         - asset: assets/fonts/Poppins-MediumItalic.ttf
+           style: italic
+           weight: 500
+         - asset: assets/fonts/Poppins-SemiBold.ttf
+           weight: 600
+         - asset: assets/fonts/Poppins-SemiBoldItalic.ttf
+           style: italic
+           weight: 600
+         - asset: assets/fonts/Poppins-Bold.ttf
+           weight: 700
+         - asset: assets/fonts/Poppins-BoldItalic.ttf
+           style: italic
+           weight: 700
+         - asset: assets/fonts/Poppins-ExtraBold.ttf
+           weight: 800
+         - asset: assets/fonts/Poppins-ExtraBoldItalic.ttf
+           style: italic
+           weight: 800
+         - asset: assets/fonts/Poppins-Black.ttf
+           weight: 900
+         - asset: assets/fonts/Poppins-BlackItalic.ttf
+           style: italic
+           weight: 900
 
 # Custom splash screen
 flutter_native_splash:
@@ -38,3 +93,11 @@ flutter_native_splash:
   color: "#0081CF"
   ios: true
   android: true
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path: "assets/startLogo-blue.png"
+  remove_alpha_ios: true
+  adaptive_icon_background: "#0081CF"
+  adaptive_icon_foreground: "assets/foreground.png"
