@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
+import '../services/user.service.dart';
 
 class MenuItems {
   static const home = MenuItem('Home', Icons.home);
@@ -81,7 +81,18 @@ class MenuPage extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: OutlinedButton.icon(
-                        onPressed: () async {},
+                        onPressed: () async {
+                          String userId =
+                              'bc5d440d-afc7-46fc-b724-bddfc18d724c'; // Obtenez l'ID de l'utilisateur
+                          bool logoutSuccess = await logout(
+                              userId); // Passez l'ID à la fonction logout
+                          if (logoutSuccess) {
+                            Navigator.pushReplacementNamed(
+                                context, '/register');
+                          } else {
+                            print('Logout failed');
+                          }
+                        }, //bc5d440d-afc7-46fc-b724-bddfc18d724c
                         icon: Icon(Icons.logout,
                             color: Colors.white), // Set icon color
                         label: Text(

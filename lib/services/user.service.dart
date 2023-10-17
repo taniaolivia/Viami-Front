@@ -69,7 +69,7 @@ Future<User> getUserById(String id, String token) async {
   }
 }
 
-Future<bool> logout(String id, String token) async {
+Future<bool> logout(String id) async {
   final String baseUrl = 'http://localhost:3333';
 
   final String logoutUrl = '$baseUrl/user/logout/$id';
@@ -77,7 +77,7 @@ Future<bool> logout(String id, String token) async {
   try {
     final response = await http.post(
       Uri.parse(logoutUrl),
-      headers: <String, String>{'Authorization': token},
+      headers: {"Content-Type": "application/json"},
     );
 
     if (response.statusCode == 200) {
