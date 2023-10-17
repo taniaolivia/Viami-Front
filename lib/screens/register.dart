@@ -126,8 +126,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 10),
                       TextFormField(
                         validator: (value) {
+                          String pattern =
+                              r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+                          RegExp regex = new RegExp(pattern);
+
                           if (value == null || value.isEmpty) {
                             return 'Veuillez remplir votre mot de passe';
+                          } else if (!regex.hasMatch(value)) {
+                            String message =
+                                "Votre mot de passe doit comporter : \n" +
+                                    "\u2022 Au moins 8 caractères \n" +
+                                    "\u2022 Une lettre minuscule \n" +
+                                    "\u2022 Une lettre majuscule \n" +
+                                    "\u2022 Un chiffre \n" +
+                                    "\u2022 Un caractère spécial [] () ! _ @ & # + - / *";
+                            return message;
                           }
 
                           return null;
