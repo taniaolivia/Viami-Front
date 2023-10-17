@@ -184,6 +184,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                               return null;
                             },
                             controller: birthdayController,
+                            readOnly: true,
                             decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
                                 labelText: 'Date de naissance*',
@@ -224,6 +225,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                               return null;
                             },
                             controller: locationController,
+                            readOnly: true,
                             decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
                                 labelText: 'Localisation*',
@@ -332,6 +334,12 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
 
                                           Navigator.pushNamed(
                                               context, '/login');
+
+                                          showSnackbar(
+                                              context,
+                                              'Votre compte a été bien créé !',
+                                              "D'accord",
+                                              '');
                                         }
                                       }
                                     }
