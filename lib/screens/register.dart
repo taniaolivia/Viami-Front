@@ -127,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextFormField(
                         validator: (value) {
                           String pattern =
-                              r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+                              '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}\$';
                           RegExp regex = new RegExp(pattern);
 
                           if (value == null || value.isEmpty) {
@@ -139,7 +139,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     "\u2022 Une lettre minuscule \n" +
                                     "\u2022 Une lettre majuscule \n" +
                                     "\u2022 Un chiffre \n" +
-                                    "\u2022 Un caractère spécial [] () ! _ @ & # + - / *";
+                                    "\u2022 Un caractère spécial () [] ! _ @ & \$ # + - / *";
                             return message;
                           }
 
