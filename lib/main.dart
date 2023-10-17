@@ -26,13 +26,12 @@ class MyApp extends StatelessWidget {
             snackBarTheme: const SnackBarThemeData(
                 contentTextStyle: TextStyle(fontFamily: "Poppins")),
             fontFamily: "Poppins"),
-        ),
         routes: {
-          "/home": (context) => const DrawerPage(),
+          "/home": (context) => DrawerPage(),
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
-          "/settings": (context) => const SettingsPage(),
-          "/notif": (context) => const NotificationPage()
+          "/settings": (context) => SettingsPage(),
+          "/notif": (context) => NotificationsPage()
         });
   }
 }
