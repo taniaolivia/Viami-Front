@@ -127,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       TextFormField(
                         validator: (value) {
                           String pattern =
-                              '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}\$';
+                              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$';
                           RegExp regex = new RegExp(pattern);
 
                           if (value == null || value.isEmpty) {
