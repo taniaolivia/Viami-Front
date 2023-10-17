@@ -81,10 +81,7 @@ class MenuPage extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: OutlinedButton.icon(
-                        onPressed: () async {
-                          await AuthService().logout();
-                          Navigator.pushNamed(context, '/home');
-                        },
+                        onPressed: () async {},
                         icon: Icon(Icons.logout,
                             color: Colors.white), // Set icon color
                         label: Text(
