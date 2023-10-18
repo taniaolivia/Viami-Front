@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
+import '../components/NavigationBarComponent.dart';
 import '../widgets/menu_widget.dart';
 
-class NotificationPage extends StatelessWidget {
+class NotificationsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blue,
       appBar: AppBar(
         leading: MenuWidget(),
         elevation: 0,
@@ -22,7 +25,7 @@ class NotificationPage extends StatelessWidget {
               ),
               SizedBox(width: 8.0),
               Text(
-                "N",
+                "Paris",
                 style: TextStyle(color: Color(0xFF000000)),
               ),
             ],
@@ -49,6 +52,10 @@ class NotificationPage extends StatelessWidget {
             ),
           )
         ],
+      ),
+      body: Text(
+        "NotificationsPage",
+        style: TextStyle(color: Colors.black12),
       ),
     );
   }

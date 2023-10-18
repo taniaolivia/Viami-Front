@@ -7,7 +7,6 @@ import 'package:viami/screens/settings.dart';
 import 'menu.dart';
 
 class DrawerPage extends StatefulWidget {
-  const DrawerPage({Key? key}) : super(key: key);
   @override
   State<DrawerPage> createState() => _DrawerPageState();
 }

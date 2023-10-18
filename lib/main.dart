@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:viami/screens/drawer.dart';
+import 'package:viami/screens/home.dart';
 import 'package:viami/screens/introduction.dart';
+import 'package:viami/screens/register.dart';
+import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
+import 'package:viami/screens/notifications_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,20 +14,25 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: IntroductionPage(),
+        home: const IntroductionPage(),
         initialRoute: "/",
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.blue,
+            primarySwatch: Colors.blue,
+            snackBarTheme: const SnackBarThemeData(
+                contentTextStyle: TextStyle(fontFamily: "Poppins")),
+            fontFamily: "Poppins"),
         ),
         routes: {
           "/home": (context) => const DrawerPage(),
-          "/settings": (context) => SettingsPage()
+          "/start": (context) => const StartPage(),
+          "/register": (context) => const RegisterPage(),
+          "/settings": (context) => const SettingsPage(),
+          "/notif": (context) => const NotificationPage()
         });
   }
 }
