@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:viami/components/connectionTemplate.dart';
+import 'package:viami/components/snackBar.dart';
 import 'package:viami/screens/completeRegister.dart';
+import 'package:viami/services/auth.service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -125,7 +128,25 @@ class _LoginPageState extends State<LoginPage> {
                           var email = emailController.text;
                           var password = passwordController.text;
 
-                          Navigator.pushNamed(context, "/home");
+                          var user = await AuthService().login(email, password);
+
+                          var storage = const FlutterSecureStorage();
+
+                          if (user != null) {
+                            if (user["message"] == "User not found") {
+                              showSnackbar(
+                                  context,
+                                  "Cet email n'a pas encore un compte, inscrivez-vous !",
+                                  "S'inscrire",
+                                  "/register");
+                            } else {
+                              storage.write(
+                                  key: "userId", value: user["user"]["id"]);
+                              storage.write(key: "token", value: user['token']);
+
+                              Navigator.pushNamed(context, "/login");
+                            }
+                          }
                         }
                       },
                     ))),
