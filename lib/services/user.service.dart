@@ -79,6 +79,31 @@ Future<bool> deleteUserById(String id, String token) async {
       Uri.parse(deleteUserByIdUrl),
       headers: <String, String>{'Authorization': token},
     );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      print(data['message']);
+      return true;
+    } else {
+      print('Failed to logout. Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      return false;
+    }
+  } catch (error) {
+    print('Error during logout: $error');
+    return false;
+  }
+}
+
+Future<bool> logout(String id) async {
+  final String baseUrl = 'http://localhost:3333';
+
+  final String logoutUrl = '$baseUrl/user/logout/$id';
+
+  try {
+    final response = await http.post(
+      Uri.parse(logoutUrl),
+      headers: {"Content-Type": "application/json"},
+    );
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
