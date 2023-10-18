@@ -20,6 +20,13 @@ class _RegisterPageState extends State<RegisterPage> {
   TextEditingController passwordController = TextEditingController();
   FocusNode focusNode = FocusNode();
   String phoneNumber = "";
+  bool passwordVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    passwordVisible = true;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,23 +126,51 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 10),
                       TextFormField(
                         validator: (value) {
+                          String pattern =
+                              r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$';
+                          RegExp regex = new RegExp(pattern);
+
                           if (value == null || value.isEmpty) {
                             return 'Veuillez remplir votre mot de passe';
+                          } else if (!regex.hasMatch(value)) {
+                            String message =
+                                "Votre mot de passe doit comporter : \n" +
+                                    "\u2022 Au moins 8 caractères \n" +
+                                    "\u2022 Une lettre minuscule \n" +
+                                    "\u2022 Une lettre majuscule \n" +
+                                    "\u2022 Un chiffre \n" +
+                                    "\u2022 Un caractère spécial () [] ! _ @ & \$ # + - / *";
+                            return message;
                           }
+
                           return null;
                         },
                         controller: passwordController,
-                        decoration: const InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: 'Mot de passe*',
-                          contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                          labelStyle: TextStyle(fontSize: 12),
-                          prefixIcon: Icon(
-                            Icons.fingerprint,
-                            color: Colors.grey,
-                            size: 25.0,
-                          ),
-                        ),
+                        obscureText: passwordVisible,
+                        decoration: InputDecoration(
+                            border: const OutlineInputBorder(),
+                            labelText: 'Mot de passe*',
+                            contentPadding:
+                                const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                            labelStyle: const TextStyle(fontSize: 12),
+                            prefixIcon: const Icon(
+                              Icons.fingerprint,
+                              color: Colors.grey,
+                              size: 25.0,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(
+                                  () {
+                                    passwordVisible = !passwordVisible;
+                                  },
+                                );
+                              },
+                            )),
+                        keyboardType: TextInputType.visiblePassword,
                       ),
                     ],
                   )),
