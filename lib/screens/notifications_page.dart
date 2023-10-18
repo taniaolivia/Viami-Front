@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
-import '../components/NavigationBarComponent.dart';
 import '../widgets/menu_widget.dart';
 
 class NotificationsPage extends StatelessWidget {
+  const NotificationsPage({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -12,7 +12,7 @@ class NotificationsPage extends StatelessWidget {
       appBar: AppBar(
         leading: MenuWidget(),
         elevation: 0,
-        backgroundColor: Color(0xFFFAFAFA),
+        backgroundColor: const Color(0xFFFAFAFA),
         title: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -23,29 +23,29 @@ class NotificationsPage extends StatelessWidget {
                 height: 20.0,
                 color: Color(0xFF0081CF),
               ),
-              SizedBox(width: 8.0),
-              Text(
+              const SizedBox(width: 8.0),
+              const Text(
                 "Paris",
                 style: TextStyle(color: Color(0xFF000000)),
               ),
             ],
           ),
         ),
-        iconTheme: IconThemeData(color: Color(0xFF6D7D95)),
+        iconTheme: const IconThemeData(color: Color(0xFF6D7D95)),
         actions: [
           Padding(
-            padding: EdgeInsets.only(
+            padding: const EdgeInsets.only(
               right: 16.0,
             ),
             child: Container(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Color(0xFFFFFFFF),
+                  color: const Color(0xFFFFFFFF),
                   width: 2.0,
                 ),
               ),
-              child: CircleAvatar(
+              child: const CircleAvatar(
                 backgroundImage: AssetImage('assets/profil.png'),
                 radius: 16,
               ),
@@ -53,7 +53,7 @@ class NotificationsPage extends StatelessWidget {
           )
         ],
       ),
-      body: Text(
+      body: const Text(
         "NotificationsPage",
         style: TextStyle(color: Colors.black12),
       ),
