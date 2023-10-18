@@ -69,7 +69,7 @@ Future<User> getUserById(String id, String token) async {
   }
 }
 
-Future<bool> deleteUserById(String id) async {
+Future<bool> deleteUserById(String id, String token) async {
   const String baseUrl = 'http://localhost:3333';
 
   final String deleteUserByIdUrl = '$baseUrl/users/$id';
@@ -77,7 +77,7 @@ Future<bool> deleteUserById(String id) async {
   try {
     final response = await http.delete(
       Uri.parse(deleteUserByIdUrl),
-      headers: {"Content-Type": "application/json"},
+      headers: <String, String>{'Authorization': token},
     );
 
     if (response.statusCode == 200) {
