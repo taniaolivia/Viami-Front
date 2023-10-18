@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
+import '../services/user.service.dart';
 
 class MenuItems {
   static const home = MenuItem('Home', Icons.home);
@@ -35,8 +35,7 @@ class MenuPage extends StatelessWidget {
               // Background Image
               Positioned.fill(
                 child: Image.asset(
-                  'assets/drawerHeader.png', // Remplacez ceci par l'URL de votre image
-                  fit: BoxFit.cover,
+                  'assets/drawerHeader.png',
                 ),
               ),
 
@@ -68,7 +67,7 @@ class MenuPage extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(left: 17.0),
                       child: Text(
-                        "Your Name", // Replace with the actual name
+                        "Your Name",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 19.0,
@@ -82,8 +81,15 @@ class MenuPage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: OutlinedButton.icon(
                         onPressed: () async {
-                          await AuthService().logout();
-                          Navigator.pushNamed(context, '/home');
+                          String userId =
+                              'bc5d440d-afc7-46fc-b724-bddfc18d724c'; //change id after with get id by provider when connect user  is done
+                          bool logoutSuccess = await logout(userId);
+                          if (logoutSuccess) {
+                            Navigator.pushReplacementNamed(
+                                context, '/register');
+                          } else {
+                            print('Logout failed');
+                          }
                         },
                         icon: Icon(Icons.logout,
                             color: Colors.white), // Set icon color
