@@ -17,22 +17,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: const IntroductionPage(),
-        initialRoute: "/",
-        title: 'Flutter Demo',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            primarySwatch: Colors.blue,
-            snackBarTheme: const SnackBarThemeData(
-                contentTextStyle: TextStyle(fontFamily: "Poppins")),
-            fontFamily: "Poppins"),
+      home: const IntroductionPage(),
+      initialRoute: "/",
+      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+        snackBarTheme: const SnackBarThemeData(
+          contentTextStyle: TextStyle(fontFamily: "Poppins"),
         ),
-        routes: {
-          "/home": (context) => const DrawerPage(),
-          "/start": (context) => const StartPage(),
-          "/register": (context) => const RegisterPage(),
-          "/settings": (context) => const SettingsPage(),
-          "/notif": (context) => const NotificationPage()
-        });
+        fontFamily: "Poppins",
+      ),
+      routes: {
+        "/home": (context) => DrawerPage(),
+        "/start": (context) => const StartPage(),
+        "/register": (context) => const RegisterPage(),
+        "/settings": (context) => SettingsPage(),
+        "/notif": (context) => NotificationsPage(),
+      },
+    );
   }
 }
