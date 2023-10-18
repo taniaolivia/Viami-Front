@@ -76,3 +76,29 @@ class UserService {
     print("");
   }
 }
+
+Future<bool> deleteUserById(String id, String token) async {
+  const String baseUrl = 'http://localhost:3333';
+
+  final String deleteUserByIdUrl = '$baseUrl/users/$id';
+
+  try {
+    final response = await http.delete(
+      Uri.parse(deleteUserByIdUrl),
+      headers: <String, String>{'Authorization': token},
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      print(data['message']);
+      return true;
+    } else {
+      print('Failed to logout. Status Code: ${response.statusCode}');
+      print('Response Body: ${response.body}');
+      return false;
+    }
+  } catch (error) {
+    print('Error during logout: $error');
+    return false;
+  }
+}
