@@ -1,21 +1,7 @@
 import 'package:flutter/material.dart';
 
-class MenuItems {
-  static const home = MenuItem('Home', Icons.home);
-  static const payment = MenuItem('Payment', Icons.payment);
-  static const notification = MenuItem('Notifications', Icons.notifications);
-  static const friends = MenuItem('Invite Friends', Icons.card_giftcard);
-  static const settings = MenuItem('Settings', Icons.settings);
-  //static const logout = MenuItem('Logout', Icons.logout);
-
-  static const all = <MenuItem>[
-    home,
-    payment,
-    notification,
-    friends,
-    settings,
-  ];
-}
+import '../models/menu_item.dart';
+import '../models/menu_items.dart';
 
 class MenuPage extends StatelessWidget {
   final MenuItem cuurentItem;
@@ -43,27 +29,27 @@ class MenuPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Spacer(),
+                    const Spacer(),
                     Padding(
-                      padding: EdgeInsets.only(left: 16.0),
+                      padding: const EdgeInsets.only(left: 16.0),
                       child: Container(
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Color(0xFFFFFFFF),
+                            color: const Color(0xFFFFFFFF),
                             width: 3.0,
                           ),
                         ),
-                        child: CircleAvatar(
+                        child: const CircleAvatar(
                           backgroundImage: AssetImage('assets/profil.png'),
                           radius: 50.0,
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                         height:
                             10.0), // Add some space between CircleAvatar and Text
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.only(left: 17.0),
                       child: Text(
                         "Your Name", // Replace with the actual name
@@ -73,18 +59,18 @@ class MenuPage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                     ...MenuItems.all.map(buildMenuItem).toList(),
-                    Spacer(flex: 2),
+                    const Spacer(flex: 2),
                     Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       child: OutlinedButton.icon(
                         onPressed: () async {
                           Navigator.pushNamed(context, '/home');
                         },
-                        icon: Icon(Icons.logout,
+                        icon: const Icon(Icons.logout,
                             color: Colors.white), // Set icon color
-                        label: Text(
+                        label: const Text(
                           "Logout",
                           style:
                               TextStyle(color: Colors.white), // Set text color
@@ -93,11 +79,11 @@ class MenuPage extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                          side: BorderSide(color: Colors.white),
+                          side: const BorderSide(color: Colors.white),
                         ),
                       ),
                     ),
-                    Spacer(),
+                    const Spacer(),
                   ],
                 ),
               ),
@@ -114,11 +100,4 @@ class MenuPage extends StatelessWidget {
         title: Text(item.title),
         onTap: () => onSelectedItem(item),
       );
-}
-
-class MenuItem {
-  final String title;
-  final IconData icon;
-
-  const MenuItem(this.title, this.icon);
 }
