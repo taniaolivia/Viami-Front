@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
+import 'package:viami/screens/profile_page.dart';
 import 'package:viami/screens/register.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
@@ -31,8 +32,9 @@ class MyApp extends StatelessWidget {
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => SettingsPage(),
-          "/notif": (context) => NotificationsPage(),
-          "/login": (context) => const LoginPage()
+          "/notif": (context) => const NotificationsPage(),
+          "/login": (context) => const LoginPage(),
+          "/profile": (context) => ProfilePage()
         });
   }
 }
