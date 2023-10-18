@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../services/auth_service.dart';
-
 class MenuItems {
   static const home = MenuItem('Home', Icons.home);
   static const payment = MenuItem('Payment', Icons.payment);
@@ -82,7 +80,6 @@ class MenuPage extends StatelessWidget {
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: OutlinedButton.icon(
                         onPressed: () async {
-                          await AuthService().logout();
                           Navigator.pushNamed(context, '/home');
                         },
                         icon: Icon(Icons.logout,
