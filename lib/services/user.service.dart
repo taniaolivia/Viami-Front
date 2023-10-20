@@ -59,7 +59,7 @@ class UserService {
 
   Future<User> getUserById(String id, String token) async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3333/users/$id'),
+      Uri.parse('http://localhost:3333/users/$id'),
       headers: <String, String>{'Authorization': token},
     );
 

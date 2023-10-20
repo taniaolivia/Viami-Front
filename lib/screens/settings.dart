@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../services/user.service.dart';
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _SettingsPage();
 }
@@ -57,7 +59,7 @@ class _SettingsPage extends State<SettingsPage> {
         physics: const BouncingScrollPhysics(),
         child: Column(children: [
           Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.blue,
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
@@ -76,12 +78,12 @@ class _SettingsPage extends State<SettingsPage> {
                             //Navigator.pop(context);
                           },
                           child: Padding(
-                              padding: EdgeInsets.only(top: 30, left: 20),
+                              padding: const EdgeInsets.only(top: 30, left: 20),
                               child: Image.asset("assets/return.png"))),
                       const SizedBox(
                         width: 30,
                       ),
-                      Padding(
+                      const Padding(
                         padding: EdgeInsets.only(top: 60),
                         child: Text(
                           "Paramètres",
@@ -144,15 +146,10 @@ class _SettingsPage extends State<SettingsPage> {
                               'Oui',
                             )),
                       ],
-                      title: Text("Suppression du compte"),
-                      content: Text(
+                      title: const Text("Suppression du compte"),
+                      content: const Text(
                           "Êtes-vous sûr de vouloir supprimer votre compte ?"),
                     ));
-            //Navigator.pushNamed(context, '/home');
-
-            //Navigator.pop(context);
-
-            //Navigator.pushNamed(context, '/home');
           }
         },
         child: AnimatedContainer(
@@ -162,12 +159,12 @@ class _SettingsPage extends State<SettingsPage> {
             transform: Matrix4.translationValues(
                 startAnimation ? 0 : MediaQuery.of(context).size.width, 0, 0),
             width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.all(5),
+            margin: const EdgeInsets.all(5),
             padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width / 40,
             ),
             decoration: BoxDecoration(
-              color: Color.fromARGB(137, 248, 244, 244),
+              color: const Color.fromARGB(137, 248, 244, 244),
               borderRadius: BorderRadius.circular(10),
               //border: Border.all(color: Color.fromARGB(255, 9, 10, 10)
             ),
@@ -175,7 +172,7 @@ class _SettingsPage extends State<SettingsPage> {
                 child: ListTile(
               title: Text(
                 " ${items[index]}",
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
               trailing: Icon(icons[index]),
             ))));
