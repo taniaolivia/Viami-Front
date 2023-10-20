@@ -4,6 +4,7 @@ import '../models-api/user.dart';
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
 import '../services/user.service.dart';
+import '../services/auth.service.dart';
 
 class MenuPage extends StatelessWidget {
   final MenuItem cuurentItem;
@@ -37,13 +38,14 @@ class MenuPage extends StatelessWidget {
             if (snapshot.hasData) {
               var user = snapshot.data!;
               var firstName = user.firstName ?? "Default Name";
+              var idUser = user.id;
               print("Assigned firstName: $firstName");
               return Stack(
                 children: [
                   // Background Image
                   Positioned.fill(
                     child: Image.asset(
-                      'assets/drawerHeader.png', // Remplacez ceci par l'URL de votre image
+                      'assets/drawerHeader.png',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -90,7 +92,15 @@ class MenuPage extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: OutlinedButton.icon(
                             onPressed: () async {
-                              Navigator.pushNamed(context, '/home');
+                              //change id after with get id by provider when connect user  is done
+                              bool logoutSuccess =
+                                  await AuthService().logout(idUser);
+                              if (logoutSuccess) {
+                                Navigator.pushReplacementNamed(
+                                    context, '/login');
+                              } else {
+                                print('Logout failed');
+                              }
                             },
                             icon: const Icon(Icons.logout,
                                 color: Colors.white), // Set icon color
