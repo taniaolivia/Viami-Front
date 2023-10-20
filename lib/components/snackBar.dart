@@ -12,7 +12,11 @@ void showSnackbar(BuildContext context, String message, String buttonText,
     action: SnackBarAction(
       label: buttonText,
       onPressed: () {
-        Navigator.pushNamed(context, '/login');
+        if (redirectAction != "") {
+          Navigator.pushNamed(context, redirectAction);
+        } else {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        }
       },
     ),
   );

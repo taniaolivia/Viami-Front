@@ -5,19 +5,20 @@ part 'user.u.dart';
 @JsonSerializable()
 class User {
   User(
-      {required this.id,
+      {this.id,
       required this.firstName,
       required this.lastName,
       required this.email,
       required this.password,
-      required this.interest,
-      required this.description,
+      this.interest,
+      this.description,
       required this.location,
       required this.phoneNumber,
       required this.age,
       required this.sex,
-      required this.lastConnection,
-      required this.message});
+      this.lastConnection,
+      this.message,
+      this.connected});
 
   factory User.fromJson(Map<String?, dynamic> json) => _$UserFromJson(json);
   Map<String?, dynamic> toJson() => _$UserToJson(this);
@@ -35,4 +36,5 @@ class User {
   final String sex;
   final String? lastConnection;
   final String? message;
+  final String? connected;
 }

@@ -4,6 +4,8 @@ import 'package:viami/screens/notifications_page.dart';
 import 'package:viami/screens/home.dart';
 import 'package:viami/screens/settings.dart';
 
+import '../models/menu_item.dart';
+import '../models/menu_items.dart';
 import 'menu.dart';
 
 class DrawerPage extends StatefulWidget {

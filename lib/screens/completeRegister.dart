@@ -8,8 +8,8 @@ import 'package:gender_picker/source/enums.dart';
 import 'package:age_calculator/age_calculator.dart';
 import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/snackBar.dart';
-import 'package:viami/services/user.service.dart';
 import 'package:viami/components/alertMessage.dart';
+import 'package:viami/services/user.service.dart';
 
 class CompleteRegisterPage extends StatefulWidget {
   final String firstName;
@@ -184,6 +184,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                               return null;
                             },
                             controller: birthdayController,
+                            readOnly: true,
                             decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
                                 labelText: 'Date de naissance*',
@@ -224,6 +225,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                               return null;
                             },
                             controller: locationController,
+                            readOnly: true,
                             decoration: const InputDecoration(
                                 border: UnderlineInputBorder(),
                                 labelText: 'Localisation*',
@@ -297,7 +299,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                           "Désolé, vous devez être 18 ans ou plus pour s'inscrire",
                                           "J'ai compris");
                                     } else {
-                                      var user = await register(
+                                      var user = await UserService().register(
                                           widget.firstName,
                                           widget.lastName,
                                           widget.email,
@@ -306,9 +308,6 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                           location,
                                           age,
                                           sex);
-
-                                      var storage =
-                                          const FlutterSecureStorage();
 
                                       if (user != null) {
                                         if (user.message ==
@@ -319,19 +318,14 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                               'Se connecter',
                                               '/login');
                                         } else {
-                                          storage.write(
-                                              key: "id", value: user.id);
-                                          storage.write(
-                                              key: "email", value: user.email);
-                                          storage.write(
-                                              key: "firstName",
-                                              value: user.firstName);
-                                          storage.write(
-                                              key: "lastName",
-                                              value: user.lastName);
-
                                           Navigator.pushNamed(
                                               context, '/login');
+
+                                          showSnackbar(
+                                              context,
+                                              'Votre compte a été bien créé !',
+                                              "D'accord",
+                                              '');
                                         }
                                       }
                                     }
