@@ -31,15 +31,11 @@ class AuthService {
 
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
-        print(data['message']);
         return true;
       } else {
-        print('Failed to logout. Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
         return false;
       }
     } catch (error) {
-      print('Error during logout: $error');
       return false;
     }
   }
