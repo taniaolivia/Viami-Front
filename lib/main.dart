@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => SettingsPage(),
           "/notif": (context) => const NotificationsPage(),
-          "/login": (context) => const LoginPage()
+          "/login": (context) => const LoginPage(),
         });
   }
 }

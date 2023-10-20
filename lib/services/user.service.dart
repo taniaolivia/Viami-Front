@@ -77,7 +77,7 @@ class UserService {
   }
 }
 
-Future<bool> deleteUserById(String id, String token) async {
+Future<bool> deleteUserById(String? id, String token) async {
   const String baseUrl = 'http://localhost:3333';
 
   final String deleteUserByIdUrl = '$baseUrl/users/$id';
