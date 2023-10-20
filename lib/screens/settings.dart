@@ -89,26 +89,24 @@ class _SettingsPage extends State<SettingsPage> {
                         bottomRight: Radius.circular(20),
                       )),
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height / 6,
                   child: Column(
                     children: [
                       Row(
                         children: [
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(context, '/home');
-
-                                //Navigator.pop(context);
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
                               },
-                              child: Padding(
-                                  padding:
-                                      const EdgeInsets.only(top: 30, left: 20),
-                                  child: Image.asset("assets/return.png"))),
+                              icon: const Icon(
+                                Icons.arrow_back_ios,
+                                size: 20,
+                                color: Colors.white,
+                              )),
                           const SizedBox(
                             width: 30,
                           ),
                           const Padding(
-                            padding: EdgeInsets.only(top: 60),
+                            padding: EdgeInsets.only(top: 40),
                             child: Text(
                               "Paramètres",
                               style:
