@@ -18,7 +18,7 @@ class MenuPage extends StatelessWidget {
               // Background Image
               Positioned.fill(
                 child: Image.asset(
-                  'assets/drawerHeader.png', // Remplacez ceci par l'URL de votre image
+                  'assets/bg.png', // Remplacez ceci par l'URL de votre image
                   fit: BoxFit.cover,
                 ),
               ),
@@ -31,18 +31,22 @@ class MenuPage extends StatelessWidget {
                     const Spacer(),
                     Padding(
                       padding: const EdgeInsets.only(left: 16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: const Color(0xFFFFFFFF),
-                            width: 3.0,
-                          ),
-                        ),
-                        child: const CircleAvatar(
-                          backgroundImage: AssetImage('assets/profil.png'),
-                          radius: 50.0,
-                        ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.pushNamed(context, "/profile");
+                        },
+                        child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: const Color(0xFFFFFFFF),
+                                width: 3.0,
+                              ),
+                            ),
+                            child: const CircleAvatar(
+                              backgroundImage: AssetImage('assets/profil.png'),
+                              radius: 50.0,
+                            )),
                       ),
                     ),
                     const SizedBox(
