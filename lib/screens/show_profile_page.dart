@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:viami/components/photoList.dart';
-import 'package:viami/models-api/user.dart';
-import 'package:viami/services/user.service.dart';
+import 'package:viami/models-api/user/user.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class ShowProfilePage extends StatefulWidget {
   const ShowProfilePage({Key? key}) : super(key: key);

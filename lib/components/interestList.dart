@@ -1,11 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:viami/models-api/interests.dart';
-import 'package:viami/models-api/usersInterests.dart';
-import 'package:viami/services/interests.service.dart';
-import 'package:viami/services/userInterest.service.dart';
-import 'package:viami/services/usersInterests.service.dart';
+import 'package:viami/models-api/interest/interests.dart';
+import 'package:viami/models-api/userInterest/usersInterests.dart';
+import 'package:viami/services/interest/interests.service.dart';
+import 'package:viami/services/userInterest/userInterest.service.dart';
+import 'package:viami/services/userInterest/usersInterests.service.dart';
 
 class InterestList extends StatefulWidget {
   const InterestList({Key? key}) : super(key: key);

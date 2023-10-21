@@ -1,15 +1,10 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:viami/components/photoList.dart';
-import 'package:viami/models-api/user.dart';
+import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/edit_profile_page.dart';
 import 'package:viami/screens/show_profile_page.dart';
-import 'package:viami/services/user.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -79,7 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 textAlign: TextAlign.center,
                                               )))
                                     ]),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -125,7 +120,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   EdgeInsets.fromLTRB(
                                                       30, 0, 30, 0))))
                                     ]),
-                                const SizedBox(height: 20),
+                                const SizedBox(height: 10),
                                 currentAction == "Edit"
                                     ? EditProfilePage(user: user)
                                     : const ShowProfilePage()

@@ -8,7 +8,7 @@ import 'package:age_calculator/age_calculator.dart';
 import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/snackBar.dart';
 import 'package:viami/components/alertMessage.dart';
-import 'package:viami/services/user.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class CompleteRegisterPage extends StatefulWidget {
   final String firstName;

@@ -1,16 +1,12 @@
-import 'dart:io';
-
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:viami/components/interestList.dart';
 import 'package:viami/components/photoList.dart';
-import 'package:viami/models-api/user.dart';
-import 'package:viami/models-api/usersInterests.dart';
-import 'package:viami/services/user.service.dart';
-import 'package:viami/services/usersInterests.service.dart';
+import 'package:viami/models-api/user/user.dart';
+import 'package:viami/models-api/userInterest/usersInterests.dart';
+import 'package:viami/services/user/user.service.dart';
+import 'package:viami/services/userInterest/usersInterests.service.dart';
 
 class EditProfilePage extends StatefulWidget {
   final User user;

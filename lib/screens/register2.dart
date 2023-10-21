@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:viami/models-api/user.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import 'completeRegister.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({Key? key}) : super(key: key);
