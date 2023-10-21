@@ -144,7 +144,7 @@ class _LoginPageState extends State<LoginPage> {
                                   key: "userId", value: user["user"]["id"]);
                               storage.write(key: "token", value: user['token']);
 
-                              Navigator.pushNamed(context, "/login");
+                              Navigator.pushNamed(context, "/home");
                             }
                           }
                         }
