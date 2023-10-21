@@ -174,6 +174,7 @@ class _SettingsPage extends State<SettingsPage> {
                           "Êtes-vous sûr de vouloir supprimer votre compte ?"),
                     ));
           }
+          if (index == 1) {}
         },
         child: AnimatedContainer(
             height: 65,
