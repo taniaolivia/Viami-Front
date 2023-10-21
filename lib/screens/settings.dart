@@ -13,9 +13,15 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPage extends State<SettingsPage> {
   final storage = const FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
 
   String? token = "";
   String? userId = "";
+  bool passwordVisible = false;
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmNewPasswordController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -187,7 +193,135 @@ class _SettingsPage extends State<SettingsPage> {
                           "Êtes-vous sûr de vouloir supprimer votre compte ?"),
                     ));
           }
-          if (index == 1) {}
+          if (index == 1) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text("Modification du mot de passe"),
+                content: Container(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Add TextFormFields for old password, new password, and confirm password
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: TextFormField(
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              prefixIcon: const Icon(
+                                Icons.fingerprint,
+                                color: Colors.grey,
+                                size: 25.0,
+                              ),
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(fontSize: 12),
+                              labelText: 'Ancien mot de passe',
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(vertical: 8.0),
+                          child: TextFormField(
+                            validator: (value) {
+                              String pattern =
+                                  r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$';
+                              RegExp regex = new RegExp(pattern);
+
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez remplir votre mot de passe';
+                              } else if (!regex.hasMatch(value)) {
+                                String message =
+                                    "Votre mot de passe doit comporter : \n" +
+                                        "\u2022 Au moins 8 caractères \n" +
+                                        "\u2022 Une lettre minuscule \n" +
+                                        "\u2022 Une lettre majuscule \n" +
+                                        "\u2022 Un chiffre \n" +
+                                        "\u2022 Un caractère spécial () [] ! _ @ & \$ # + - / *";
+                                return message;
+                              }
+
+                              return null;
+                            },
+                            controller: newPasswordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: 'Nouveau mot de passe',
+                              contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                              prefixIcon: const Icon(
+                                Icons.fingerprint,
+                                color: Colors.grey,
+                                size: 25.0,
+                              ),
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: TextFormField(
+                            validator: (value) {
+                              String pattern =
+                                  r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$';
+                              RegExp regex = new RegExp(pattern);
+
+                              if (value == null || value.isEmpty) {
+                                return 'Veuillez remplir votre mot de passe';
+                              } else if (!regex.hasMatch(value)) {
+                                String message =
+                                    "Votre mot de passe doit comporter : \n" +
+                                        "\u2022 Au moins 8 caractères \n" +
+                                        "\u2022 Une lettre minuscule \n" +
+                                        "\u2022 Une lettre majuscule \n" +
+                                        "\u2022 Un chiffre \n" +
+                                        "\u2022 Un caractère spécial () [] ! _ @ & \$ # + - / *";
+                                return message;
+                              }
+
+                              return null;
+                            },
+                            controller: confirmNewPasswordController,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              labelText: 'Confirmer le nouveau mot de passe',
+                              contentPadding: EdgeInsets.all(15.0),
+                              prefixIcon: const Icon(
+                                Icons.fingerprint,
+                                color: Colors.grey,
+                                size: 25.0,
+                              ),
+                              border: OutlineInputBorder(),
+                              labelStyle: TextStyle(fontSize: 12),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Annuler'),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    onPressed: () async {},
+                    child: const Text('Confirmer'),
+                  ),
+                ],
+              ),
+            );
+          }
         },
         child: AnimatedContainer(
             height: 65,
