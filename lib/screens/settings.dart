@@ -31,7 +31,7 @@ class _SettingsPage extends State<SettingsPage> {
   bool startAnimation = false;
   final List<String> items = [
     "Supprimer le compte ",
-    "item 2 ",
+    "Changer le mot de passe ",
     "item3",
     "item 2 ",
     "item 2 ",
@@ -46,7 +46,7 @@ class _SettingsPage extends State<SettingsPage> {
   ];
   final List<IconData> icons = [
     Icons.delete,
-    Icons.delete,
+    Icons.password,
     Icons.delete,
     Icons.delete,
     Icons.delete,
