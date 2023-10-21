@@ -1,10 +1,11 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class AuthService {
   Future<Map<String?, dynamic>> login(String email, String password) async {
     final response = await http.post(
-        Uri.parse("http://10.0.2.2:3333/user/login"),
+        Uri.parse("${dotenv.env['API_URL']}/login"),
         body: {"email": email, "password": password});
 
     if (response.statusCode == 200 ||

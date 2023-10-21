@@ -1,6 +1,7 @@
 import 'package:viami/models-api/user.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class UserService {
   Future<User> register(
@@ -10,21 +11,21 @@ class UserService {
       String passsword,
       String phoneNumber,
       String location,
-      num age,
+      String birthday,
       String sex) async {
     final response =
-        await http.post(Uri.parse("http://10.0.2.2:3333/user/register"),
+        await http.post(Uri.parse("${dotenv.env['API_URL']}/register"),
             headers: {"Content-Type": "application/json"},
             body: jsonEncode(<String, dynamic>{
               "firstName": firstName,
               "lastName": lastName,
               "email": email,
               "password": passsword,
-              "interest": "",
               "description": "",
               "location": location,
               "phoneNumber": phoneNumber,
-              "age": age,
+              "birthday": birthday,
+              "age": 0,
               "sex": sex,
               "lastConnection": "",
               "connected": "0"
@@ -42,10 +43,10 @@ class UserService {
         "lastName": "",
         "email": "",
         "password": "",
-        "interest": "",
         "description": "",
         "location": "",
         "phoneNumber": "",
+        "birthday": "",
         "age": 0,
         "sex": "",
         "lastConnection": "",
@@ -59,7 +60,7 @@ class UserService {
 
   Future<User> getUserById(String id, String token) async {
     final response = await http.get(
-      Uri.parse('http://10.0.2.2:3333/users/$id'),
+      Uri.parse('${dotenv.env['API_URL']}/users/$id'),
       headers: <String, String>{'Authorization': token},
     );
 
@@ -78,9 +79,7 @@ class UserService {
 }
 
 Future<bool> deleteUserById(String id, String token) async {
-  const String baseUrl = 'http://localhost:3333';
-
-  final String deleteUserByIdUrl = '$baseUrl/users/$id';
+  final String deleteUserByIdUrl = '${dotenv.env['API_URL']}/users/$id';
 
   try {
     final response = await http.delete(
@@ -90,7 +89,6 @@ Future<bool> deleteUserById(String id, String token) async {
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
-      print(data['message']);
       return true;
     } else {
       print('Failed to logout. Status Code: ${response.statusCode}');

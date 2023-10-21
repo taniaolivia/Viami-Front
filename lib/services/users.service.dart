@@ -1,11 +1,12 @@
 import 'package:viami/models-api/users.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class UsersService {
   Future<Users> getAllUsers(String token) async {
     final response = await http.get(
-      Uri.parse('http://localhost:3333/users'),
+      Uri.parse('${dotenv.env['API_URL']}/users'),
       headers: <String, String>{
         'Authorization': token,
       },
