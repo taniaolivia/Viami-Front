@@ -137,6 +137,19 @@ class _SettingsPage extends State<SettingsPage> {
     ));
   }
 
+  bool validatePasswordChange(
+      String oldPassword, String newPassword, String confirmPassword) {
+    if (oldPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      return false;
+    }
+
+    if (newPassword != confirmPassword) {
+      return false;
+    }
+
+    return true;
+  }
+
   Widget item(int index, String token, String? userId) {
     return GestureDetector(
         onTap: () {
