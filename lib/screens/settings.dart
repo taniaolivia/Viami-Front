@@ -1,5 +1,8 @@
+import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:liquid_swipe/liquid_swipe.dart';
 
 import '../models-api/user.dart';
 import '../services/user.service.dart';
