@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
@@ -8,7 +9,8 @@ import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: "lib/.env");
   runApp(const MyApp());
 }
 
@@ -34,7 +36,7 @@ class MyApp extends StatelessWidget {
           "/settings": (context) => SettingsPage(),
           "/notif": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
-          "/profile": (context) => ProfilePage()
+          "/profile": (context) => const ProfilePage()
         });
   }
 }
