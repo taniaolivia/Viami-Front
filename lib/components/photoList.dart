@@ -1,8 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/services/image/image.service.dart';
+import 'package:viami/services/userImage/userImage.service.dart';
+import 'package:viami/services/userImage/usersImages.service.dart';
 
 class PhotoList extends StatefulWidget {
   final int imageNumber;
@@ -14,22 +18,61 @@ class PhotoList extends StatefulWidget {
 
 class _PhotoListState extends State<PhotoList> {
   final picker = ImagePicker();
-  List<String> imageList = [];
-  int clickedContainerIndex = 0;
+  final storage = const FlutterSecureStorage();
+
+  String? token = "";
+  String? userId = "";
+  int? userImagesLength;
+  String status = "add";
+  int? clickedImageId;
+  List<UserImage> userImages = [];
+
+  Future<UsersImages> getUserImages() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    final images = await UsersImagesService()
+        .getUserImagesById(userId.toString(), token.toString());
+
+    setState(() {
+      userImages = images.userImages;
+    });
+
+    return images;
+  }
+
+  Future<Map<String?, dynamic>> addNewImage(String path) async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    return UserImageService().addUserImage(userId!, path, token!);
+  }
+
+  Future<Map<String?, dynamic>> updateImageById(
+      int imageId, String path) async {
+    token = await storage.read(key: "token");
+
+    return ImageService().updateImageById(imageId, path, token!);
+  }
+
+  Future<Map<String?, dynamic>> deleteUserImage() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    return UserImageService().deleteUserImage(userId!, clickedImageId!, token!);
+  }
 
   Future getImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
 
     setState(() {
       if (pickedFile != null) {
-        if (imageList.isEmpty) {
-          imageList.add(pickedFile.path);
-        } else if (clickedContainerIndex <= imageList.length - 1) {
-          setState(() {
-            imageList[clickedContainerIndex] = pickedFile.path;
-          });
+        if (status == "add") {
+          addNewImage(pickedFile.path);
+          getUserImages();
         } else {
-          imageList.add(pickedFile.path);
+          updateImageById(clickedImageId!, pickedFile.path);
+          getUserImages();
         }
       }
     });
@@ -40,14 +83,12 @@ class _PhotoListState extends State<PhotoList> {
 
     setState(() {
       if (pickedFile != null) {
-        if (imageList.isEmpty) {
-          imageList.add(pickedFile.path);
-        } else if (clickedContainerIndex <= imageList.length - 1) {
-          setState(() {
-            imageList[clickedContainerIndex] = pickedFile.path;
-          });
+        if (status == "add") {
+          addNewImage(pickedFile.path);
+          getUserImages();
         } else {
-          imageList.add(pickedFile.path);
+          updateImageById(clickedImageId!, pickedFile.path);
+          getUserImages();
         }
       }
     });
@@ -63,6 +104,7 @@ class _PhotoListState extends State<PhotoList> {
             onPressed: () {
               Navigator.of(context).pop();
               getImageFromGallery();
+              getUserImages();
             },
           ),
           CupertinoActionSheetAction(
@@ -70,6 +112,41 @@ class _PhotoListState extends State<PhotoList> {
             onPressed: () {
               Navigator.of(context).pop();
               getImageFromCamera();
+              getUserImages();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future showOptionsImages() async {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (context) => CupertinoActionSheet(
+        actions: [
+          CupertinoActionSheetAction(
+            child: const Text('Galerie de photos'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              getImageFromGallery();
+              getUserImages();
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Caméra'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              getImageFromCamera();
+              getUserImages();
+            },
+          ),
+          CupertinoActionSheetAction(
+            child: const Text('Supprimer'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              deleteUserImage();
+              getUserImages();
             },
           ),
         ],
@@ -78,56 +155,113 @@ class _PhotoListState extends State<PhotoList> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    getUserImages();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Widget> photoList = List.generate(widget.imageNumber, (index) {
-      return GestureDetector(
-        onTap: () {
-          setState(() {
-            clickedContainerIndex = index;
-          });
+    return FutureBuilder(
+        future: getUserImages(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            var images = snapshot.data!;
+            userImagesLength = images.userImages.length;
 
-          showOptions();
-        },
-        child: Stack(
-          children: [
-            Container(
-              width: MediaQuery.of(context).size.width / 3.6,
-              height: 150,
-              decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(15)),
-                color: const Color(0xFFD3D3D3),
-                image: imageList.length >= index + 1
-                    ? DecorationImage(
-                        image: FileImage(File(imageList[index])),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              right: 0,
-              child: IconButton(
-                onPressed: () {
-                  setState(() {
-                    clickedContainerIndex = index;
-                  });
-
-                  showOptions();
-                },
-                icon: imageList.length >= index + 1
-                    ? const Icon(Icons.create_rounded,
-                        color: Colors.white, size: 30)
-                    : const Icon(Icons.add_circle,
-                        color: Colors.blue, size: 30),
-              ),
-            ),
-          ],
-        ),
-      );
-    });
-
-    return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween, children: photoList);
+            return images.userImages.length != 0
+                ? SingleChildScrollView(
+                    child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: List.generate(images.userImages.length,
+                                (index) {
+                              return GestureDetector(
+                                onTap: () async {
+                                  setState(() {
+                                    if (userImagesLength == 3) {
+                                      status = "update";
+                                    } else {
+                                      status = "add";
+                                    }
+                                    clickedImageId =
+                                        images.userImages[index].imageId;
+                                  });
+                                  await showOptionsImages();
+                                },
+                                child: Stack(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                      width: MediaQuery.of(context).size.width /
+                                          3.6,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                            Radius.circular(15)),
+                                        color: const Color(0xFFD3D3D3),
+                                        image: images.userImages.length != 0
+                                            ? DecorationImage(
+                                                image: FileImage(File(images
+                                                    .userImages[index].image)),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : null,
+                                      ),
+                                    ),
+                                    Positioned(
+                                      bottom: 0,
+                                      right: 0,
+                                      child: IconButton(
+                                        onPressed: () async {
+                                          setState(() {
+                                            if (userImagesLength == 3) {
+                                              status = "update";
+                                            } else {
+                                              status = "add";
+                                            }
+                                            clickedImageId = images
+                                                .userImages[index].imageId;
+                                          });
+                                          await showOptionsImages();
+                                        },
+                                        icon: images.userImages.length != 0
+                                            ? const Icon(Icons.create_rounded,
+                                                color: Colors.white, size: 30)
+                                            : const Icon(Icons.add_circle,
+                                                color: Colors.blue, size: 30),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            })),
+                        userImagesLength! < 3
+                            ? Container(
+                                width: MediaQuery.of(context).size.width / 3.5,
+                                height: 150,
+                                child: IconButton(
+                                    onPressed: () async {
+                                      await showOptions();
+                                    },
+                                    icon: const Icon(Icons.add_circle,
+                                        size: 50, color: Colors.blue)))
+                            : Container()
+                      ]))
+                : Container(
+                    width: MediaQuery.of(context).size.width / 3.6,
+                    height: 150,
+                    child: IconButton(
+                        onPressed: () async {
+                          await showOptions();
+                        },
+                        icon: const Icon(Icons.add_circle,
+                            size: 50, color: Colors.blue)));
+          }
+          return const Align(
+              alignment: Alignment.center, child: CircularProgressIndicator());
+        });
   }
 }
