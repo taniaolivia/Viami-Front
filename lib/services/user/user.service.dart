@@ -73,30 +73,50 @@ class UserService {
     }
   }
 
+  Future<Map<String, dynamic>> updateUserDescriptionById(
+      String id, String description, String token) async {
+    final response = await http.patch(
+        Uri.parse('${dotenv.env['API_URL']}/users/$id/description'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          'Authorization': token
+        },
+        body: jsonEncode(<String, dynamic>{"description": description}));
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+      print(res);
+      return res;
+    } else {
+      print(response.body);
+      throw Exception('Failed to load user');
+    }
+  }
+
   Future<void> logout() async {
     print("");
   }
-}
 
-Future<bool> deleteUserById(String id, String token) async {
-  final String deleteUserByIdUrl = '${dotenv.env['API_URL']}/users/$id';
+  Future<bool> deleteUserById(String id, String token) async {
+    final String deleteUserByIdUrl = '${dotenv.env['API_URL']}/users/$id';
 
-  try {
-    final response = await http.delete(
-      Uri.parse(deleteUserByIdUrl),
-      headers: <String, String>{'Authorization': token},
-    );
+    try {
+      final response = await http.delete(
+        Uri.parse(deleteUserByIdUrl),
+        headers: <String, String>{'Authorization': token},
+      );
 
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-      return true;
-    } else {
-      print('Failed to logout. Status Code: ${response.statusCode}');
-      print('Response Body: ${response.body}');
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return true;
+      } else {
+        print('Failed to logout. Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+        return false;
+      }
+    } catch (error) {
+      print('Error during logout: $error');
       return false;
     }
-  } catch (error) {
-    print('Error during logout: $error');
-    return false;
   }
 }
