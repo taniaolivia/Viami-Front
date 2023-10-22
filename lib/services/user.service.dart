@@ -71,10 +71,6 @@ class UserService {
       throw Exception('Failed to load user');
     }
   }
-
-  Future<void> logout() async {
-    print("");
-  }
 }
 
 Future<bool> deleteUserById(String? id, String token) async {

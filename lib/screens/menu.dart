@@ -7,7 +7,7 @@ import '../services/user.service.dart';
 import '../services/auth.service.dart';
 
 class MenuPage extends StatelessWidget {
-  final MenuItem cuurentItem;
+  final MenuItem currentItem;
   final ValueChanged<MenuItem> onSelectedItem;
   final storage = const FlutterSecureStorage();
 
@@ -26,7 +26,7 @@ class MenuPage extends StatelessWidget {
   }
 
   MenuPage(
-      {super.key, required this.cuurentItem, required this.onSelectedItem});
+      {super.key, required this.currentItem, required this.onSelectedItem});
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -132,7 +132,7 @@ class MenuPage extends StatelessWidget {
 
   Widget buildMenuItem(MenuItem item) => ListTile(
         selectedTileColor: Colors.white,
-        selected: cuurentItem == item,
+        selected: currentItem == item,
         minLeadingWidth: 20,
         leading: Icon(item.icon),
         title: Text(item.title),
