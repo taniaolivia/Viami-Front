@@ -1,13 +1,13 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'usersInterests.u.dart';
+part 'usersLanguages.l.dart';
 
 @JsonSerializable()
-class UserInterest {
-  UserInterest(
+class UserLanguage {
+  UserLanguage(
       {required this.id,
       required this.userId,
-      required this.interestId,
+      required this.languageId,
       required this.firstName,
       required this.lastName,
       required this.email,
@@ -20,15 +20,15 @@ class UserInterest {
       required this.sex,
       required this.lastConnection,
       required this.connected,
-      required this.interest});
+      required this.language});
 
-  factory UserInterest.fromJson(Map<String?, dynamic> json) =>
-      _$UserInterestFromJson(json);
-  Map<String?, dynamic> toJson() => _$UserInterestToJson(this);
+  factory UserLanguage.fromJson(Map<String?, dynamic> json) =>
+      _$UserLanguageFromJson(json);
+  Map<String?, dynamic> toJson() => _$UserLanguageToJson(this);
 
   final int id;
   final String userId;
-  final int interestId;
+  final int languageId;
   final String firstName;
   final String lastName;
   final String email;
@@ -41,15 +41,15 @@ class UserInterest {
   final String sex;
   final String lastConnection;
   final String connected;
-  final String interest;
+  final String language;
 }
 
-class UsersInterests {
-  UsersInterests({required this.userInterests});
+class UsersLanguages {
+  UsersLanguages({required this.userLanguages});
 
-  factory UsersInterests.fromJson(Map<String?, dynamic> json) =>
-      _$UsersInterestsFromJson(json);
-  Map<String?, dynamic> toJson() => _$UsersInterestsToJson(this);
+  factory UsersLanguages.fromJson(Map<String?, dynamic> json) =>
+      _$UsersLanguagesFromJson(json);
+  Map<String?, dynamic> toJson() => _$UsersLanguagesToJson(this);
 
-  final List<UserInterest> userInterests;
+  final List<UserLanguage> userLanguages;
 }

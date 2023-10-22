@@ -1,9 +1,9 @@
-part of 'usersInterests.dart';
+part of 'usersLanguages.dart';
 
-UserInterest _$UserInterestFromJson(Map<String?, dynamic> json) => UserInterest(
+UserLanguage _$UserLanguageFromJson(Map<String?, dynamic> json) => UserLanguage(
       id: json['id'],
       userId: json["userId"],
-      interestId: json['interestId'],
+      languageId: json['languageId'],
       firstName: json["firstName"],
       lastName: json["lastName"],
       email: json['email'],
@@ -16,14 +16,14 @@ UserInterest _$UserInterestFromJson(Map<String?, dynamic> json) => UserInterest(
       sex: json['sex'],
       lastConnection: json['lastConnection'],
       connected: json["connected"],
-      interest: json['interest'],
+      language: json['language'],
     );
 
-Map<String?, dynamic> _$UserInterestToJson(UserInterest instance) =>
+Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
     <String?, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
-      'interestId': instance.interestId,
+      'languageId': instance.languageId,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'email': instance.email,
@@ -36,15 +36,15 @@ Map<String?, dynamic> _$UserInterestToJson(UserInterest instance) =>
       'sex': instance.sex,
       'lastConnection': instance.lastConnection,
       'connected': instance.connected,
-      'interest': instance.interest
+      'language': instance.language
     };
 
-UsersInterests _$UsersInterestsFromJson(Map<String?, dynamic> json) =>
-    UsersInterests(
-      userInterests: (json['userInterests'] as List<dynamic>)
-          .map((e) => UserInterest.fromJson(e as Map<String?, dynamic>))
+UsersLanguages _$UsersLanguagesFromJson(Map<String?, dynamic> json) =>
+    UsersLanguages(
+      userLanguages: (json['userLanguages'] as List<dynamic>)
+          .map((e) => UserLanguage.fromJson(e as Map<String?, dynamic>))
           .toList(),
     );
 
-Map<String?, dynamic> _$UsersInterestsToJson(UsersInterests instance) =>
-    <String?, dynamic>{'userInterests': instance.userInterests};
+Map<String?, dynamic> _$UsersLanguagesToJson(UsersLanguages instance) =>
+    <String?, dynamic>{'userLanguages': instance.userLanguages};
