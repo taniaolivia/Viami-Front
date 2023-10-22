@@ -74,7 +74,7 @@ class UserService {
 }
 
 Future<bool> deleteUserById(String? id, String token) async {
-  const String baseUrl = 'http://localhost:3333';
+  const String baseUrl = 'http://10.0.2.2:3333';
 
   final String deleteUserByIdUrl = '$baseUrl/users/$id';
 
@@ -100,17 +100,20 @@ Future<bool> deleteUserById(String? id, String token) async {
 }
 
 Future<bool> updateUserPasswordById(
-    String? id, String token, String passsword) async {
+    String? id, String token, String password) async {
   const String baseUrl = 'http://localhost:3333';
 
   final String updateUserPasswordByIdUrl = '$baseUrl/users/$id';
+  print('URL de mise à jour du mot de passe : $updateUserPasswordByIdUrl');
+  print('URL du mot de passe : $password');
 
   try {
     final response = await http.patch(Uri.parse(updateUserPasswordByIdUrl),
-        headers: <String, String>{'Authorization': token},
-        body: jsonEncode(<String, dynamic>{
-          "password": passsword,
-        }));
+        headers: <String, String>{
+          'Authorization': token,
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(<String, dynamic>{"password": password}));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> data = json.decode(response.body);
