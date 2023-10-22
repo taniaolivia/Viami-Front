@@ -52,6 +52,7 @@ class _InterestListState extends State<InterestList> {
     return Scaffold(
         body: SingleChildScrollView(
             child: Container(
+                color: Colors.white,
                 padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
                 child: Column(children: <Widget>[
                   Row(
@@ -176,8 +177,9 @@ class _InterestListState extends State<InterestList> {
                                       height: 100,
                                       decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(20.0),
+                                              BorderRadius.circular(10.0),
                                           image: DecorationImage(
+                                              fit: BoxFit.cover,
                                               colorFilter: isCheckedList[index]
                                                   ? ColorFilter.mode(
                                                       const Color(0xFFFFDAA2)
