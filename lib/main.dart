@@ -6,6 +6,7 @@ import 'package:viami/screens/register.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
+import 'package:viami/screens/updatePassword.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
           "/settings": (context) => SettingsPage(),
           "/notif": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
+          "/updatePassword": (context) => const UpdatePassword()
         });
   }
 }
