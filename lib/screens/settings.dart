@@ -131,8 +131,8 @@ class _SettingsPage extends State<SettingsPage> {
                                   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNmM2E4NzNhLTIwZDItNDc2My05ZTI5LWE3NDA2MzFhMDRhMyIsImVtYWlsIjoibmloZWxvdWFuYXNzaUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCR2MDlySUcuU21VN1hKYTVGbVd2WTF1ZS9yWXIwNE1qZ0tkUC44QmRpcWp0eTdWYzNtUGdBNiIsImlhdCI6MTY5NzYxNzYzMSwiZXhwIjoxNjk4ODI3MjMxfQ.yoAxYxDrGxQjKUrcHcbgZvdGMW7249x6NZM6QQn4TQA';
                               String userId =
                                   '3f3a873a-20d2-4763-9e29-a740631a04a3'; //change id after with get id by provider when connect user  is done
-                              bool logoutSuccess =
-                                  await deleteUserById(userId, token);
+                              bool logoutSuccess = await UserService()
+                                  .deleteUserById(userId, token);
                               if (logoutSuccess) {
                                 Navigator.pushReplacementNamed(
                                     context, '/register');
