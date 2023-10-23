@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -7,6 +8,7 @@ import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/services/image/image.service.dart';
 import 'package:viami/services/userImage/userImage.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
+import 'package:path_provider/path_provider.dart';
 
 class PhotoList extends StatefulWidget {
   final int imageNumber;
@@ -62,32 +64,60 @@ class _PhotoListState extends State<PhotoList> {
     return UserImageService().deleteUserImage(userId!, clickedImageId!, token!);
   }
 
+  String generateRandomImageName() {
+    final uniqueId = DateTime.now().millisecondsSinceEpoch;
+    final random = Random().nextInt(10000);
+    return 'image_${uniqueId}_$random.jpg';
+  }
+
   Future getImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    Directory directory = await getApplicationDocumentsDirectory();
+    String documentDirectoryPath = directory.path;
 
-    setState(() {
-      if (pickedFile != null) {
-        if (status == "add") {
-          addNewImage(pickedFile.path);
-          getUserImages();
-        } else {
-          updateImageById(clickedImageId!, pickedFile.path);
-          getUserImages();
-        }
+    String imageName = generateRandomImageName();
+    String newPath = '$documentDirectoryPath/$imageName';
+
+    if (pickedFile == null) {
+      return;
+    }
+
+    try {
+      final File imageFile = File(pickedFile.path);
+      await imageFile.copy(newPath);
+
+      if (status == "add") {
+        addNewImage(newPath);
+      } else {
+        updateImageById(clickedImageId!, newPath);
       }
-    });
+
+      setState(() {
+        getUserImages();
+      });
+    } catch (e) {
+      print("Error copying image: $e");
+    }
   }
 
   Future getImageFromCamera() async {
     final pickedFile = await picker.pickImage(source: ImageSource.camera);
+    final appDocDirPath = await getApplicationDocumentsDirectoryPath();
+    final newPath = '$appDocDirPath/image.jpg';
 
     setState(() {
       if (pickedFile != null) {
+        final File imageFile = File(pickedFile.path);
+
+        imageFile.copy(newPath);
+
+        print(newPath);
+
         if (status == "add") {
-          addNewImage(pickedFile.path);
+          addNewImage(newPath);
           getUserImages();
         } else {
-          updateImageById(clickedImageId!, pickedFile.path);
+          updateImageById(clickedImageId!, newPath);
           getUserImages();
         }
       }
@@ -152,6 +182,13 @@ class _PhotoListState extends State<PhotoList> {
         ],
       ),
     );
+  }
+
+  Future<String> getApplicationDocumentsDirectoryPath() async {
+    Directory directory = await getApplicationDocumentsDirectory();
+    String documentDirectoryPath = directory.path;
+
+    return documentDirectoryPath;
   }
 
   @override
