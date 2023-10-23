@@ -8,6 +8,7 @@ import 'package:viami/screens/register.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
+import 'package:viami/screens/updatePassword.dart';
 
 void main() async {
   await dotenv.load(fileName: "lib/.env");
@@ -36,7 +37,8 @@ class MyApp extends StatelessWidget {
           "/settings": (context) => const SettingsPage(),
           "/notif": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
-          "/profile": (context) => const ProfilePage()
+          "/profile": (context) => const ProfilePage(),
+          "/updatePassword": (context) => const UpdatePassword()
         });
   }
 }

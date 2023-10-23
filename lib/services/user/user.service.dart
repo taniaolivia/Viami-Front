@@ -91,7 +91,7 @@ class UserService {
     }
   }
 
-  Future<bool> deleteUserById(String id, String token) async {
+  Future<bool> deleteUserById(String? id, String token) async {
     final String deleteUserByIdUrl = '${dotenv.env['API_URL']}/users/$id';
 
     try {
@@ -110,6 +110,30 @@ class UserService {
       }
     } catch (error) {
       print('Error during logout: $error');
+      return false;
+    }
+  }
+
+  Future<bool> updateUserPasswordById(
+      String? id, String token, String password) async {
+    final String updateUserPasswordByIdUrl =
+        '${dotenv.env['API_URL']}/users/$id';
+
+    try {
+      final response = await http.patch(Uri.parse(updateUserPasswordByIdUrl),
+          headers: <String, String>{
+            'Authorization': token,
+            "Content-Type": "application/json"
+          },
+          body: jsonEncode(<String, dynamic>{"password": password}));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
       return false;
     }
   }
