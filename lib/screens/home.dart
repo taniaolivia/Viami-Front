@@ -12,15 +12,16 @@ import 'message_page.dart';
 import 'notifications_page.dart';
 import 'profile_page.dart';
 import 'search_page.dart';
-import 'travel_page.dart';
+import 'vip_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  late ZoomDrawerController _drawerController;
   int _currentIndex = 2;
   late PageController _pageController;
   MenuItem currentItem = MenuItems.home;
@@ -28,7 +29,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _drawerController = ZoomDrawerController();
     _pageController = PageController(initialPage: _currentIndex);
   }
 
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
         controller: _pageController,
         children: [
           SearchPage(),
-          TravelPage(),
+          VipPage(),
           Container(), // Page Home
           MessagePage(),
           ProfilePage(),
@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
           });
         },
       ),
-      drawer: DrawerPage(),
+      drawer: const DrawerPage(),
       bottomNavigationBar: CustomCurvedNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -124,7 +124,7 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index;
             _pageController.animateToPage(
               index,
-              duration: Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut,
             );
           });
