@@ -46,52 +46,67 @@ class _EditProfilePageState extends State<EditProfilePage> {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const Align(
-          alignment: Alignment.topLeft,
-          child: AutoSizeText(
-            "Média",
-            minFontSize: 10,
-            maxFontSize: 12,
-            style: TextStyle(color: Colors.black),
-          ),
-        ),
-        const SizedBox(height: 10),
-        const PhotoList(imageNumber: 3),
         const SizedBox(height: 20),
         const Align(
           alignment: Alignment.topLeft,
           child: AutoSizeText(
-            "A propos de moi",
-            minFontSize: 10,
-            maxFontSize: 12,
-            style: TextStyle(color: Colors.black),
+            "Média",
+            minFontSize: 11,
+            maxFontSize: 13,
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
           ),
         ),
         const SizedBox(height: 10),
-        Form(
-            key: _formKey,
-            child: TextFormField(
-              maxLength: 500,
-              controller: aboutMeController,
-              decoration: const InputDecoration(
-                filled: true,
-                fillColor: Color(0xFFF4F4F4),
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                labelStyle: TextStyle(fontSize: 12),
-              ),
-            )),
+        const PhotoList(imageNumber: 3),
+        const SizedBox(height: 30),
+        const Align(
+          alignment: Alignment.topLeft,
+          child: AutoSizeText(
+            "A propos de moi",
+            minFontSize: 11,
+            maxFontSize: 13,
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+          ),
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder(
+            future: getUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var user = snapshot.data!;
+
+                aboutMeController.text = user.description!;
+
+                return Form(
+                    key: _formKey,
+                    child: TextFormField(
+                        maxLength: 500,
+                        controller: aboutMeController,
+                        decoration: const InputDecoration(
+                          filled: true,
+                          fillColor: Color(0xFFF4F4F4),
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                          labelStyle: TextStyle(fontSize: 12),
+                        ),
+                        maxLines: null));
+              }
+              return const Align(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator());
+            }),
+        const SizedBox(height: 30),
         InterestComponent(),
-        LanguageComponent(),
+        const LanguageComponent(),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                backgroundColor: const Color(0xFF0081CF),
+                backgroundColor: Colors.blue,
                 textStyle: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)))),
+                    borderRadius: BorderRadius.all(Radius.circular(20)))),
             onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 var description = aboutMeController.text;
