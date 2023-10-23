@@ -4,7 +4,7 @@ part 'language.l.dart';
 
 @JsonSerializable()
 class Language {
-  Language({this.id, required this.language});
+  Language({this.id, required this.language, required this.imageName});
 
   factory Language.fromJson(Map<String?, dynamic> json) =>
       _$LanguageFromJson(json);
@@ -12,4 +12,5 @@ class Language {
 
   final int? id;
   final String language;
+  final String imageName;
 }

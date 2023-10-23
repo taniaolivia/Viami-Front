@@ -20,7 +20,8 @@ class UserInterest {
       required this.sex,
       required this.lastConnection,
       required this.connected,
-      required this.interest});
+      required this.interest,
+      required this.imageName});
 
   factory UserInterest.fromJson(Map<String?, dynamic> json) =>
       _$UserInterestFromJson(json);
@@ -42,6 +43,7 @@ class UserInterest {
   final String lastConnection;
   final String connected;
   final String interest;
+  final String imageName;
 }
 
 class UsersInterests {

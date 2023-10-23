@@ -17,6 +17,7 @@ UserLanguage _$UserLanguageFromJson(Map<String?, dynamic> json) => UserLanguage(
       lastConnection: json['lastConnection'],
       connected: json["connected"],
       language: json['language'],
+      imageName: json['imageName'],
     );
 
 Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
@@ -36,7 +37,8 @@ Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
       'sex': instance.sex,
       'lastConnection': instance.lastConnection,
       'connected': instance.connected,
-      'language': instance.language
+      'language': instance.language,
+      'imageName': instance.imageName
     };
 
 UsersLanguages _$UsersLanguagesFromJson(Map<String?, dynamic> json) =>

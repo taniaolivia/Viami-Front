@@ -20,7 +20,8 @@ class UserLanguage {
       required this.sex,
       required this.lastConnection,
       required this.connected,
-      required this.language});
+      required this.language,
+      required this.imageName});
 
   factory UserLanguage.fromJson(Map<String?, dynamic> json) =>
       _$UserLanguageFromJson(json);
@@ -42,6 +43,7 @@ class UserLanguage {
   final String lastConnection;
   final String connected;
   final String language;
+  final String imageName;
 }
 
 class UsersLanguages {

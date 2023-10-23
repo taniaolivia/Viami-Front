@@ -4,7 +4,7 @@ part 'interest.i.dart';
 
 @JsonSerializable()
 class Interest {
-  Interest({this.id, required this.interest});
+  Interest({this.id, required this.interest, required this.imageName});
 
   factory Interest.fromJson(Map<String?, dynamic> json) =>
       _$InterestFromJson(json);
@@ -12,4 +12,5 @@ class Interest {
 
   final int? id;
   final String interest;
+  final String imageName;
 }
