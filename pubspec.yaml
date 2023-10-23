@@ -30,6 +30,7 @@ dependencies:
   flutter_launcher_icons: "^0.13.1"
   liquid_swipe: ^3.1.0
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
