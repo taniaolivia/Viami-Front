@@ -30,26 +30,27 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: FutureBuilder<User>(
-            future: getUser(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var user = snapshot.data!;
-                return const Align(
-                  alignment: Alignment.topLeft,
-                  child: AutoSizeText(
-                    "Média",
-                    minFontSize: 10,
-                    maxFontSize: 12,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                );
-              }
+    return Column(children: <Widget>[
+      FutureBuilder<User>(
+          future: getUser(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              var user = snapshot.data!;
+              return Align(
+                alignment: Alignment.topLeft,
+                child: AutoSizeText(
+                  user.firstName,
+                  minFontSize: 10,
+                  maxFontSize: 12,
+                  style: const TextStyle(color: Colors.black),
+                ),
+              );
+            }
 
-              return const Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator());
-            }));
+            return const Align(
+                alignment: Alignment.center,
+                child: CircularProgressIndicator());
+          })
+    ]);
   }
 }
