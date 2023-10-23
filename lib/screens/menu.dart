@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
 
@@ -43,19 +44,18 @@ class MenuPage extends StatelessWidget {
                                 width: 3.0,
                               ),
                             ),
-                            child: const CircleAvatar(
-                              backgroundImage: AssetImage('assets/profil.png'),
+                            child: CircleAvatar(
+                              backgroundImage: NetworkImage(
+                                  '${dotenv.env['CDN_URL']}/assets/profil.png'),
                               radius: 50.0,
                             )),
                       ),
                     ),
-                    const SizedBox(
-                        height:
-                            10.0), // Add some space between CircleAvatar and Text
+                    const SizedBox(height: 10.0),
                     const Padding(
                       padding: EdgeInsets.only(left: 17.0),
                       child: Text(
-                        "Your Name", // Replace with the actual name
+                        "Your Name",
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 19.0,

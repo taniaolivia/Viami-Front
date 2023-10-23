@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../widgets/menu_widget.dart';
 
@@ -45,8 +46,9 @@ class NotificationsPage extends StatelessWidget {
                   width: 2.0,
                 ),
               ),
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/profil.png'),
+              child: CircleAvatar(
+                backgroundImage:
+                    NetworkImage('${dotenv.env['CDN_URL']}/assets/profil.png'),
                 radius: 16,
               ),
             ),

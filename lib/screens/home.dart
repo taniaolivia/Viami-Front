@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../widgets/menu_widget.dart';
 
 class Home extends StatelessWidget {
@@ -48,8 +49,9 @@ class Home extends StatelessWidget {
                   onTap: () {
                     Navigator.pushNamed(context, "/profile");
                   },
-                  child: const CircleAvatar(
-                    backgroundImage: AssetImage('assets/profil.png'),
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        '${dotenv.env['CDN_URL']}/assets/profil.png'),
                     radius: 16,
                   )),
             ),
