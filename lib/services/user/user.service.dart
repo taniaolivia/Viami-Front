@@ -85,16 +85,10 @@ class UserService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print(res);
       return res;
     } else {
-      print(response.body);
       throw Exception('Failed to load user');
     }
-  }
-
-  Future<void> logout() async {
-    print("");
   }
 
   Future<bool> deleteUserById(String id, String token) async {

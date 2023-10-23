@@ -18,4 +18,24 @@ class AuthService {
       throw Exception("Failed to load user");
     }
   }
+
+  Future<bool> logout(String? id) async {
+    final String logoutUrl = '${dotenv.env['API_URL']}/logout/$id';
+
+    try {
+      final response = await http.post(
+        Uri.parse(logoutUrl),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
+  }
 }

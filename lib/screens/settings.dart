@@ -1,13 +1,32 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/models-api/user/user.dart';
 import '../services/user/user.service.dart';
 
 class SettingsPage extends StatefulWidget {
+  const SettingsPage({super.key});
+
   @override
   State<StatefulWidget> createState() => _SettingsPage();
 }
 
 class _SettingsPage extends State<SettingsPage> {
+  final storage = const FlutterSecureStorage();
+
+  String? token = "";
+  String? userId = "";
+
+  Future<User> getUser() {
+    Future<User> getConnectedUser() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
+
+      return UserService().getUserById(userId.toString(), token.toString());
+    }
+
+    return getConnectedUser();
+  }
+
   bool startAnimation = false;
   final List<String> items = [
     "Supprimer le compte ",
@@ -52,63 +71,72 @@ class _SettingsPage extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-          child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        child: Column(children: [
-          Container(
-              decoration: BoxDecoration(
-                  color: Colors.blue,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  )),
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 6,
-              child: Column(
-                children: [
-                  Row(
+        body: FutureBuilder<User>(
+      future: getUser(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          var user = snapshot.data!;
+          return SafeArea(
+              child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Column(children: [
+              Container(
+                  decoration: const BoxDecoration(
+                      color: Colors.blue,
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(20),
+                        bottomRight: Radius.circular(20),
+                      )),
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
                     children: [
-                      GestureDetector(
-                          onTap: () {
-                            Navigator.pushNamed(context, '/home');
-
-                            //Navigator.pop(context);
-                          },
-                          child: Padding(
-                              padding: EdgeInsets.only(top: 30, left: 20),
-                              child: Image.asset("assets/return.png"))),
-                      const SizedBox(
-                        width: 30,
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 60),
-                        child: Text(
-                          "Paramètres",
-                          style: TextStyle(color: Colors.white, fontSize: 35),
-                        ),
+                      Row(
+                        children: [
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: const Icon(
+                                Icons.arrow_back_ios,
+                                size: 20,
+                                color: Colors.white,
+                              )),
+                          const SizedBox(
+                            width: 30,
+                          ),
+                          const Padding(
+                            padding: EdgeInsets.only(top: 40),
+                            child: Text(
+                              "Paramètres",
+                              style:
+                                  TextStyle(color: Colors.white, fontSize: 35),
+                            ),
+                          )
+                        ],
                       )
                     ],
-                  )
-                ],
-              )),
-          const SizedBox(
-            height: 15,
-          ),
-          ListView.builder(
-            primary: false,
-            shrinkWrap: true,
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              return item(index);
-            },
-          ),
-        ]),
-      )),
-    );
+                  )),
+              const SizedBox(
+                height: 15,
+              ),
+              ListView.builder(
+                primary: false,
+                shrinkWrap: true,
+                itemCount: items.length,
+                itemBuilder: (context, index) {
+                  return item(index, token!, userId);
+                },
+              ),
+            ]),
+          ));
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    ));
   }
 
-  Widget item(int index) {
+  Widget item(int index, String token, String? userId) {
     return GestureDetector(
         onTap: () {
           if (index == 0) {
@@ -127,32 +155,21 @@ class _SettingsPage extends State<SettingsPage> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green),
                             onPressed: () async {
-                              String token =
-                                  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjNmM2E4NzNhLTIwZDItNDc2My05ZTI5LWE3NDA2MzFhMDRhMyIsImVtYWlsIjoibmloZWxvdWFuYXNzaUBnbWFpbC5jb20iLCJwYXNzd29yZCI6IiQyYSQxMCR2MDlySUcuU21VN1hKYTVGbVd2WTF1ZS9yWXIwNE1qZ0tkUC44QmRpcWp0eTdWYzNtUGdBNiIsImlhdCI6MTY5NzYxNzYzMSwiZXhwIjoxNjk4ODI3MjMxfQ.yoAxYxDrGxQjKUrcHcbgZvdGMW7249x6NZM6QQn4TQA';
-                              String userId =
-                                  '3f3a873a-20d2-4763-9e29-a740631a04a3'; //change id after with get id by provider when connect user  is done
                               bool logoutSuccess = await UserService()
-                                  .deleteUserById(userId, token);
+                                  .deleteUserById(userId!, token);
+
                               if (logoutSuccess) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/register');
-                              } else {
-                                print('Logout failed');
+                                Navigator.pushNamed(context, '/login');
                               }
                             },
                             child: const Text(
                               'Oui',
                             )),
                       ],
-                      title: Text("Suppression du compte"),
-                      content: Text(
+                      title: const Text("Suppression du compte"),
+                      content: const Text(
                           "Êtes-vous sûr de vouloir supprimer votre compte ?"),
                     ));
-            //Navigator.pushNamed(context, '/home');
-
-            //Navigator.pop(context);
-
-            //Navigator.pushNamed(context, '/home');
           }
         },
         child: AnimatedContainer(
@@ -162,20 +179,19 @@ class _SettingsPage extends State<SettingsPage> {
             transform: Matrix4.translationValues(
                 startAnimation ? 0 : MediaQuery.of(context).size.width, 0, 0),
             width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.all(5),
+            margin: const EdgeInsets.all(5),
             padding: EdgeInsets.symmetric(
               horizontal: MediaQuery.of(context).size.width / 40,
             ),
             decoration: BoxDecoration(
-              color: Color.fromARGB(137, 248, 244, 244),
+              color: const Color.fromARGB(137, 248, 244, 244),
               borderRadius: BorderRadius.circular(10),
-              //border: Border.all(color: Color.fromARGB(255, 9, 10, 10)
             ),
             child: Card(
                 child: ListTile(
               title: Text(
                 " ${items[index]}",
-                style: TextStyle(fontSize: 16),
+                style: const TextStyle(fontSize: 16),
               ),
               trailing: Icon(icons[index]),
             ))));
