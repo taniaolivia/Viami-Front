@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:gender_picker/gender_picker.dart';
 import 'package:gender_picker/source/enums.dart';
@@ -9,7 +8,7 @@ import 'package:age_calculator/age_calculator.dart';
 import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/snackBar.dart';
 import 'package:viami/components/alertMessage.dart';
-import 'package:viami/services/user.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class CompleteRegisterPage extends StatefulWidget {
   final String firstName;
@@ -306,7 +305,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                           widget.password,
                                           widget.phone,
                                           location,
-                                          age,
+                                          birthday,
                                           sex);
 
                                       if (user != null) {
@@ -331,7 +330,8 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                     }
                                   }
                                 },
-                              )))
+                              ))),
+                      const SizedBox(height: 50)
                     ]))
               ],
             ))));

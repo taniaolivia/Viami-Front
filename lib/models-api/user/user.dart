@@ -10,11 +10,11 @@ class User {
       required this.lastName,
       required this.email,
       required this.password,
-      this.interest,
       this.description,
       required this.location,
       required this.phoneNumber,
-      required this.age,
+      required this.birthday,
+      this.age,
       required this.sex,
       this.lastConnection,
       this.message,
@@ -28,11 +28,11 @@ class User {
   final String lastName;
   final String email;
   final String password;
-  final String? interest;
   final String? description;
   final String location;
   final String phoneNumber;
-  final num age;
+  final String birthday;
+  final num? age;
   final String sex;
   final String? lastConnection;
   final String? message;

@@ -43,9 +43,9 @@ class _DrawerPageState extends State<DrawerPage> {
   Widget getScreen() {
     switch (currentItem) {
       case MenuItems.notification:
-        return NotificationsPage();
+        return const NotificationsPage();
       case MenuItems.settings:
-        return SettingsPage();
+        return const SettingsPage();
       default:
         return HomePage();
     }

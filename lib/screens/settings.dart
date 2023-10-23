@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
-import '../models-api/user.dart';
-import '../services/user.service.dart';
+import 'package:viami/models-api/user/user.dart';
+import '../services/user/user.service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -13,9 +12,15 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPage extends State<SettingsPage> {
   final storage = const FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
 
   String? token = "";
   String? userId = "";
+  bool passwordVisible = false;
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmNewPasswordController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -31,7 +36,7 @@ class _SettingsPage extends State<SettingsPage> {
   bool startAnimation = false;
   final List<String> items = [
     "Supprimer le compte ",
-    "item 2 ",
+    "Changer le mot de passe ",
     "item3",
     "item 2 ",
     "item 2 ",
@@ -46,7 +51,7 @@ class _SettingsPage extends State<SettingsPage> {
   ];
   final List<IconData> icons = [
     Icons.delete,
-    Icons.delete,
+    Icons.password,
     Icons.delete,
     Icons.delete,
     Icons.delete,
@@ -137,6 +142,19 @@ class _SettingsPage extends State<SettingsPage> {
     ));
   }
 
+  bool validatePasswordChange(
+      String oldPassword, String newPassword, String confirmPassword) {
+    if (oldPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      return false;
+    }
+
+    if (newPassword != confirmPassword) {
+      return false;
+    }
+
+    return true;
+  }
+
   Widget item(int index, String token, String? userId) {
     return GestureDetector(
         onTap: () {
@@ -156,13 +174,11 @@ class _SettingsPage extends State<SettingsPage> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green),
                             onPressed: () async {
-                              bool logoutSuccess =
-                                  await deleteUserById(userId, token);
+                              bool logoutSuccess = await UserService()
+                                  .deleteUserById(userId!, token);
+
                               if (logoutSuccess) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/login');
-                              } else {
-                                print('Logout failed');
+                                Navigator.pushNamed(context, '/login');
                               }
                             },
                             child: const Text(
@@ -173,6 +189,9 @@ class _SettingsPage extends State<SettingsPage> {
                       content: const Text(
                           "Êtes-vous sûr de vouloir supprimer votre compte ?"),
                     ));
+          }
+          if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/updatePassword');
           }
         },
         child: AnimatedContainer(
@@ -189,7 +208,6 @@ class _SettingsPage extends State<SettingsPage> {
             decoration: BoxDecoration(
               color: const Color.fromARGB(137, 248, 244, 244),
               borderRadius: BorderRadius.circular(10),
-              //border: Border.all(color: Color.fromARGB(255, 9, 10, 10)
             ),
             child: Card(
                 child: ListTile(

@@ -10,6 +10,7 @@ import 'drawer.dart';
 import 'menu.dart';
 import 'message_page.dart';
 import 'notifications_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'profile_page.dart';
 import 'search_page.dart';
 import 'vip_page.dart';
@@ -93,10 +94,15 @@ class _HomePageState extends State<HomePage> {
                   width: 2.0,
                 ),
               ),
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/profil.png'),
-                radius: 16,
-              ),
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/profile");
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        '${dotenv.env['CDN_URL']}/assets/profil.png'),
+                    radius: 16,
+                  )),
             ),
           )
         ],
