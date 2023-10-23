@@ -71,14 +71,10 @@ class UserService {
       throw Exception('Failed to load user');
     }
   }
-
-  Future<void> logout() async {
-    print("");
-  }
 }
 
 Future<bool> deleteUserById(String? id, String token) async {
-  const String baseUrl = 'http://localhost:3333';
+  const String baseUrl = 'http://10.0.2.2:3333';
 
   final String deleteUserByIdUrl = '$baseUrl/users/$id';
 
@@ -99,6 +95,34 @@ Future<bool> deleteUserById(String? id, String token) async {
     }
   } catch (error) {
     print('Error during logout: $error');
+    return false;
+  }
+}
+
+Future<bool> updateUserPasswordById(
+    String? id, String token, String password) async {
+  const String baseUrl = 'http://localhost:3333';
+
+  final String updateUserPasswordByIdUrl = '$baseUrl/users/$id';
+  print('URL de mise à jour du mot de passe : $updateUserPasswordByIdUrl');
+  print('URL du mot de passe : $password');
+
+  try {
+    final response = await http.patch(Uri.parse(updateUserPasswordByIdUrl),
+        headers: <String, String>{
+          'Authorization': token,
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode(<String, dynamic>{"password": password}));
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(response.body);
+      return true;
+    } else {
+      print('Response Body: ${response.body}');
+      return false;
+    }
+  } catch (error) {
     return false;
   }
 }

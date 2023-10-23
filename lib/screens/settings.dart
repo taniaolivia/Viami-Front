@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:liquid_swipe/liquid_swipe.dart';
 
 import '../models-api/user.dart';
 import '../services/user.service.dart';
@@ -13,9 +14,15 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPage extends State<SettingsPage> {
   final storage = const FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
 
   String? token = "";
   String? userId = "";
+  bool passwordVisible = false;
+  TextEditingController passwordController = TextEditingController();
+  TextEditingController newPasswordController = TextEditingController();
+  TextEditingController confirmNewPasswordController = TextEditingController();
+  FocusNode focusNode = FocusNode();
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -137,6 +144,19 @@ class _SettingsPage extends State<SettingsPage> {
     ));
   }
 
+  bool validatePasswordChange(
+      String oldPassword, String newPassword, String confirmPassword) {
+    if (oldPassword.isEmpty || newPassword.isEmpty || confirmPassword.isEmpty) {
+      return false;
+    }
+
+    if (newPassword != confirmPassword) {
+      return false;
+    }
+
+    return true;
+  }
+
   Widget item(int index, String token, String? userId) {
     return GestureDetector(
         onTap: () {
@@ -174,7 +194,9 @@ class _SettingsPage extends State<SettingsPage> {
                           "Êtes-vous sûr de vouloir supprimer votre compte ?"),
                     ));
           }
-          if (index == 1) {}
+          if (index == 1) {
+            Navigator.pushReplacementNamed(context, '/updatePassword');
+          }
         },
         child: AnimatedContainer(
             height: 65,

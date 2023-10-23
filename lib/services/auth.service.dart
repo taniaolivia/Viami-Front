@@ -19,7 +19,7 @@ class AuthService {
   }
 
   Future<bool> logout(String? id) async {
-    final String baseUrl = 'http://localhost:3333';
+    final String baseUrl = 'http://10.0.2.2:3333';
 
     final String logoutUrl = '$baseUrl/user/logout/$id';
 
