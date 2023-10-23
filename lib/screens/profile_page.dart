@@ -18,6 +18,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? token = "";
   String? userId = "";
+  String currentAction = "edit";
+  Color currentColor = Colors.blue;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -30,12 +32,37 @@ class _ProfilePageState extends State<ProfilePage> {
     return getConnectedUser();
   }
 
+  void initState() {
+    currentAction = currentAction;
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    String currentAction = "Edit";
-    Color currentColor = Colors.blue;
-
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const AutoSizeText(
+            "Mon profil",
+            style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                fontFamily: "Poppins"),
+            minFontSize: 18,
+            maxFontSize: 20,
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+                size: 20,
+              )),
+        ),
         body: SingleChildScrollView(
             child: FutureBuilder<User>(
                 future: getUser(),
@@ -44,37 +71,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     var user = snapshot.data!;
                     return SingleChildScrollView(
                         child: Container(
-                            padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                             child: Column(
                               children: <Widget>[
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                          },
-                                          icon: const Icon(
-                                            Icons.arrow_back_ios,
-                                            size: 20,
-                                          )),
-                                      const Expanded(
-                                          child: Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  0, 0, 40, 0),
-                                              child: AutoSizeText(
-                                                "Mon profil",
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                minFontSize: 18,
-                                                maxFontSize: 20,
-                                                textAlign: TextAlign.center,
-                                              )))
-                                    ]),
-                                const SizedBox(height: 10),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -85,43 +84,53 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   color: Colors.grey),
                                             ),
                                           ),
-                                          child: TextButton(
-                                              onPressed: () {},
-                                              style: const ButtonStyle(
+                                          child: GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  currentAction = "edit";
+                                                });
+                                              },
+                                              child: Padding(
                                                   padding:
-                                                      MaterialStatePropertyAll(
-                                                          EdgeInsets.fromLTRB(
-                                                              30, 0, 30, 0))),
-                                              child: AutoSizeText(
-                                                "Modifier",
-                                                minFontSize: 9,
-                                                maxFontSize: 12,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    color:
-                                                        currentAction == "Edit"
+                                                      const EdgeInsets.fromLTRB(
+                                                          25, 10, 25, 10),
+                                                  child: AutoSizeText(
+                                                    "Modifier",
+                                                    minFontSize: 11,
+                                                    maxFontSize: 13,
+                                                    textAlign: TextAlign.center,
+                                                    style: TextStyle(
+                                                        color: currentAction ==
+                                                                "edit"
                                                             ? currentColor
-                                                            : Colors.black),
-                                              ))),
-                                      TextButton(
-                                          onPressed: () {},
-                                          child: AutoSizeText(
-                                            "Aperçu",
-                                            minFontSize: 9,
-                                            maxFontSize: 12,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: currentAction != "Edit"
-                                                    ? currentColor
-                                                    : Colors.black),
-                                          ),
-                                          style: const ButtonStyle(
-                                              padding: MaterialStatePropertyAll(
-                                                  EdgeInsets.fromLTRB(
-                                                      30, 0, 30, 0))))
+                                                            : Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                  )))),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            currentAction = "show";
+                                          });
+                                        },
+                                        child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                25, 10, 25, 10),
+                                            child: AutoSizeText(
+                                              "Aperçu",
+                                              minFontSize: 11,
+                                              maxFontSize: 13,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: currentAction != "edit"
+                                                      ? currentColor
+                                                      : Colors.black,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                      )
                                     ]),
                                 const SizedBox(height: 10),
-                                currentAction == "Edit"
+                                currentAction == "edit"
                                     ? EditProfilePage(user: user)
                                     : const ShowProfilePage()
                               ],
