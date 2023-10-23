@@ -33,15 +33,37 @@ class InterestComponent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
-        const Align(
-          alignment: Alignment.topLeft,
-          child: AutoSizeText(
-            "Mes centres d'intérêt",
-            minFontSize: 10,
-            maxFontSize: 12,
-            style: TextStyle(color: Colors.black),
+        Row(children: [
+          const Align(
+            alignment: Alignment.topLeft,
+            child: AutoSizeText(
+              "Mes centres d'intérêt",
+              minFontSize: 11,
+              maxFontSize: 13,
+              style:
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+            ),
           ),
-        ),
+          GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const InterestList()),
+                );
+              },
+              child: Container(
+                  width: MediaQuery.of(context).size.width / 2.1,
+                  child: const AutoSizeText(
+                    "< Ajouter",
+                    style: TextStyle(
+                      color: Colors.blue,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    minFontSize: 11,
+                    maxFontSize: 13,
+                    textAlign: TextAlign.right,
+                  )))
+        ]),
         const SizedBox(height: 10),
         GestureDetector(
             onTap: () {
@@ -87,10 +109,10 @@ class InterestComponent extends StatelessWidget {
                                     data.userInterests[index].interest,
                                     style: const TextStyle(
                                       color: Colors.black,
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    minFontSize: 11,
-                                    maxFontSize: 13,
+                                    minFontSize: 10,
+                                    maxFontSize: 12,
                                   ));
                             }).toList());
                       }
@@ -99,7 +121,7 @@ class InterestComponent extends StatelessWidget {
                           alignment: Alignment.center,
                           child: CircularProgressIndicator());
                     }))),
-        const SizedBox(height: 20),
+        const SizedBox(height: 30),
       ],
     );
   }

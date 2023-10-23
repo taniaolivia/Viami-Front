@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/snackBar.dart';
 import 'package:viami/models-api/language/languages.dart';
 import 'package:viami/models-api/userLanguage/usersLanguages.dart';
 import 'package:viami/services/language/languages.service.dart';
@@ -23,6 +25,7 @@ class _LanguageListState extends State<LanguageList> {
   List<String> languageList = [];
   List<int> languageIndex = [];
   ColorFilter? newColor;
+  int? userLanguageLength;
 
   Future<Languages> getLanguages() {
     Future<Languages> getAllLanguages() async {
@@ -47,40 +50,44 @@ class _LanguageListState extends State<LanguageList> {
     return getAllLanguages();
   }
 
+  void initState() {
+    userLanguageLength = userLanguageLength;
+    getUserLanguages();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const AutoSizeText(
+            "Langues",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            minFontSize: 18,
+            maxFontSize: 20,
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+                size: 20,
+              )),
+        ),
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
             child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                 child: Column(children: <Widget>[
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              size: 20,
-                            )),
-                        const Expanded(
-                            child: Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 40, 0),
-                                child: AutoSizeText(
-                                  "Langues",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  minFontSize: 18,
-                                  maxFontSize: 20,
-                                  textAlign: TextAlign.center,
-                                ))),
-                      ]),
-                  const SizedBox(height: 20),
                   const AutoSizeText(
                     "Choisissez cinq langues que vous maîtrisez le plus.",
                     style: TextStyle(
@@ -116,24 +123,25 @@ class _LanguageListState extends State<LanguageList> {
                           isCheckedList = List.generate(
                               language.languages.length, (index) => false);
 
+                          userLanguageLength = data.userLanguages.length;
+
+                          for (int i = 0; i < data.userLanguages.length; i++) {
+                            if (languageList
+                                .contains(data.userLanguages[i].language)) {
+                              if (!languageIndex.contains(languageList
+                                  .indexOf(data.userLanguages[i].language))) {
+                                languageIndex.add(languageList
+                                    .indexOf(data.userLanguages[i].language));
+                              }
+                            }
+                          }
+
                           return Wrap(
                               alignment: WrapAlignment.start,
                               spacing: 8.0,
                               runSpacing: 8.0,
                               children: List.generate(language.languages.length,
                                   (index) {
-                                if (index < data.userLanguages.length) {
-                                  if (languageList.contains(
-                                      data.userLanguages[index].language)) {
-                                    if (!languageIndex.contains(
-                                        languageList.indexOf(data
-                                            .userLanguages[index].language))) {
-                                      languageIndex.add(languageList.indexOf(
-                                          data.userLanguages[index].language));
-                                    }
-                                  }
-                                }
-
                                 if (languageIndex.contains(index)) {
                                   isCheckedList[index] = true;
                                 }
@@ -150,19 +158,22 @@ class _LanguageListState extends State<LanguageList> {
                                       }
                                     });
 
-                                    newColor = isCheckedList[index]
-                                        ? ColorFilter.mode(
-                                            const Color(0xFFFFDAA2)
-                                                .withOpacity(0.5),
-                                            BlendMode.dstATop)
-                                        : null;
-
                                     if (isCheckedList[index] == true) {
-                                      await UserLanguageService()
-                                          .addUserLanguage(
-                                              userId!,
-                                              language.languages[index].id!,
-                                              token!);
+                                      if (languageIndex.length < 6) {
+                                        await UserLanguageService()
+                                            .addUserLanguage(
+                                                userId!,
+                                                language.languages[index].id!,
+                                                token!);
+                                      } else {
+                                        languageIndex.remove(index);
+                                        isCheckedList[index] = false;
+                                        showSnackbar(
+                                            context,
+                                            "Vous avez dépassé la limite ! Vous ne pouvez que choisir cinq au maximum.",
+                                            "D'accord",
+                                            "");
+                                      }
                                     } else {
                                       await UserLanguageService()
                                           .deleteUserLanguage(
@@ -173,8 +184,8 @@ class _LanguageListState extends State<LanguageList> {
                                   },
                                   child: Container(
                                       width: MediaQuery.of(context).size.width /
-                                          2.5,
-                                      height: 100,
+                                          2.7,
+                                      height: 90,
                                       decoration: BoxDecoration(
                                           border: Border.all(
                                             width: 2,
@@ -182,15 +193,15 @@ class _LanguageListState extends State<LanguageList> {
                                           borderRadius:
                                               BorderRadius.circular(10.0),
                                           image: DecorationImage(
-                                              fit: BoxFit.cover,
+                                              fit: BoxFit.fill,
                                               colorFilter: isCheckedList[index]
                                                   ? ColorFilter.mode(
                                                       const Color(0xFFFFDAA2)
                                                           .withOpacity(0.5),
                                                       BlendMode.dstATop)
                                                   : null,
-                                              image: AssetImage(
-                                                  "assets/language/${language.languages[index].language}.jpg"))),
+                                              image: NetworkImage(
+                                                  "${dotenv.env['CDN_URL']}/assets/language/${language.languages[index].imageName}"))),
                                       child: Align(
                                           alignment: Alignment.center,
                                           child: Container(
@@ -212,8 +223,8 @@ class _LanguageListState extends State<LanguageList> {
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
                                                 ),
-                                                minFontSize: 11,
-                                                maxFontSize: 13,
+                                                minFontSize: 7,
+                                                maxFontSize: 12,
                                                 textAlign: TextAlign.center,
                                               )))),
                                 );
@@ -244,7 +255,6 @@ class _LanguageListState extends State<LanguageList> {
                       fontFamily: "Poppins",
                       fontWeight: FontWeight.bold),
                 ))),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked);
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

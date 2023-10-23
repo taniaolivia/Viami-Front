@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/snackBar.dart';
 import 'package:viami/models-api/interest/interests.dart';
 import 'package:viami/models-api/userInterest/usersInterests.dart';
 import 'package:viami/services/interest/interests.service.dart';
@@ -23,11 +25,12 @@ class _InterestListState extends State<InterestList> {
   List<String> interestList = [];
   List<int> interestIndex = [];
   ColorFilter? newColor;
+  int? userInterestLength = 0;
 
   Future<Interests> getInterests() {
     Future<Interests> getAllInterests() async {
       token = await storage.read(key: "token");
-      userId = await storage.read(key: "userId");
+      await getUserInterests();
 
       return InterestsService().getAllInterests(token.toString());
     }
@@ -47,40 +50,44 @@ class _InterestListState extends State<InterestList> {
     return getAllInterests();
   }
 
+  void initState() {
+    userInterestLength = userInterestLength;
+    getUserInterests();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const AutoSizeText(
+            "Centres d'intérêt",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+            minFontSize: 18,
+            maxFontSize: 20,
+            textAlign: TextAlign.center,
+          ),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.black,
+                size: 20,
+              )),
+        ),
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
             child: Container(
                 color: Colors.white,
-                padding: const EdgeInsets.fromLTRB(20, 60, 20, 60),
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                 child: Column(children: <Widget>[
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              size: 20,
-                            )),
-                        const Expanded(
-                            child: Padding(
-                                padding: EdgeInsets.fromLTRB(0, 0, 40, 0),
-                                child: AutoSizeText(
-                                  "Centres d'intérêt",
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  minFontSize: 18,
-                                  maxFontSize: 20,
-                                  textAlign: TextAlign.center,
-                                ))),
-                      ]),
-                  const SizedBox(height: 20),
                   const AutoSizeText(
                     "Choisissez cinq intérêts que vous aimez le plus.",
                     style: TextStyle(
@@ -116,28 +123,28 @@ class _InterestListState extends State<InterestList> {
                           isCheckedList = List.generate(
                               interest.interests.length, (index) => false);
 
+                          userInterestLength = data.userInterests.length;
+
+                          for (int i = 0; i < data.userInterests.length; i++) {
+                            if (interestList
+                                .contains(data.userInterests[i].interest)) {
+                              if (!interestIndex.contains(interestList
+                                  .indexOf(data.userInterests[i].interest))) {
+                                interestIndex.add(interestList
+                                    .indexOf(data.userInterests[i].interest));
+                              }
+                            }
+                          }
+
                           return Wrap(
                               alignment: WrapAlignment.start,
                               spacing: 8.0,
                               runSpacing: 8.0,
                               children: List.generate(interest.interests.length,
                                   (index) {
-                                if (index < data.userInterests.length) {
-                                  if (interestList.contains(
-                                      data.userInterests[index].interest)) {
-                                    if (!interestIndex.contains(
-                                        interestList.indexOf(data
-                                            .userInterests[index].interest))) {
-                                      interestIndex.add(interestList.indexOf(
-                                          data.userInterests[index].interest));
-                                    }
-                                  }
-                                }
-
                                 if (interestIndex.contains(index)) {
                                   isCheckedList[index] = true;
                                 }
-
                                 return GestureDetector(
                                   onTap: () async {
                                     setState(() {
@@ -150,19 +157,22 @@ class _InterestListState extends State<InterestList> {
                                       }
                                     });
 
-                                    newColor = isCheckedList[index]
-                                        ? ColorFilter.mode(
-                                            const Color(0xFFFFDAA2)
-                                                .withOpacity(0.5),
-                                            BlendMode.dstATop)
-                                        : null;
-
                                     if (isCheckedList[index] == true) {
-                                      await UserInterestService()
-                                          .addUserInterest(
-                                              userId!,
-                                              interest.interests[index].id!,
-                                              token!);
+                                      if (interestIndex.length < 6) {
+                                        await UserInterestService()
+                                            .addUserInterest(
+                                                userId!,
+                                                interest.interests[index].id!,
+                                                token!);
+                                      } else {
+                                        interestIndex.remove(index);
+                                        isCheckedList[index] = false;
+                                        showSnackbar(
+                                            context,
+                                            "Vous avez dépassé la limite ! Vous ne pouvez que choisir cinq au maximum.",
+                                            "D'accord",
+                                            "");
+                                      }
                                     } else {
                                       await UserInterestService()
                                           .deleteUserInterest(
@@ -186,8 +196,8 @@ class _InterestListState extends State<InterestList> {
                                                           .withOpacity(0.5),
                                                       BlendMode.dstATop)
                                                   : null,
-                                              image: AssetImage(
-                                                  "assets/interest/${interest.interests[index].interest}.jpg"))),
+                                              image: NetworkImage(
+                                                  "${dotenv.env['CDN_URL']}/assets/interest/${interest.interests[index].imageName}"))),
                                       child: Align(
                                           alignment: Alignment.center,
                                           child: Container(
@@ -209,8 +219,8 @@ class _InterestListState extends State<InterestList> {
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.bold,
                                                 ),
-                                                minFontSize: 11,
-                                                maxFontSize: 13,
+                                                minFontSize: 8,
+                                                maxFontSize: 12,
                                                 textAlign: TextAlign.center,
                                               )))),
                                 );
@@ -241,7 +251,6 @@ class _InterestListState extends State<InterestList> {
                       fontFamily: "Poppins",
                       fontWeight: FontWeight.bold),
                 ))),
-        floatingActionButtonLocation:
-            FloatingActionButtonLocation.centerDocked);
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }
