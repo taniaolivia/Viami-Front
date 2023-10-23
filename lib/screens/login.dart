@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:viami/components/connectionTemplate.dart';
 import 'package:viami/components/snackBar.dart';
-import 'package:viami/screens/completeRegister.dart';
-import 'package:viami/services/auth.service.dart';
+import 'package:viami/services/user/auth.service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);

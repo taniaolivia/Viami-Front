@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/services/user/user.service.dart';
 
-import '../models-api/user.dart';
-import '../services/user.service.dart';
+import '../models-api/user/user.dart';
 
 class UpdatePassword extends StatefulWidget {
   const UpdatePassword({super.key});
@@ -31,7 +31,6 @@ class _UpdatePassword extends State<UpdatePassword> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      print('lid est : $userId');
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -272,10 +271,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                                   }
 
                                   bool passwordChangeSuccess =
-                                      await updateUserPasswordById(
-                                          userId, token!, newPassword);
-                                  print('lid est : $userId');
-                                  print('newPassword est : $newPassword');
+                                      await UserService()
+                                          .updateUserPasswordById(
+                                              userId, token!, newPassword);
 
                                   if (passwordChangeSuccess) {
                                     ScaffoldMessenger.of(context).showSnackBar(
@@ -288,7 +286,15 @@ class _UpdatePassword extends State<UpdatePassword> {
                                       ),
                                     );
                                   } else {
-                                    print('Password change failed');
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                          "Echec de la mise à jour du mot de passe !",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                        duration: Duration(seconds: 7),
+                                      ),
+                                    );
                                   }
                                 }
                               },

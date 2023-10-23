@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import '../models-api/user.dart';
+import 'package:viami/services/user/auth.service.dart';
+import 'package:viami/services/user/user.service.dart';
+import '../models-api/user/user.dart';
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
-import '../services/user.service.dart';
-import '../services/auth.service.dart';
 
 class MenuPage extends StatelessWidget {
-  final MenuItem cuurentItem;
+  final MenuItem currentItem;
   final ValueChanged<MenuItem> onSelectedItem;
   final storage = const FlutterSecureStorage();
+
+  MenuPage(
+      {super.key, required this.currentItem, required this.onSelectedItem});
 
   String? token = "";
   String? userId = "";
@@ -25,8 +29,6 @@ class MenuPage extends StatelessWidget {
     return getConnectedUser();
   }
 
-  MenuPage(
-      {super.key, required this.cuurentItem, required this.onSelectedItem});
   @override
   Widget build(BuildContext context) {
     return Theme(
@@ -37,51 +39,69 @@ class MenuPage extends StatelessWidget {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               var user = snapshot.data!;
-              var firstName = user.firstName ?? "Default Name";
+              var firstName = user.firstName;
               var idUser = user.id;
-              print("Assigned firstName: $firstName");
-              return Stack(
-                children: [
-                  // Background Image
-                  Positioned.fill(
-                    child: Image.asset(
-                      'assets/drawerHeader.png',
-                      fit: BoxFit.cover,
-                    ),
-                  ),
 
-                  // Menu Content
-                  SafeArea(
-                    child: Column(
+              return Stack(children: [
+                // Background Image
+                Positioned.fill(
+                  child: Image.asset(
+                    'assets/drawerHeader.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+
+                // Menu Content
+                SafeArea(
+                  child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         const Spacer(),
                         Padding(
-                          padding: const EdgeInsets.only(left: 16.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: const Color(0xFFFFFFFF),
-                                width: 3.0,
-                              ),
-                            ),
-                            child: const CircleAvatar(
-                              backgroundImage: AssetImage('assets/profil.png'),
-                              radius: 50.0,
+                            padding: const EdgeInsets.only(left: 16.0),
+                            child: GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(context, "/profile");
+                                },
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: const Color(0xFFFFFFFF),
+                                        width: 3.0,
+                                      ),
+                                    ),
+                                    child: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          '${dotenv.env['CDN_URL']}/assets/profil.png'),
+                                      radius: 50.0,
+                                    )))),
+                        const SizedBox(height: 10.0),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 17.0),
+                          child: Text(
+                            firstName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 19.0,
                             ),
                           ),
                         ),
-                        const SizedBox(
-                            height:
-                                10.0), // Add some space between CircleAvatar and Text
+                        const Spacer(),
+                        ...MenuItems.all.map(buildMenuItem).toList(),
+                        const Spacer(flex: 2),
                         Padding(
-                          padding: EdgeInsets.only(left: 17.0),
-                          child: Text(
-                            firstName,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 19.0,
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: OutlinedButton.icon(
+                            onPressed: () async {
+                              Navigator.pushNamed(context, '/home');
+                            },
+                            icon: const Icon(Icons.logout,
+                                color: Colors.white), // Set icon color
+                            label: const Text(
+                              "Logout",
+                              style: TextStyle(
+                                  color: Colors.white), // Set text color
                             ),
                           ),
                         ),
@@ -96,18 +116,13 @@ class MenuPage extends StatelessWidget {
                               bool logoutSuccess =
                                   await AuthService().logout(idUser);
                               if (logoutSuccess) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/login');
-                              } else {
-                                print('Logout failed');
+                                Navigator.pushNamed(context, '/login');
                               }
                             },
-                            icon: const Icon(Icons.logout,
-                                color: Colors.white), // Set icon color
+                            icon: const Icon(Icons.logout, color: Colors.white),
                             label: const Text(
                               "Logout",
-                              style: TextStyle(
-                                  color: Colors.white), // Set text color
+                              style: TextStyle(color: Colors.white),
                             ),
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
@@ -118,11 +133,9 @@ class MenuPage extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                      ],
-                    ),
-                  ),
-                ],
-              );
+                      ]),
+                ),
+              ]);
             } else {
               return const CircularProgressIndicator();
             }
@@ -132,7 +145,7 @@ class MenuPage extends StatelessWidget {
 
   Widget buildMenuItem(MenuItem item) => ListTile(
         selectedTileColor: Colors.white,
-        selected: cuurentItem == item,
+        selected: currentItem == item,
         minLeadingWidth: 20,
         leading: Icon(item.icon),
         title: Text(item.title),

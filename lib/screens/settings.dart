@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:liquid_swipe/liquid_swipe.dart';
-
-import '../models-api/user.dart';
-import '../services/user.service.dart';
+import 'package:viami/models-api/user/user.dart';
+import '../services/user/user.service.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -176,13 +174,11 @@ class _SettingsPage extends State<SettingsPage> {
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green),
                             onPressed: () async {
-                              bool logoutSuccess =
-                                  await deleteUserById(userId, token);
+                              bool logoutSuccess = await UserService()
+                                  .deleteUserById(userId!, token);
+
                               if (logoutSuccess) {
-                                Navigator.pushReplacementNamed(
-                                    context, '/login');
-                              } else {
-                                print('Logout failed');
+                                Navigator.pushNamed(context, '/login');
                               }
                             },
                             child: const Text(
@@ -212,7 +208,6 @@ class _SettingsPage extends State<SettingsPage> {
             decoration: BoxDecoration(
               color: const Color.fromARGB(137, 248, 244, 244),
               borderRadius: BorderRadius.circular(10),
-              //border: Border.all(color: Color.fromARGB(255, 9, 10, 10)
             ),
             child: Card(
                 child: ListTile(

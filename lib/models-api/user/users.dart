@@ -1,7 +1,5 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:json_annotation/json_annotation.dart';
-import 'package:viami/models-api/user.dart';
+import 'package:viami/models-api/user/user.dart';
 
 part 'users.u.dart';
 

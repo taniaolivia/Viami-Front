@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
+import 'package:viami/screens/profile_page.dart';
 import 'package:viami/screens/register.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
 import 'package:viami/screens/updatePassword.dart';
 
-void main() {
+void main() async {
+  await dotenv.load(fileName: "lib/.env");
   runApp(const MyApp());
 }
 
@@ -31,9 +34,10 @@ class MyApp extends StatelessWidget {
           "/home": (context) => DrawerPage(),
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
-          "/settings": (context) => SettingsPage(),
+          "/settings": (context) => const SettingsPage(),
           "/notif": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
+          "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword()
         });
   }

@@ -109,7 +109,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         focusNode: focusNode,
                         decoration: const InputDecoration(
                           labelText: 'Numéro de téléphone',
-                          hintText: "0690752111",
+                          hintText: "690752111",
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                           labelStyle: TextStyle(fontSize: 12),
@@ -118,8 +118,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         invalidNumberMessage:
                             "Veuillez remplir votre numéro de téléphone",
                         onChanged: (phone) {
-                          phoneNumber =
-                              '(' + phone.countryCode + ')' + phone.number;
+                          phoneNumber = phone.countryCode + phone.number;
                         },
                         onCountryChanged: (country) {},
                       ),
@@ -128,7 +127,7 @@ class _RegisterPageState extends State<RegisterPage> {
                         validator: (value) {
                           String pattern =
                               r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$';
-                          RegExp regex = new RegExp(pattern);
+                          RegExp regex = RegExp(pattern);
 
                           if (value == null || value.isEmpty) {
                             return 'Veuillez remplir votre mot de passe';

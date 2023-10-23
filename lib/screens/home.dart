@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../widgets/menu_widget.dart';
 
 class Home extends StatelessWidget {
+  const Home({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,10 +45,15 @@ class Home extends StatelessWidget {
                   width: 2.0,
                 ),
               ),
-              child: const CircleAvatar(
-                backgroundImage: AssetImage('assets/profil.png'),
-                radius: 16,
-              ),
+              child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/profile");
+                  },
+                  child: CircleAvatar(
+                    backgroundImage: NetworkImage(
+                        '${dotenv.env['CDN_URL']}/assets/profil.png'),
+                    radius: 16,
+                  )),
             ),
           )
         ],

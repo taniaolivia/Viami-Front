@@ -26,7 +26,7 @@ class _DrawerPageState extends State<DrawerPage> {
         mainScreen: getScreen(),
         menuScreen: Builder(
           builder: (context) => MenuPage(
-            cuurentItem: cuurentItem,
+            currentItem: cuurentItem,
             onSelectedItem: (item) {
               setState(() {
                 cuurentItem = item;
@@ -41,11 +41,11 @@ class _DrawerPageState extends State<DrawerPage> {
   Widget getScreen() {
     switch (cuurentItem) {
       case MenuItems.notification:
-        return NotificationsPage();
+        return const NotificationsPage();
       case MenuItems.settings:
-        return SettingsPage();
+        return const SettingsPage();
       default:
-        return Home();
+        return const Home();
     }
   }
 }

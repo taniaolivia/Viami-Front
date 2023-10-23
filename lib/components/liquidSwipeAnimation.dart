@@ -1,10 +1,7 @@
-import 'dart:math';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:viami/models/introduction_item.dart';
-import 'package:viami/screens/start.dart';
 
 class LiquidSwipeAnimation extends StatefulWidget {
   final int page;
