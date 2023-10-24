@@ -90,24 +90,7 @@ class MenuPage extends StatelessWidget {
                         const Spacer(),
                         ...MenuItems.all.map(buildMenuItem).toList(),
                         const Spacer(flex: 2),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: OutlinedButton.icon(
-                            onPressed: () async {
-                              Navigator.pushNamed(context, '/home');
-                            },
-                            icon: const Icon(Icons.logout,
-                                color: Colors.white), // Set icon color
-                            label: const Text(
-                              "Logout",
-                              style: TextStyle(
-                                  color: Colors.white), // Set text color
-                            ),
-                          ),
-                        ),
                         const Spacer(),
-                        ...MenuItems.all.map(buildMenuItem).toList(),
-                        const Spacer(flex: 2),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: OutlinedButton.icon(
