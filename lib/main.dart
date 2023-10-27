@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:viami/screens/display_trip_details.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
@@ -38,7 +39,8 @@ class MyApp extends StatelessWidget {
           "/notif": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
-          "/updatePassword": (context) => const UpdatePassword()
+          "/updatePassword": (context) => const UpdatePassword(),
+          "/displayTravelPage": (context) => const DisplayTravelPage()
         });
   }
 }
