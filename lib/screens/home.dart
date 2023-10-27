@@ -1,14 +1,63 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:viami/screens/settings.dart';
+import '../components/NavigationBarComponent.dart';
+import '../models/menu_item.dart';
+import '../models/menu_items.dart';
 import '../widgets/menu_widget.dart';
+import 'drawer.dart';
+import 'menu.dart';
+import 'message_page.dart';
+import 'notifications_page.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'profile_page.dart';
+import 'search_page.dart';
+import 'vip_page.dart';
 
-class Home extends StatelessWidget {
-  const Home({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _currentIndex = 2;
+  late PageController _pageController;
+  MenuItem currentItem = MenuItems.home;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final items = <Widget>[
+      const Icon(
+        Icons.search,
+        size: 30,
+      ),
+      const Icon(
+        Icons.star,
+        size: 30,
+      ),
+      const Icon(
+        Icons.home,
+        size: 30,
+      ),
+      const Icon(
+        Icons.message,
+        size: 30,
+      ),
+      const Icon(
+        Icons.person,
+        size: 30,
+      ),
+    ];
     return Scaffold(
-      backgroundColor: Colors.blue,
       appBar: AppBar(
         leading: MenuWidget(),
         elevation: 0,
@@ -57,6 +106,35 @@ class Home extends StatelessWidget {
             ),
           )
         ],
+      ),
+      body: PageView(
+        controller: _pageController,
+        children: [
+          SearchPage(),
+          VipPage(),
+          Container(), // Page Home
+          MessagePage(),
+          ProfilePage(),
+        ],
+        onPageChanged: (index) {
+          setState(() {
+            _currentIndex = index;
+          });
+        },
+      ),
+      drawer: const DrawerPage(),
+      bottomNavigationBar: CustomCurvedNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (index) {
+          setState(() {
+            _currentIndex = index;
+            _pageController.animateToPage(
+              index,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          });
+        },
       ),
     );
   }

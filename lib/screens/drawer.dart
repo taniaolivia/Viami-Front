@@ -9,12 +9,14 @@ import '../models/menu_items.dart';
 import 'menu.dart';
 
 class DrawerPage extends StatefulWidget {
+  const DrawerPage({super.key});
+
   @override
   State<DrawerPage> createState() => _DrawerPageState();
 }
 
 class _DrawerPageState extends State<DrawerPage> {
-  MenuItem cuurentItem = MenuItems.home;
+  MenuItem currentItem = MenuItems.home;
   @override
   Widget build(BuildContext context) {
     return ZoomDrawer(
@@ -26,10 +28,10 @@ class _DrawerPageState extends State<DrawerPage> {
         mainScreen: getScreen(),
         menuScreen: Builder(
           builder: (context) => MenuPage(
-            currentItem: cuurentItem,
+            currentItem: currentItem,
             onSelectedItem: (item) {
               setState(() {
-                cuurentItem = item;
+                currentItem = item;
               });
 
               ZoomDrawer.of(context)!.close();
@@ -39,13 +41,13 @@ class _DrawerPageState extends State<DrawerPage> {
   }
 
   Widget getScreen() {
-    switch (cuurentItem) {
+    switch (currentItem) {
       case MenuItems.notification:
         return const NotificationsPage();
       case MenuItems.settings:
         return const SettingsPage();
       default:
-        return const Home();
+        return HomePage();
     }
   }
 }
