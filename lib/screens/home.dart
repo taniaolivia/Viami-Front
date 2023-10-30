@@ -1,15 +1,15 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:viami/screens/settings.dart';
-import '../components/NavigationBarComponent.dart';
-import '../models/menu_item.dart';
-import '../models/menu_items.dart';
-import '../widgets/menu_widget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/NavigationBarComponent.dart';
+import 'package:viami/models-api/user/user.dart';
+import 'package:viami/models/menu_item.dart';
+import 'package:viami/models/menu_items.dart';
+import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/services/user/user.service.dart';
+import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
-import 'menu.dart';
 import 'message_page.dart';
-import 'notifications_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'profile_page.dart';
 import 'search_page.dart';
@@ -26,6 +26,21 @@ class _HomePageState extends State<HomePage> {
   int _currentIndex = 2;
   late PageController _pageController;
   MenuItem currentItem = MenuItems.home;
+  final storage = const FlutterSecureStorage();
+
+  String? token = "";
+  String? userId = "";
+
+  Future<User> getUser() {
+    Future<User> getConnectedUser() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
+
+      return UserService().getUserById(userId.toString(), token.toString());
+    }
+
+    return getConnectedUser();
+  }
 
   @override
   void initState() {
@@ -58,63 +73,83 @@ class _HomePageState extends State<HomePage> {
       ),
     ];
     return Scaffold(
-      appBar: AppBar(
-        leading: MenuWidget(),
-        elevation: 0,
-        backgroundColor: const Color(0xFFFAFAFA),
-        title: Center(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/location.png',
-                width: 20.0,
-                height: 20.0,
-                color: const Color(0xFF0081CF),
-              ),
-              const SizedBox(width: 8.0),
-              const Text(
-                "Paris",
-                style: TextStyle(color: Color(0xFF000000)),
-              ),
-            ],
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Color(0xFF6D7D95)),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(
-              right: 16.0,
-            ),
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color(0xFFFFFFFF),
-                  width: 2.0,
-                ),
-              ),
-              child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/profile");
-                  },
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        '${dotenv.env['CDN_URL']}/assets/profil.png'),
-                    radius: 16,
-                  )),
-            ),
-          )
-        ],
-      ),
+      appBar: _currentIndex != 4
+          ? AppBar(
+              leading: MenuWidget(),
+              elevation: 0,
+              backgroundColor: const Color(0xFFFAFAFA),
+              title: Center(
+                  child: FutureBuilder<User>(
+                      future: getUser(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var user = snapshot.data!;
+
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.network(
+                                '${dotenv.env['CDN_URL']}/assets/location.png',
+                                width: 20.0,
+                                height: 20.0,
+                                color: const Color(0xFF0081CF),
+                              ),
+                              const SizedBox(width: 8.0),
+                              AutoSizeText(
+                                user.location.split(',')[0],
+                                minFontSize: 11,
+                                maxFontSize: 13,
+                                style:
+                                    const TextStyle(color: Color(0xFF000000)),
+                              ),
+                            ],
+                          );
+                        }
+
+                        return const Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator());
+                      })),
+              iconTheme: const IconThemeData(color: Color(0xFF6D7D95)),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                    right: 16.0,
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: const Color(0xFFFFFFFF),
+                        width: 2.0,
+                      ),
+                    ),
+                    child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      ShowProfilePage(userId: userId!)));
+                        },
+                        child: CircleAvatar(
+                          backgroundImage: NetworkImage(
+                              '${dotenv.env['CDN_URL']}/assets/profil.png'),
+                          radius: 16,
+                        )),
+                  ),
+                )
+              ],
+            )
+          : null,
       body: PageView(
         controller: _pageController,
         children: [
           SearchPage(),
           VipPage(),
-          Container(), // Page Home
+          Container(),
           MessagePage(),
-          ProfilePage(),
+          ShowProfilePage(userId: userId!),
         ],
         onPageChanged: (index) {
           setState(() {
@@ -130,7 +165,7 @@ class _HomePageState extends State<HomePage> {
             _currentIndex = index;
             _pageController.animateToPage(
               index,
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 10),
               curve: Curves.easeInOut,
             );
           });
