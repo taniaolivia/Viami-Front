@@ -53,7 +53,9 @@ class UserService {
         "lastConnection": "",
         "message": res['message'],
         "connected": "",
-        "profileImage": ""
+        "profileImage": "",
+        "verifyEmailToken": null,
+        "emailVerified": "0"
       });
     } else {
       throw Exception("Failed to load user");

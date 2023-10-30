@@ -22,6 +22,8 @@ class UserLanguage {
       required this.connected,
       required this.language,
       this.profileImage,
+      this.verifyEmailToken,
+      this.emailVerified,
       required this.imageName});
 
   factory UserLanguage.fromJson(Map<String?, dynamic> json) =>
@@ -45,6 +47,8 @@ class UserLanguage {
   final String connected;
   final String language;
   final String? profileImage;
+  final String? verifyEmailToken;
+  final String? emailVerified;
   final String imageName;
 }
 

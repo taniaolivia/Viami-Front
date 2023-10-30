@@ -16,6 +16,9 @@ UserLanguage _$UserLanguageFromJson(Map<String?, dynamic> json) => UserLanguage(
       sex: json['sex'],
       lastConnection: json['lastConnection'],
       connected: json["connected"],
+      profileImage: json["profileImage"],
+      verifyEmailToken: json["verifyEmailToken"],
+      emailVerified: json["emailVerified"],
       language: json['language'],
       imageName: json['imageName'],
     );
@@ -37,6 +40,9 @@ Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
       'sex': instance.sex,
       'lastConnection': instance.lastConnection,
       'connected': instance.connected,
+      'profileImage': instance.profileImage,
+      'verifyEmailToken': instance.verifyEmailToken,
+      'emailVerified': instance.emailVerified,
       'language': instance.language,
       'imageName': instance.imageName
     };

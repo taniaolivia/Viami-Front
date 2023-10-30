@@ -22,6 +22,8 @@ class UserComment {
       required this.lastConnection,
       required this.connected,
       this.profileImage,
+      this.verifyEmailToken,
+      this.emailVerified,
       required this.comment});
 
   factory UserComment.fromJson(Map<String?, dynamic> json) =>
@@ -45,6 +47,8 @@ class UserComment {
   final String lastConnection;
   final String connected;
   final String? profileImage;
+  final String? verifyEmailToken;
+  final String? emailVerified;
   final String comment;
 }
 

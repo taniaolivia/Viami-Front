@@ -17,6 +17,9 @@ UserComment _$UserCommentFromJson(Map<String?, dynamic> json) => UserComment(
       sex: json['sex'],
       lastConnection: json['lastConnection'],
       connected: json["connected"],
+      profileImage: json["profileImage"],
+      verifyEmailToken: json["verifyEmailToken"],
+      emailVerified: json["emailVerified"],
       comment: json['comment'],
     );
 
@@ -38,6 +41,9 @@ Map<String?, dynamic> _$UserCommentToJson(UserComment instance) =>
       'sex': instance.sex,
       'lastConnection': instance.lastConnection,
       'connected': instance.connected,
+      'profileImage': instance.profileImage,
+      'verifyEmailToken': instance.verifyEmailToken,
+      'emailVerified': instance.emailVerified,
       'comment': instance.comment
     };
 
