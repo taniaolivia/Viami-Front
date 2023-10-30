@@ -31,14 +31,14 @@ class MyApp extends StatelessWidget {
                 contentTextStyle: TextStyle(fontFamily: "Poppins")),
             fontFamily: "Poppins"),
         routes: {
-          "/home": (context) => DrawerPage(),
+          "/home": (context) => const DrawerPage(),
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => const SettingsPage(),
           "/notif": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
-          "/updatePassword": (context) => const UpdatePassword()
+          "/updatePassword": (context) => const UpdatePassword(),
         });
   }
 }
