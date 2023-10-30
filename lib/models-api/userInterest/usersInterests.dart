@@ -21,6 +21,7 @@ class UserInterest {
       required this.lastConnection,
       required this.connected,
       required this.interest,
+      this.profileImage,
       required this.imageName});
 
   factory UserInterest.fromJson(Map<String?, dynamic> json) =>
@@ -43,6 +44,7 @@ class UserInterest {
   final String lastConnection;
   final String connected;
   final String interest;
+  final String? profileImage;
   final String imageName;
 }
 

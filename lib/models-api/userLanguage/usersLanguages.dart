@@ -21,6 +21,7 @@ class UserLanguage {
       required this.lastConnection,
       required this.connected,
       required this.language,
+      this.profileImage,
       required this.imageName});
 
   factory UserLanguage.fromJson(Map<String?, dynamic> json) =>
@@ -43,6 +44,7 @@ class UserLanguage {
   final String lastConnection;
   final String connected;
   final String language;
+  final String? profileImage;
   final String imageName;
 }
 
