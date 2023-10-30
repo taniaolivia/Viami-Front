@@ -31,7 +31,7 @@ class UsersInterestsService {
 
       return UsersInterests.fromJson(res);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load user interest');
     }
   }
 
@@ -47,7 +47,7 @@ class UsersInterestsService {
 
       return UsersInterests.fromJson(res);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load user interest');
     }
   }
 }

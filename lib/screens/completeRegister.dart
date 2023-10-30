@@ -322,7 +322,7 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
 
                                           showSnackbar(
                                               context,
-                                              'Votre compte a été bien créé !',
+                                              "Veuillez finaliser votre inscription en vérifiant votre adresse e-mail envoyé sur votre mail ! Vérifiez vos spams si vous ne trouvez pas le mail",
                                               "D'accord",
                                               '');
                                         }

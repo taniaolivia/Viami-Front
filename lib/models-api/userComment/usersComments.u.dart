@@ -1,9 +1,10 @@
-part of 'usersLanguages.dart';
+part of 'usersComments.dart';
 
-UserLanguage _$UserLanguageFromJson(Map<String?, dynamic> json) => UserLanguage(
+UserComment _$UserCommentFromJson(Map<String?, dynamic> json) => UserComment(
       id: json['id'],
       userId: json["userId"],
-      languageId: json['languageId'],
+      commenterId: json['commenterId'],
+      commentId: json["commentId"],
       firstName: json["firstName"],
       lastName: json["lastName"],
       email: json['email'],
@@ -19,15 +20,15 @@ UserLanguage _$UserLanguageFromJson(Map<String?, dynamic> json) => UserLanguage(
       profileImage: json["profileImage"],
       verifyEmailToken: json["verifyEmailToken"],
       emailVerified: json["emailVerified"],
-      language: json['language'],
-      imageName: json['imageName'],
+      comment: json['comment'],
     );
 
-Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
+Map<String?, dynamic> _$UserCommentToJson(UserComment instance) =>
     <String?, dynamic>{
       'id': instance.id,
       'userId': instance.userId,
-      'languageId': instance.languageId,
+      'commenterId': instance.commenterId,
+      'commentId': instance.commentId,
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'email': instance.email,
@@ -43,16 +44,15 @@ Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
       'profileImage': instance.profileImage,
       'verifyEmailToken': instance.verifyEmailToken,
       'emailVerified': instance.emailVerified,
-      'language': instance.language,
-      'imageName': instance.imageName
+      'comment': instance.comment
     };
 
-UsersLanguages _$UsersLanguagesFromJson(Map<String?, dynamic> json) =>
-    UsersLanguages(
-      userLanguages: (json['userLanguages'] as List<dynamic>)
-          .map((e) => UserLanguage.fromJson(e as Map<String?, dynamic>))
+UsersComments _$UsersCommentsFromJson(Map<String?, dynamic> json) =>
+    UsersComments(
+      userComments: (json['userComments'] as List<dynamic>)
+          .map((e) => UserComment.fromJson(e as Map<String?, dynamic>))
           .toList(),
     );
 
-Map<String?, dynamic> _$UsersLanguagesToJson(UsersLanguages instance) =>
-    <String?, dynamic>{'userLanguages': instance.userLanguages};
+Map<String?, dynamic> _$UsersCommentsToJson(UsersComments instance) =>
+    <String?, dynamic>{'userComments': instance.userComments};

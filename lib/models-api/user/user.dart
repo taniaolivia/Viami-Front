@@ -18,7 +18,10 @@ class User {
       required this.sex,
       this.lastConnection,
       this.message,
-      this.connected});
+      this.connected,
+      this.profileImage,
+      this.verifyEmailToken,
+      this.emailVerified});
 
   factory User.fromJson(Map<String?, dynamic> json) => _$UserFromJson(json);
   Map<String?, dynamic> toJson() => _$UserToJson(this);
@@ -37,4 +40,7 @@ class User {
   final String? lastConnection;
   final String? message;
   final String? connected;
+  final String? profileImage;
+  final String? verifyEmailToken;
+  final String? emailVerified;
 }

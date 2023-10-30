@@ -16,6 +16,9 @@ UserInterest _$UserInterestFromJson(Map<String?, dynamic> json) => UserInterest(
     sex: json['sex'],
     lastConnection: json['lastConnection'],
     connected: json["connected"],
+    profileImage: json["profileImage"],
+    verifyEmailToken: json["verifyEmailToken"],
+    emailVerified: json["emailVerified"],
     interest: json['interest'],
     imageName: json['imageName']);
 
@@ -36,6 +39,9 @@ Map<String?, dynamic> _$UserInterestToJson(UserInterest instance) =>
       'sex': instance.sex,
       'lastConnection': instance.lastConnection,
       'connected': instance.connected,
+      'profileImage': instance.profileImage,
+      'verifyEmailToken': instance.verifyEmailToken,
+      'emailVerified': instance.emailVerified,
       'interest': instance.interest,
       'imageName': instance.imageName
     };

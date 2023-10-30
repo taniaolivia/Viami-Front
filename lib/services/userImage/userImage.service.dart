@@ -17,7 +17,7 @@ class UserImageService {
       var res = json.decode(response.body);
       return res;
     } else {
-      throw Exception("Failed to load user");
+      throw Exception("Failed to load user image");
     }
   }
 
@@ -36,7 +36,7 @@ class UserImageService {
 
       return res;
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load user image');
     }
   }
 }

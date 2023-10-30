@@ -1,13 +1,14 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'usersLanguages.l.dart';
+part 'usersComments.u.dart';
 
 @JsonSerializable()
-class UserLanguage {
-  UserLanguage(
+class UserComment {
+  UserComment(
       {required this.id,
       required this.userId,
-      required this.languageId,
+      required this.commenterId,
+      required this.commentId,
       required this.firstName,
       required this.lastName,
       required this.email,
@@ -20,19 +21,19 @@ class UserLanguage {
       required this.sex,
       required this.lastConnection,
       required this.connected,
-      required this.language,
       this.profileImage,
       this.verifyEmailToken,
       this.emailVerified,
-      required this.imageName});
+      required this.comment});
 
-  factory UserLanguage.fromJson(Map<String?, dynamic> json) =>
-      _$UserLanguageFromJson(json);
-  Map<String?, dynamic> toJson() => _$UserLanguageToJson(this);
+  factory UserComment.fromJson(Map<String?, dynamic> json) =>
+      _$UserCommentFromJson(json);
+  Map<String?, dynamic> toJson() => _$UserCommentToJson(this);
 
   final int id;
   final String userId;
-  final int languageId;
+  final String commenterId;
+  final int commentId;
   final String firstName;
   final String lastName;
   final String email;
@@ -45,19 +46,18 @@ class UserLanguage {
   final String sex;
   final String lastConnection;
   final String connected;
-  final String language;
   final String? profileImage;
   final String? verifyEmailToken;
   final String? emailVerified;
-  final String imageName;
+  final String comment;
 }
 
-class UsersLanguages {
-  UsersLanguages({required this.userLanguages});
+class UsersComments {
+  UsersComments({required this.userComments});
 
-  factory UsersLanguages.fromJson(Map<String?, dynamic> json) =>
-      _$UsersLanguagesFromJson(json);
-  Map<String?, dynamic> toJson() => _$UsersLanguagesToJson(this);
+  factory UsersComments.fromJson(Map<String?, dynamic> json) =>
+      _$UsersCommentsFromJson(json);
+  Map<String?, dynamic> toJson() => _$UsersCommentsToJson(this);
 
-  final List<UserLanguage> userLanguages;
+  final List<UserComment> userComments;
 }

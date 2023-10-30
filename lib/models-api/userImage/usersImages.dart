@@ -20,6 +20,9 @@ class UserImage {
       required this.sex,
       required this.lastConnection,
       required this.connected,
+      this.profileImage,
+      this.verifyEmailToken,
+      this.emailVerified,
       required this.image});
 
   factory UserImage.fromJson(Map<String?, dynamic> json) =>
@@ -41,6 +44,9 @@ class UserImage {
   final String sex;
   final String lastConnection;
   final String connected;
+  final String? profileImage;
+  final String? verifyEmailToken;
+  final String? emailVerified;
   final String image;
 }
 
