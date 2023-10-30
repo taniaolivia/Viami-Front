@@ -72,10 +72,18 @@ class MenuPage extends StatelessWidget {
                                           ),
                                         ),
                                         child: CircleAvatar(
-                                          backgroundImage: NetworkImage(
-                                              '${dotenv.env['CDN_URL']}/assets/profil.png'),
-                                          radius: 50.0,
-                                        )))),
+                                            backgroundImage: user
+                                                        .profileImage !=
+                                                    null
+                                                ? AssetImage(user.profileImage!)
+                                                : null,
+                                            radius: 50.0,
+                                            child: user.profileImage == null
+                                                ? const Icon(
+                                                    Icons.person,
+                                                    size: 70,
+                                                  )
+                                                : null)))),
                             const SizedBox(height: 10.0),
                             Padding(
                               padding:

@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   String? token = "";
   String? userId = "";
+  String? userProfile = "";
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -85,6 +86,7 @@ class _HomePageState extends State<HomePage> {
                         if (snapshot.hasData) {
                           var user = snapshot.data!;
 
+                          userProfile = user.profileImage;
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -133,10 +135,13 @@ class _HomePageState extends State<HomePage> {
                                       ShowProfilePage(userId: userId!)));
                         },
                         child: CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              '${dotenv.env['CDN_URL']}/assets/profil.png'),
-                          radius: 16,
-                        )),
+                            backgroundImage: userProfile != null
+                                ? AssetImage(userProfile!)
+                                : null,
+                            radius: 20,
+                            child: userProfile == null
+                                ? const Icon(Icons.person)
+                                : null)),
                   ),
                 )
               ],

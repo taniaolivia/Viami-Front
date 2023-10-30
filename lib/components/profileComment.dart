@@ -104,7 +104,10 @@ class _ProfileCommentState extends State<ProfileComment> {
                                                   ? AssetImage(
                                                       commenter.profileImage!)
                                                   : null,
-                                              child: const Icon(Icons.person))
+                                              child:
+                                                  commenter.profileImage == null
+                                                      ? const Icon(Icons.person)
+                                                      : null)
                                         ]);
                                   }
                                   return const Align(
