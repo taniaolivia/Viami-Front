@@ -1,7 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/utils/dimensions.dart';
 import 'package:viami/widgets/icon_and_text_widget.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -118,7 +117,7 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
+                      children: [
                         AutoSizeText(
                           "Nusa Pedina",
                           style: TextStyle(
@@ -130,10 +129,20 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                           maxFontSize: 28,
                           textAlign: TextAlign.center,
                         ),
-                        Icon(
-                          Icons.favorite,
-                          color: Color(0xFF0081CF),
-                        )
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 228, 241, 247),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: Icon(
+                              Icons.favorite,
+                              color: Color(0xFF0081CF),
+                              size: 20,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(

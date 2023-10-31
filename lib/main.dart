@@ -10,12 +10,9 @@ import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
 import 'package:viami/screens/updatePassword.dart';
-import 'package:viami/utils/dimensions.dart';
 
 void main() async {
   await dotenv.load(fileName: "lib/.env");
- 
-
   runApp(const MyApp());
 }
 
@@ -25,7 +22,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: DisplayTravelPage(),
+        home: const IntroductionPage(),
         initialRoute: "/",
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
