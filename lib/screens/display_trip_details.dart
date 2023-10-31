@@ -36,7 +36,7 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
             left: 0,
             right: 0,
             child: Container(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
               width: double.maxFinite,
               height: travelImageContainer,
               decoration: BoxDecoration(
@@ -79,7 +79,7 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                       });
                     },
                     child: Container(
-                      margin: EdgeInsets.only(top: 6),
+                      margin: const EdgeInsets.only(top: 6),
                       height: 51,
                       width: 51,
                       decoration: BoxDecoration(
@@ -105,8 +105,8 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
             top: travelImageContainer,
             child: SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                decoration: BoxDecoration(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                decoration: const BoxDecoration(
                   color: Colors.white,
                 ),
                 child: Column(
@@ -118,7 +118,7 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        AutoSizeText(
+                        const AutoSizeText(
                           "Nusa Pedina",
                           style: TextStyle(
                             color: Color(0xFF0A2753),
@@ -130,12 +130,12 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                           textAlign: TextAlign.center,
                         ),
                         Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             shape: BoxShape.circle,
                             color: Color.fromARGB(255, 228, 241, 247),
                           ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
+                          child: const Padding(
+                            padding: EdgeInsets.all(6.0),
                             child: Icon(
                               Icons.favorite,
                               color: Color(0xFF0081CF),
