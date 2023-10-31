@@ -21,6 +21,9 @@ class UserInterest {
       required this.lastConnection,
       required this.connected,
       required this.interest,
+      this.profileImage,
+      this.verifyEmailToken,
+      this.emailVerified,
       required this.imageName});
 
   factory UserInterest.fromJson(Map<String?, dynamic> json) =>
@@ -42,6 +45,9 @@ class UserInterest {
   final String sex;
   final String lastConnection;
   final String connected;
+  final String? profileImage;
+  final String? verifyEmailToken;
+  final String? emailVerified;
   final String interest;
   final String imageName;
 }

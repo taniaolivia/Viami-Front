@@ -16,6 +16,9 @@ UserImage _$UserImageFromJson(Map<String?, dynamic> json) => UserImage(
       sex: json['sex'],
       lastConnection: json['lastConnection'],
       connected: json["connected"],
+      profileImage: json["profileImage"],
+      verifyEmailToken: json["verifyEmailToken"],
+      emailVerified: json["emailVerified"],
       image: json['image'],
     );
 
@@ -36,6 +39,9 @@ Map<String?, dynamic> _$UserImageToJson(UserImage instance) =>
       'sex': instance.sex,
       'lastConnection': instance.lastConnection,
       'connected': instance.connected,
+      'profileImage': instance.profileImage,
+      'verifyEmailToken': instance.verifyEmailToken,
+      'emailVerified': instance.emailVerified,
       'image': instance.image
     };
 

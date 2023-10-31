@@ -18,7 +18,7 @@ class UserInterestService {
 
       return res;
     } else {
-      throw Exception("Failed to load user");
+      throw Exception("Failed to load user interest");
     }
   }
 
@@ -37,7 +37,7 @@ class UserInterestService {
 
       return res;
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load user interest');
     }
   }
 }

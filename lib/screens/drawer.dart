@@ -47,7 +47,7 @@ class _DrawerPageState extends State<DrawerPage> {
       case MenuItems.settings:
         return const SettingsPage();
       default:
-        return HomePage();
+        return const HomePage();
     }
   }
 }

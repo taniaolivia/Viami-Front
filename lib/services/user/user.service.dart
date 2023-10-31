@@ -28,7 +28,8 @@ class UserService {
               "age": 0,
               "sex": sex,
               "lastConnection": "",
-              "connected": "0"
+              "connected": "0",
+              "profileImage": ""
             }));
 
     if (response.statusCode == 200) {
@@ -51,7 +52,10 @@ class UserService {
         "sex": "",
         "lastConnection": "",
         "message": res['message'],
-        "connected": ""
+        "connected": "",
+        "profileImage": "",
+        "verifyEmailToken": null,
+        "emailVerified": "0"
       });
     } else {
       throw Exception("Failed to load user");

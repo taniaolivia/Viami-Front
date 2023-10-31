@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
                 contentTextStyle: TextStyle(fontFamily: "Poppins")),
             fontFamily: "Poppins"),
         routes: {
-          "/home": (context) => DrawerPage(),
+          "/home": (context) => const DrawerPage(),
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => const SettingsPage(),

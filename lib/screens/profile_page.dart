@@ -32,11 +32,6 @@ class _ProfilePageState extends State<ProfilePage> {
     return getConnectedUser();
   }
 
-  void initState() {
-    currentAction = currentAction;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,37 +79,31 @@ class _ProfilePageState extends State<ProfilePage> {
                                                   color: Colors.grey),
                                             ),
                                           ),
-                                          child: GestureDetector(
-                                              onTap: () {
-                                                setState(() {
-                                                  currentAction = "edit";
-                                                });
-                                              },
-                                              child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          25, 10, 25, 10),
-                                                  child: AutoSizeText(
-                                                    "Modifier",
-                                                    minFontSize: 11,
-                                                    maxFontSize: 13,
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                        color: currentAction ==
-                                                                "edit"
-                                                            ? currentColor
-                                                            : Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                  )))),
+                                          child: Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      25, 10, 25, 10),
+                                              child: AutoSizeText(
+                                                "Modifier",
+                                                minFontSize: 11,
+                                                maxFontSize: 13,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                    color: currentColor,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ))),
                                       GestureDetector(
                                         onTap: () {
-                                          setState(() {
-                                            currentAction = "show";
-                                          });
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      ShowProfilePage(
+                                                          userId: userId!)));
                                         },
-                                        child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
+                                        child: const Padding(
+                                            padding: EdgeInsets.fromLTRB(
                                                 25, 10, 25, 10),
                                             child: AutoSizeText(
                                               "Aperçu",
@@ -122,17 +111,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                               maxFontSize: 13,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  color: currentAction != "edit"
-                                                      ? currentColor
-                                                      : Colors.black,
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.bold),
                                             )),
                                       )
                                     ]),
                                 const SizedBox(height: 10),
-                                currentAction == "edit"
-                                    ? EditProfilePage(user: user)
-                                    : const ShowProfilePage()
+                                EditProfilePage(user: user)
                               ],
                             )));
                   }

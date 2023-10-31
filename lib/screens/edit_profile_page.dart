@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:viami/components/interestComponent.dart';
 import 'package:viami/components/languageComponent.dart';
 import 'package:viami/components/photoList.dart';
@@ -62,7 +63,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const Align(
           alignment: Alignment.topLeft,
           child: AutoSizeText(
-            "A propos de moi",
+            "À propos de moi",
             minFontSize: 11,
             maxFontSize: 13,
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
@@ -75,11 +76,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
               if (snapshot.hasData) {
                 var user = snapshot.data!;
 
-                aboutMeController.text = user.description!;
+                aboutMeController.text =
+                    toBeginningOfSentenceCase(user.description)!;
 
                 return Form(
                     key: _formKey,
                     child: TextFormField(
+                        textCapitalization: TextCapitalization.sentences,
                         maxLength: 500,
                         controller: aboutMeController,
                         decoration: const InputDecoration(
@@ -96,8 +99,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   child: CircularProgressIndicator());
             }),
         const SizedBox(height: 30),
-        InterestComponent(),
-        const LanguageComponent(),
+        InterestComponent(page: "edit", userId: userId!),
+        LanguageComponent(page: "edit", userId: userId!),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
