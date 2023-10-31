@@ -17,8 +17,10 @@ dependencies:
   swipe_to: ^1.0.2
   percent_indicator: ^4.0.1
   auto_size_text: ^3.0.0
+  carousel_slider: ^4.2.1
   http: ^0.13.6
   json_annotation: ^4.8.1
+  photo_view: ^0.14.0
   flutter_secure_storage: ^8.1.0
   bottom_picker: ^2.1.1
   intl: ^0.18.1
@@ -33,6 +35,9 @@ dependencies:
   image_picker: ^1.0.4
   path_provider: ^2.0.4
   get: ^4.1.4
+  
+  
+ 
 
 
 
@@ -98,6 +103,9 @@ flutter:
          - asset: assets/fonts/Poppins-BlackItalic.ttf
            style: italic
            weight: 900
+         - asset: assets/fonts/Montserrat-Regular.ttf
+           style: italic
+           weight: 700
 
 # Custom splash screen
 flutter_native_splash:
