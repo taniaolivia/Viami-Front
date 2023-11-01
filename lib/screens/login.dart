@@ -99,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   )),
             ),
+            forgetPassword: "Mot de passe oublié ?",
             button: Container(
                 margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                 child: SizedBox(
