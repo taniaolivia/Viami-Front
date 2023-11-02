@@ -1,13 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/models-api/user/user.dart';
+import 'package:viami/services/user/auth.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 import '../widgets/menu_widget.dart';
 
 class NotificationsPage extends StatelessWidget {
-  const NotificationsPage({super.key});
+  NotificationsPage({super.key});
+  final storage = const FlutterSecureStorage();
+  String? token = "";
+  String? userId = "";
+  String? userProfile;
+  bool? tokenExpired;
+
+  Future<User> getUser() {
+    Future<User> getConnectedUser() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
+
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
+
+      return UserService().getUserById(userId.toString(), token.toString());
+    }
+
+    return getConnectedUser();
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (tokenExpired == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialogMessage(
+            context,
+            "Connectez-vous",
+            const Text("Veuillez vous reconnecter !"),
+            TextButton(
+              child: const Text("Se connecter"),
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+            ));
+      });
+    }
     return Scaffold(
       backgroundColor: Colors.blue,
       appBar: AppBar(
@@ -18,11 +57,11 @@ class NotificationsPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset(
-                'assets/location.png',
+              Image.network(
+                '${dotenv.env['CDN_URL']}assets/location.png',
                 width: 20.0,
                 height: 20.0,
-                color: Color(0xFF0081CF),
+                color: const Color(0xFF0081CF),
               ),
               const SizedBox(width: 8.0),
               const Text(

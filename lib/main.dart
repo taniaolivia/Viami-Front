@@ -12,6 +12,8 @@ import 'package:viami/screens/updatePassword.dart';
 
 void main() async {
   await dotenv.load(fileName: "lib/.env");
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         home: const IntroductionPage(),
         initialRoute: "/",
-        title: 'Flutter Demo',
+        title: 'Viami',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primarySwatch: Colors.blue,
@@ -35,7 +37,7 @@ class MyApp extends StatelessWidget {
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => const SettingsPage(),
-          "/notif": (context) => const NotificationsPage(),
+          "/notif": (context) => NotificationsPage(),
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),

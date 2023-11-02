@@ -139,9 +139,10 @@ class _LoginPageState extends State<LoginPage> {
                                   "S'inscrire",
                                   "/register");
                             } else {
-                              storage.write(
+                              await storage.write(
                                   key: "userId", value: user["user"]["id"]);
-                              storage.write(key: "token", value: user['token']);
+                              await storage.write(
+                                  key: "token", value: user['token']);
 
                               Navigator.pushNamed(context, "/home");
                             }
