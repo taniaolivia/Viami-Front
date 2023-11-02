@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/edit_profile_page.dart';
 import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -20,11 +22,15 @@ class _ProfilePageState extends State<ProfilePage> {
   String? userId = "";
   String currentAction = "edit";
   Color currentColor = Colors.blue;
+  bool? tokenExpired;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -34,6 +40,21 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (tokenExpired == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialogMessage(
+            context,
+            "Connectez-vous",
+            const Text("Veuillez vous reconnecter !"),
+            TextButton(
+              child: const Text("Se connecter"),
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+            ));
+      });
+    }
+
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.white,

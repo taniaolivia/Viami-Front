@@ -1,12 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 import '../models-api/user/user.dart';
 
 class UpdatePassword extends StatefulWidget {
-  const UpdatePassword({super.key});
+  final bool? tokenExpired;
+
+  const UpdatePassword({super.key, this.tokenExpired});
 
   @override
   State<StatefulWidget> createState() => _UpdatePassword();
@@ -18,6 +22,8 @@ class _UpdatePassword extends State<UpdatePassword> {
 
   String? token = "";
   String? userId = "";
+  String? userProfile;
+  bool? tokenExpired;
   bool passwordVisible = false;
   bool newPasswordVisible = false;
   bool confirmNewpasswordVisible = false;
@@ -31,6 +37,10 @@ class _UpdatePassword extends State<UpdatePassword> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
+
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -48,6 +58,21 @@ class _UpdatePassword extends State<UpdatePassword> {
 
   @override
   Widget build(BuildContext context) {
+    if (tokenExpired == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialogMessage(
+            context,
+            "Connectez-vous",
+            const Text("Veuillez vous reconnecter !"),
+            TextButton(
+              child: const Text("Se connecter"),
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+            ));
+      });
+    }
+
     return Scaffold(
         body: FutureBuilder<User>(
             future: getUser(),

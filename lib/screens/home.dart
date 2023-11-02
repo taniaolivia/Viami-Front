@@ -2,16 +2,18 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/NavigationBarComponent.dart';
+import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
+import 'package:viami/screens/login.dart';
 import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
 import 'message_page.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'profile_page.dart';
 import 'search_page.dart';
 import 'vip_page.dart';
 
@@ -30,12 +32,17 @@ class _HomePageState extends State<HomePage> {
 
   String? token = "";
   String? userId = "";
-  String? userProfile = "";
+  String? userProfile;
+  bool? tokenExpired;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
+
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -73,6 +80,21 @@ class _HomePageState extends State<HomePage> {
         size: 30,
       ),
     ];
+
+    if (tokenExpired == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialogMessage(
+            context,
+            "Connectez-vous",
+            const Text("Veuillez vous reconnecter !"),
+            TextButton(
+              child: const Text("Se connecter"),
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+            ));
+      });
+    }
     return Scaffold(
       appBar: _currentIndex != 4
           ? AppBar(
