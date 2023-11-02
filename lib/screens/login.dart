@@ -138,6 +138,13 @@ class _LoginPageState extends State<LoginPage> {
                                   "Cet email n'a pas encore un compte, inscrivez-vous !",
                                   "S'inscrire",
                                   "/register");
+                            } else if (user["message"] ==
+                                "Incorrect password") {
+                              showSnackbar(
+                                  context,
+                                  "Mot de passe est incorrect. Veuillez remplir le bon mot de passe !",
+                                  "D'accord",
+                                  "");
                             } else {
                               await storage.write(
                                   key: "userId", value: user["user"]["id"]);
