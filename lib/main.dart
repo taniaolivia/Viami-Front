@@ -9,6 +9,7 @@ import 'package:viami/screens/register.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
+import 'package:viami/screens/travel_page.dart';
 import 'package:viami/screens/updatePassword.dart';
 
 void main() async {
@@ -22,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: const IntroductionPage(),
+        home: TravelPage(),
         initialRoute: "/",
         title: 'Flutter Demo',
         debugShowCheckedModeBanner: false,
