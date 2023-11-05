@@ -22,6 +22,8 @@ class RecommandedCrd extends StatefulWidget {
 class _RecommandedCrdState extends State<RecommandedCrd> {
   @override
   Widget build(BuildContext context) {
+    double cardWidth = MediaQuery.of(context).size.width - 40;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       shape: RoundedRectangleBorder(
@@ -35,10 +37,24 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
             padding: const EdgeInsets.all(8.0),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.0),
-              child: Image.asset(
-                'assets/${widget.imagePath}',
-                height: 160.0,
-                fit: BoxFit.cover,
+              child: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Image.asset(
+                    'assets/${widget.imagePath}',
+                    width: cardWidth,
+                    height: 160.0,
+                    fit: BoxFit.cover,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Image.asset(
+                      'assets/icon_recommended.png',
+                      width: 32.0,
+                      height: 32.0,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
