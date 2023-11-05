@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/widgets/icon_and_text_widget.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:card_swiper/card_swiper.dart';
 
+import '../components/activity_card.dart';
+import '../models/activity.dart';
 import '../widgets/expandable_text_widget.dart';
 
 class DisplayTravelPage extends StatefulWidget {
@@ -20,6 +23,40 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
     '${dotenv.env['CDN_URL']}/assets/menu.png',
     // Ajoutez d'autres chemins d'images ici
   ];
+  List<Activity> activities = [
+    Activity(
+      image: '${dotenv.env['CDN_URL']}/assets/profil.png',
+      name: 'Excursion en montagne',
+      location: 'Montagnes de Nusa Pedina',
+    ),
+    Activity(
+      image: '${dotenv.env['CDN_URL']}/assets/profil.png',
+      name: 'Plongée sous-marine',
+      location: 'Plages de Nusa Pedina',
+    ),
+    Activity(
+      image: '${dotenv.env['CDN_URL']}/assets/profil.png',
+      name: 'Excursion en montagne',
+      location: 'Montagnes de Nusa Pedina',
+    ),
+    Activity(
+      image: '${dotenv.env['CDN_URL']}/assets/profil.png',
+      name: 'Excursion en montagne',
+      location: 'Montagnes de Nusa Pedina',
+    ),
+    Activity(
+      image: '${dotenv.env['CDN_URL']}/assets/profil.png',
+      name: 'Excursion en montagne',
+      location: 'Montagnes de Nusa Pedina',
+    ),
+    Activity(
+      image: '${dotenv.env['CDN_URL']}/assets/profil.png',
+      name: 'Excursion en montagne',
+      location: 'Montagnes de Nusa Pedina',
+    ),
+    // Ajoutez d'autres activités ici
+  ];
+
   int selectedImage = 0;
 
   @override
@@ -167,25 +204,43 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
                         IconAndTextWidget(
-                            icon: Icons.person,
-                            text: "Nombre personnes",
-                            color: Colors.black,
-                            iconColor: Colors.blue,
-                            subtext: "subText"),
+                          icon: Icons.person,
+                          text: "Nombre personnes",
+                          color: Colors.black,
+                          iconColor: Colors.blue,
+                          subtext: "subText",
+                        ),
                       ],
                     ),
                     const SizedBox(
                       height: 20,
                     ),
-                    const ExpandableTextWidget(
+                    ExpandableTextWidget(
                       text:
-                          "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
+                          "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
                     ),
                   ],
                 ),
               ),
             ),
           ),
+          Positioned(
+            child: Container(
+              child: Swiper(
+                itemCount: activities.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ActivityCard(activity: activities[index]);
+                },
+                layout: SwiperLayout.STACK,
+                itemWidth: screenWidth * 0.8,
+                itemHeight: screenHeight / 2.5,
+                pagination: SwiperPagination(),
+                control: SwiperControl(),
+                viewportFraction: 0.8, // Added this line
+                scale: 0.9, // Added this line
+              ),
+            ),
+          )
         ],
       ),
       bottomNavigationBar: Container(
