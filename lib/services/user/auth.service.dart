@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 
 class AuthService {
   Future<Map<String?, dynamic>> login(String email, String password) async {
@@ -37,5 +38,9 @@ class AuthService {
     } catch (error) {
       return false;
     }
+  }
+
+  bool isTokenExpired(String token) {
+    return JwtDecoder.isExpired(token);
   }
 }

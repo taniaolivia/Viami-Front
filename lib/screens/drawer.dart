@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/notifications_page.dart';
 import 'package:viami/screens/home.dart';
 import 'package:viami/screens/settings.dart';
+import 'package:viami/services/user/auth.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
 import 'menu.dart';
 
 class DrawerPage extends StatefulWidget {
-  const DrawerPage({super.key});
+  final bool? tokenExpired;
+  const DrawerPage({super.key, this.tokenExpired});
 
   @override
   State<DrawerPage> createState() => _DrawerPageState();
@@ -17,8 +23,44 @@ class DrawerPage extends StatefulWidget {
 
 class _DrawerPageState extends State<DrawerPage> {
   MenuItem currentItem = MenuItems.home;
+  final storage = const FlutterSecureStorage();
+
+  String? token = "";
+  String? userId = "";
+  String? userProfile;
+  bool? tokenExpired;
+
+  Future<User> getUser() {
+    Future<User> getConnectedUser() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
+
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
+
+      return UserService().getUserById(userId.toString(), token.toString());
+    }
+
+    return getConnectedUser();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (tokenExpired == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialogMessage(
+            context,
+            "Connectez-vous",
+            const Text("Veuillez vous reconnecter !"),
+            TextButton(
+              child: const Text("Se connecter"),
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+            ));
+      });
+    }
     return ZoomDrawer(
         style: DrawerStyle.Style1,
         borderRadius: 40,
@@ -43,7 +85,7 @@ class _DrawerPageState extends State<DrawerPage> {
   Widget getScreen() {
     switch (currentItem) {
       case MenuItems.notification:
-        return const NotificationsPage();
+        return NotificationsPage();
       case MenuItems.settings:
         return const SettingsPage();
       default:

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/services/user/auth.service.dart';
 import '../services/user/user.service.dart';
 
 class SettingsPage extends StatefulWidget {
-  const SettingsPage({super.key});
+  final bool? tokenExpired;
+  const SettingsPage({super.key, this.tokenExpired});
 
   @override
   State<StatefulWidget> createState() => _SettingsPage();
@@ -21,11 +24,16 @@ class _SettingsPage extends State<SettingsPage> {
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmNewPasswordController = TextEditingController();
   FocusNode focusNode = FocusNode();
+  bool? tokenExpired;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
+
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -76,6 +84,20 @@ class _SettingsPage extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.tokenExpired == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        showDialogMessage(
+            context,
+            "Connectez-vous",
+            const Text("Veuillez vous reconnecter !"),
+            TextButton(
+              child: const Text("Se connecter"),
+              onPressed: () {
+                Navigator.pushNamed(context, "/login");
+              },
+            ));
+      });
+    }
     return Scaffold(
         body: FutureBuilder<User>(
       future: getUser(),

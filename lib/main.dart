@@ -5,6 +5,7 @@ import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/profile_page.dart';
+import 'package:viami/screens/recommandation_page.dart';
 import 'package:viami/screens/register.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
@@ -14,6 +15,8 @@ import 'package:viami/screens/updatePassword.dart';
 
 void main() async {
   await dotenv.load(fileName: "lib/.env");
+  WidgetsFlutterBinding.ensureInitialized();
+
   runApp(const MyApp());
 }
 
@@ -23,9 +26,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: TravelPage(),
+        home: RecommandationPage(),
         initialRoute: "/",
-        title: 'Flutter Demo',
+        title: 'Viami',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primarySwatch: Colors.blue,
@@ -37,11 +40,10 @@ class MyApp extends StatelessWidget {
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => const SettingsPage(),
-          "/notif": (context) => const NotificationsPage(),
+          "/notif": (context) => NotificationsPage(),
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
-          "/displayTravelPage": (context) => const DisplayTravelPage()
         });
   }
 }
