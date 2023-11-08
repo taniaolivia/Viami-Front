@@ -4,10 +4,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/screens/drawer.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
 class TravelsPage extends StatefulWidget {
-  const TravelsPage({Key? key}) : super(key: key);
+  final Travels? travels;
+  const TravelsPage({Key? key, this.travels}) : super(key: key);
 
   @override
   State<TravelsPage> createState() => _TravelsPageState();
@@ -33,10 +35,12 @@ class _TravelsPageState extends State<TravelsPage> {
 
     return Scaffold(
         backgroundColor: Colors.white,
+        drawer: const DrawerPage(),
         body: GeneralTemplate(
             image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
-            contentHeight: 5.5,
-            containerHeight: 1.35,
+            imageHeight: 3.5,
+            contentHeight: 5,
+            containerHeight: 1.25,
             title: "Liste de voyages",
             content: SingleChildScrollView(
                 child: Padding(
@@ -49,8 +53,10 @@ class _TravelsPageState extends State<TravelsPage> {
                       var travel = snapshot.data!;
 
                       return Column(
-                          children:
-                              List.generate(travel.travels.length, (index) {
+                          children: List.generate(
+                              widget.travels != null
+                                  ? widget.travels!.travels.length
+                                  : travel.travels.length, (index) {
                         return Column(children: [
                           GestureDetector(
                               onTap: () {
@@ -108,9 +114,13 @@ class _TravelsPageState extends State<TravelsPage> {
                                             ],
                                             image: DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: NetworkImage(
-                                                  "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
-                                                ))),
+                                                image: widget.travels != null
+                                                    ? NetworkImage(
+                                                        "${dotenv.env['CDN_URL']}/assets/${widget.travels!.travels[index].image}",
+                                                      )
+                                                    : NetworkImage(
+                                                        "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
+                                                      ))),
                                         child: GestureDetector(
                                             onTap: () {
                                               setState(() {
@@ -162,7 +172,10 @@ class _TravelsPageState extends State<TravelsPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           AutoSizeText(
-                                              travel.travels[index].name,
+                                              widget.travels != null
+                                                  ? widget.travels!
+                                                      .travels[index].name
+                                                  : travel.travels[index].name,
                                               minFontSize: 20,
                                               maxFontSize: 25,
                                               style: const TextStyle(
@@ -176,18 +189,37 @@ class _TravelsPageState extends State<TravelsPage> {
                                             const SizedBox(
                                               width: 10,
                                             ),
-                                            AutoSizeText(
-                                                travel.travels[index]
-                                                            .nbPepInt ==
-                                                        null
-                                                    ? 0.toString()
-                                                    : travel
-                                                        .travels[index].nbPepInt
-                                                        .toString(),
-                                                minFontSize: 15,
-                                                maxFontSize: 20,
-                                                style: const TextStyle(
-                                                    color: Color(0xFF0A2753))),
+                                            widget.travels != null
+                                                ? AutoSizeText(
+                                                    widget
+                                                                .travels!
+                                                                .travels[index]
+                                                                .nbPepInt ==
+                                                            null
+                                                        ? 0.toString()
+                                                        : widget
+                                                            .travels!
+                                                            .travels[index]
+                                                            .nbPepInt
+                                                            .toString(),
+                                                    minFontSize: 15,
+                                                    maxFontSize: 20,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Color(0xFF0A2753)))
+                                                : AutoSizeText(
+                                                    travel.travels[index]
+                                                                .nbPepInt ==
+                                                            null
+                                                        ? 0.toString()
+                                                        : travel.travels[index]
+                                                            .nbPepInt
+                                                            .toString(),
+                                                    minFontSize: 15,
+                                                    maxFontSize: 20,
+                                                    style: const TextStyle(
+                                                        color:
+                                                            Color(0xFF0A2753))),
                                           ])
                                         ]),
                                     const SizedBox(
@@ -206,7 +238,11 @@ class _TravelsPageState extends State<TravelsPage> {
                                             width: 10,
                                           ),
                                           AutoSizeText(
-                                              travel.travels[index].location,
+                                              widget.travels != null
+                                                  ? widget.travels!
+                                                      .travels[index].location
+                                                  : travel
+                                                      .travels[index].location,
                                               minFontSize: 15,
                                               maxFontSize: 20,
                                               style: const TextStyle(
