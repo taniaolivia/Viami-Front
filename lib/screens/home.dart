@@ -8,6 +8,7 @@ import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/screens/travels.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/widgets/menu_widget.dart';
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
       });
     }
     return Scaffold(
-      appBar: _currentIndex != 4
+      appBar: _currentIndex != 4 && _currentIndex != 0
           ? AppBar(
               leading: MenuWidget(),
               elevation: 0,
@@ -172,7 +173,7 @@ class _HomePageState extends State<HomePage> {
       body: PageView(
         controller: _pageController,
         children: [
-          SearchPage(),
+          const TravelsPage(),
           VipPage(),
           Container(),
           MessagePage(),
