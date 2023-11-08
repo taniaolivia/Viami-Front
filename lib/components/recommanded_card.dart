@@ -5,7 +5,7 @@ class RecommandedCrd extends StatefulWidget {
   final String destination;
   final String location;
   final String imagePath;
-  final int interestedPeople;
+  final String? interestedPeople;
 
   const RecommandedCrd({
     Key? key,

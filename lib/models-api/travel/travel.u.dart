@@ -5,12 +5,14 @@ Travel _$TravelFromJson(Map<String?, dynamic> json) => Travel(
     name: json['name'],
     description: json['description'],
     location: json['location'],
-    nbPepInt: json["nbPepInt"]);
+    nbPepInt: json['nbPepInt'].toString(),
+    isRecommended: json["isRecommended"]);
 
 Map<String?, dynamic> _$TravelToJson(Travel instance) => <String?, dynamic>{
       'id': instance.id,
       'firstName': instance.name,
       'description': instance.description,
       'location': instance.location,
-      'connected': instance.nbPepInt
+      'nbPepInt': (instance.nbPepInt).toString(),
+      'isRecommended': instance.isRecommended
     };

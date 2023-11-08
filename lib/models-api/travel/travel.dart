@@ -8,7 +8,8 @@ class Travel {
       required this.name,
       required this.description,
       required this.location,
-      required this.nbPepInt});
+      this.nbPepInt,
+      required this.isRecommended});
 
   factory Travel.fromJson(Map<String?, dynamic> json) => _$TravelFromJson(json);
   Map<String?, dynamic> toJson() => _$TravelToJson(this);
@@ -18,4 +19,5 @@ class Travel {
   final String? description;
   final String location;
   final String? nbPepInt;
+  final bool isRecommended;
 }

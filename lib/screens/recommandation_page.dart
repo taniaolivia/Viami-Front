@@ -1,7 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:viami/models-api/travel/travels.dart';
 
 import '../components/recommanded_card.dart';
+import '../models-api/travel/travel.dart';
+import '../services/travel/recommendedTravel.service.dart';
 
 class RecommendationPage extends StatefulWidget {
   const RecommendationPage({Key? key}) : super(key: key);
@@ -11,6 +14,16 @@ class RecommendationPage extends StatefulWidget {
 }
 
 class _RecommendationPageState extends State<RecommendationPage> {
+  final RecommendedTravelsService _recommendedTravelsService =
+      RecommendedTravelsService();
+  late Future<Travels> _recommendedTravels;
+
+  @override
+  void initState() {
+    super.initState();
+    _recommendedTravels = _recommendedTravelsService.getAllRecommendedTravels();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,21 +82,32 @@ class _RecommendationPageState extends State<RecommendationPage> {
                 children: [
                   SizedBox(height: 16.0),
                   Expanded(
-                    child: ListView(
-                      children: const [
-                        RecommandedCrd(
-                          destination: 'Destination 1',
-                          location: 'location 1',
-                          imagePath: 'profil.png',
-                          interestedPeople: 5,
-                        ),
-                        RecommandedCrd(
-                          destination: 'Destination 2',
-                          location: 'location 2',
-                          imagePath: 'profil.png',
-                          interestedPeople: 10,
-                        ),
-                      ],
+                    child: FutureBuilder<Travels>(
+                      future: _recommendedTravels,
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return CircularProgressIndicator();
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if (!snapshot.hasData ||
+                            snapshot.data!.travels.isEmpty) {
+                          return Text('No recommended travels available.');
+                        } else {
+                          return ListView.builder(
+                            itemCount: snapshot.data!.travels.length,
+                            itemBuilder: (context, index) {
+                              var travel = snapshot.data!.travels[index];
+                              return RecommandedCrd(
+                                destination: travel.name,
+                                location: travel.location,
+                                imagePath: 'profil.png',
+                                interestedPeople: travel.nbPepInt ?? '0',
+                              );
+                            },
+                          );
+                        }
+                      },
                     ),
                   ),
                 ],
