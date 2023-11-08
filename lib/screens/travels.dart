@@ -6,6 +6,8 @@ import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
+import 'display_trip_details.dart';
+
 class TravelsPage extends StatefulWidget {
   const TravelsPage({Key? key}) : super(key: key);
 
@@ -47,6 +49,7 @@ class _TravelsPageState extends State<TravelsPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var travel = snapshot.data!;
+                     
 
                       return Column(
                           children:
@@ -54,7 +57,14 @@ class _TravelsPageState extends State<TravelsPage> {
                         return Column(children: [
                           GestureDetector(
                               onTap: () {
-                                // Redirect to travel detail page
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => DisplayTravelPage(
+                                        travelId: travel.travels[index].id
+                                            .toString()),
+                                  ),
+                                );
                               },
                               child: Container(
                                   alignment: Alignment.center,

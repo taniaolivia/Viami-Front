@@ -1,29 +1,55 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/widgets/icon_and_text_widget.dart';
 import 'package:flutter/cupertino.dart';
 
+import '../models-api/travel/travel.dart';
+import '../services/travel/travels.service.dart';
 import '../widgets/expandable_text_widget.dart';
 
 class DisplayTravelPage extends StatefulWidget {
-  const DisplayTravelPage({Key? key}) : super(key: key);
+  final String travelId;
+  const DisplayTravelPage({Key? key, required this.travelId}) : super(key: key);
 
   @override
   State<DisplayTravelPage> createState() => _DisplayTravelPage();
 }
 
 class _DisplayTravelPage extends State<DisplayTravelPage> {
+  final storage = const FlutterSecureStorage();
+
+  String? token = "";
+  String? nbPeInt;
   List<String> productImages = [
     '${dotenv.env['CDN_URL']}/assets/profil.png',
     '${dotenv.env['CDN_URL']}/assets/logo.png',
     '${dotenv.env['CDN_URL']}/assets/menu.png',
-    // Ajoutez d'autres chemins d'images ici
   ];
+
   int selectedImage = 0;
+  // late Travel travel;
+  Future<Travel> getListTravelById() {
+    Future<Travel> getAllTravel() async {
+      token = await storage.read(key: "token");
+      return TravelsService().getTravelById(widget.travelId, token.toString());
+    }
+
+    print("service good");
+
+    return getAllTravel();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getListTravelById();
+  }
 
   @override
   Widget build(BuildContext context) {
+    Travel travel;
     double screenHeight = MediaQuery.of(context).size.height;
     double screenWidth = MediaQuery.of(context).size.width;
     double travelImageContainer = screenHeight / 2.41;
@@ -104,87 +130,101 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
             right: 0,
             top: travelImageContainer,
             child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.only(left: 20, right: 20, top: 20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        AutoSizeText(
-                          "Nusa Pedina",
-                          style: TextStyle(
-                            color: Color(0xFF0A2753),
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Montserrat",
+                child: FutureBuilder<Travel>(
+              future: getListTravelById(),
+              builder: (context, snapshot) {
+                print(snapshot);
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return Text('No travel details available.');
+                }
+
+                travel = snapshot.data!;
+                nbPeInt = travel.nbPepInt.toString();
+
+                return Container(
+                  padding: EdgeInsets.only(left: 20, right: 20, top: 20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AutoSizeText(
+                            travel.name,
+                            style: TextStyle(
+                              color: Color(0xFF0A2753),
+                              fontWeight: FontWeight.bold,
+                            ),
+                            minFontSize: 25,
+                            maxFontSize: 28,
+                            textAlign: TextAlign.center,
                           ),
-                          minFontSize: 25,
-                          maxFontSize: 28,
-                          textAlign: TextAlign.center,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 228, 241, 247),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(6.0),
-                            child: Icon(
-                              Icons.favorite,
-                              color: Color(0xFF0081CF),
-                              size: 20,
+                          Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Color.fromARGB(255, 228, 241, 247),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(6.0),
+                              child: Icon(
+                                Icons.favorite,
+                                color: Color(0xFF0081CF),
+                                size: 20,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        IconAndTextWidget(
-                          icon: Icons.location_on,
-                          text: "Location",
-                          color: Colors.black,
-                          iconColor: Color(0xFF0081CF),
-                          subtext: "subText",
-                        )
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: const [
-                        IconAndTextWidget(
-                            icon: Icons.person,
-                            text: "Nombre personnes",
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconAndTextWidget(
+                            icon: Icons.location_on,
+                            text: "Location",
                             color: Colors.black,
-                            iconColor: Colors.blue,
-                            subtext: "subText"),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    const ExpandableTextWidget(
-                      text:
-                          "hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
-                    ),
-                  ],
-                ),
-              ),
-            ),
+                            iconColor: Color(0xFF0081CF),
+                            subtext: travel.location,
+                          )
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconAndTextWidget(
+                              icon: Icons.person,
+                              text: "Nombre personnes",
+                              color: Colors.black,
+                              iconColor: Colors.blue,
+                              subtext: travel.nbPepInt?.toString() ?? "0"),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 20,
+                      ),
+                      ExpandableTextWidget(
+                        text: travel.description,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            )),
           ),
         ],
       ),
@@ -209,12 +249,12 @@ class _DisplayTravelPage extends State<DisplayTravelPage> {
                 },
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: Colors.blue, // Couleur du texte
+                  backgroundColor: Colors.blue,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                child: const Text("8 personnes interesses"),
+                child: Text("${nbPeInt}"),
               ),
             )
           ],

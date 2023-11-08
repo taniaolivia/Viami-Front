@@ -24,9 +24,9 @@ class TravelsService {
     }
   }
 
-   Future<Travel> getTravelById(String travelId, String token) async {
+  Future<Travel> getTravelById(String travelId, String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/travel/$travelId'),
+      Uri.parse('${dotenv.env['API_URL']}/travels/$travelId'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -35,12 +35,9 @@ class TravelsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return Travel.fromJson(res['travel']); 
+      return Travel.fromJson(res['travel'][0]);
     } else {
       throw Exception('Failed to load travel');
     }
   }
-}
-
-
 }
