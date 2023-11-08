@@ -141,4 +141,20 @@ class UserService {
       return false;
     }
   }
+
+  Future forgetPassword(String email) async {
+    final response = await http.post(
+        Uri.parse("${dotenv.env['API_URL_2']}/forgetPassword"),
+        body: {"email": email});
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 500 ||
+        response.statusCode == 401) {
+      var res = json.decode(response.body);
+
+      return res;
+    } else {
+      throw Exception("Failed to load user");
+    }
+  }
 }

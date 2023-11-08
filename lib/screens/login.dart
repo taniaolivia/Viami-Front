@@ -99,6 +99,7 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   )),
             ),
+            forgetPassword: "Mot de passe oublié ?",
             button: Container(
                 margin: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                 child: SizedBox(
@@ -137,10 +138,18 @@ class _LoginPageState extends State<LoginPage> {
                                   "Cet email n'a pas encore un compte, inscrivez-vous !",
                                   "S'inscrire",
                                   "/register");
+                            } else if (user["message"] ==
+                                "Incorrect password") {
+                              showSnackbar(
+                                  context,
+                                  "Mot de passe est incorrect. Veuillez remplir le bon mot de passe !",
+                                  "D'accord",
+                                  "");
                             } else {
-                              storage.write(
+                              await storage.write(
                                   key: "userId", value: user["user"]["id"]);
-                              storage.write(key: "token", value: user['token']);
+                              await storage.write(
+                                  key: "token", value: user['token']);
 
                               Navigator.pushNamed(context, "/home");
                             }

@@ -1,5 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/components/snackBar.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class ConnectionTemplate extends StatefulWidget {
   final Widget form;
@@ -9,6 +13,7 @@ class ConnectionTemplate extends StatefulWidget {
   final String optionText;
   final String optionAction;
   final String redirectText;
+  final String? forgetPassword;
 
   const ConnectionTemplate(
       {Key? key,
@@ -18,7 +23,8 @@ class ConnectionTemplate extends StatefulWidget {
       required this.button,
       required this.optionText,
       required this.optionAction,
-      required this.redirectText})
+      required this.redirectText,
+      this.forgetPassword})
       : super(key: key);
 
   @override
@@ -26,6 +32,9 @@ class ConnectionTemplate extends StatefulWidget {
 }
 
 class _ConnectionTemplateState extends State<ConnectionTemplate> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,15 +55,11 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                       alignment: Alignment.topLeft,
                       child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 60, 0, 0),
-                          child: Image.asset(
-                            "assets/logo.png",
-                            width: MediaQuery.of(context).size.width / 2.2,
+                          child: Image.network(
+                            "${dotenv.env['CDN_URL']}/assets/viami.gif",
+                            width: MediaQuery.of(context).size.width / 3.5,
                           )),
                     ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height < 600
-                            ? 10.0
-                            : 20.0),
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
@@ -93,6 +98,81 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                             : 40.0),
                   ])),
               widget.form,
+              widget.forgetPassword != null
+                  ? Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 20, 0),
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                              child: AutoSizeText(widget.forgetPassword!,
+                                  minFontSize: 11,
+                                  maxFontSize: 13,
+                                  style: const TextStyle(
+                                      decoration: TextDecoration.underline)),
+                              onPressed: () {
+                                showDialogMessage(
+                                    context,
+                                    "Mot de passe oublié ?",
+                                    Form(
+                                        key: _formKey,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: <Widget>[
+                                            TextFormField(
+                                              validator: (value) {
+                                                if (value == null ||
+                                                    value.isEmpty) {
+                                                  return 'Veuillez remplir votre email';
+                                                }
+                                                return null;
+                                              },
+                                              controller: emailController,
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                contentPadding:
+                                                    EdgeInsets.fromLTRB(
+                                                        10, 5, 10, 5),
+                                                labelText: 'Email*',
+                                                hintText:
+                                                    ' Ex: example@gmail.com',
+                                                labelStyle:
+                                                    TextStyle(fontSize: 12),
+                                                prefixIcon: Icon(
+                                                  Icons.email_outlined,
+                                                  color: Colors.grey,
+                                                  size: 25.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        )),
+                                    TextButton(
+                                        child: const Text("Valider"),
+                                        onPressed: () async {
+                                          if (_formKey.currentState!
+                                              .validate()) {
+                                            var email = emailController.text;
+
+                                            var user = await UserService()
+                                                .forgetPassword(email);
+
+                                            if (user != null) {
+                                              if (user["message"] ==
+                                                  "Email sent") {
+                                                Navigator.pop(context);
+
+                                                showSnackbar(
+                                                    context,
+                                                    "Un e-mail vous a été envoyé. Veuillez vérifier votre boîte de réception ou le courrier indésirable (spam) pour le trouver.",
+                                                    "D'accord",
+                                                    "");
+                                              }
+                                            }
+                                          }
+                                        }));
+                              })))
+                  : Container(),
               widget.button,
               const SizedBox(height: 20),
               const AutoSizeText("OU",
