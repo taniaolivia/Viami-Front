@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:viami/models-api/travel/travel.dart';
 
-part 'travels.u.dart';
+part 'travels.t.dart';
 
 @JsonSerializable()
 class Travels {

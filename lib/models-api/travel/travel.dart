@@ -1,23 +1,26 @@
 import 'package:json_annotation/json_annotation.dart';
-part 'travel.u.dart';
+
+part 'travel.t.dart';
 
 @JsonSerializable()
 class Travel {
   Travel(
-      {this.id,
+      {required this.id,
       required this.name,
-      required this.description,
+      this.description,
       required this.location,
+      required this.image,
       this.nbPepInt,
       required this.isRecommended});
 
   factory Travel.fromJson(Map<String?, dynamic> json) => _$TravelFromJson(json);
   Map<String?, dynamic> toJson() => _$TravelToJson(this);
 
-  final String? id;
+  final int id;
   final String name;
   final String? description;
   final String location;
-  final String? nbPepInt;
+  final String image;
+  final int? nbPepInt;
   final bool isRecommended;
 }

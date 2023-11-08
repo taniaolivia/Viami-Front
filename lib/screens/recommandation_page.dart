@@ -26,6 +26,14 @@ class _RecommendationPageState extends State<RecommendationPage> {
 
   @override
   Widget build(BuildContext context) {
+    Future<Travels> getListRecommendedTravels() {
+      Future<Travels> getAllRTravels() async {
+        return RecommendedTravelsService().getAllRecommendedTravels();
+      }
+
+      return getAllRTravels();
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -83,7 +91,7 @@ class _RecommendationPageState extends State<RecommendationPage> {
                   SizedBox(height: 16.0),
                   Expanded(
                     child: FutureBuilder<Travels>(
-                      future: _recommendedTravels,
+                      future: getListRecommendedTravels(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -102,7 +110,7 @@ class _RecommendationPageState extends State<RecommendationPage> {
                                 destination: travel.name,
                                 location: travel.location,
                                 imagePath: 'profil.png',
-                                interestedPeople: travel.nbPepInt ?? '0',
+                                interestedPeople: travel.nbPepInt ?? 0,
                               );
                             },
                           );
