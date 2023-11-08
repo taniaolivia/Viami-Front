@@ -51,7 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
               onPressed: () {
                 Navigator.pushNamed(context, "/login");
               },
-            ));
+            ),
+            null);
       });
     }
 

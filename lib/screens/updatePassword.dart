@@ -69,7 +69,8 @@ class _UpdatePassword extends State<UpdatePassword> {
               onPressed: () {
                 Navigator.pushNamed(context, "/login");
               },
-            ));
+            ),
+            null);
       });
     }
 
