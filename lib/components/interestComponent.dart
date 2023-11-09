@@ -20,22 +20,30 @@ class _InterestComponentState extends State<InterestComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
+  String? userId = "";
+
   int? userInterestsLength = 0;
   List<UserInterest>? userInterests = [];
 
-  @override
-  Widget build(BuildContext context) {
-    Future<UsersInterests> getUserInterests() {
-      Future<UsersInterests> getAllInterests() async {
-        token = await storage.read(key: "token");
+  Future<UsersInterests> getUserInterests() {
+    Future<UsersInterests> getAllInterests() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
 
-        return UsersInterestsService()
-            .getUserInterestsById(widget.userId, token.toString());
-      }
-
-      return getAllInterests();
+      return UsersInterestsService()
+          .getUserInterestsById(userId!, token.toString());
     }
 
+    return getAllInterests();
+  }
+
+  void initState() {
+    getUserInterests();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
