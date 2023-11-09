@@ -21,36 +21,42 @@ class IconAndTextWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: iconColor,
-        ),
-        SizedBox(width: 5),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AutoSizeText(
-              text,
-              style: TextStyle(
-                  color: Color(0xFF6A778B),
-                  fontWeight: FontWeight.normal,
-                  fontFamily: "Montserrat"),
-              minFontSize: 12,
-              maxFontSize: 13,
-              textAlign: TextAlign.center,
-            ),
-            if (subtext != null)
-              AutoSizeText(
-                subtext!,
-                style: TextStyle(
-                    color: Color(0xFF0A2753),
-                    fontWeight: FontWeight.normal,
-                    fontFamily: "Montserrat"),
-                minFontSize: 12,
-                maxFontSize: 13,
-                textAlign: TextAlign.center,
+        Container(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Color(0xFFFFFFFF),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0, 3),
               ),
-          ],
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(6.0),
+            child: Icon(
+              icon,
+              color: iconColor,
+              size: 20,
+            ),
+          ),
+        ),
+        SizedBox(width: 10),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: AutoSizeText(
+            text,
+            style: TextStyle(
+              color: Color(0xFF6A778B),
+              fontWeight: FontWeight.normal,
+              fontFamily: "Poppins",
+            ),
+            minFontSize: 12,
+            maxFontSize: 13,
+            textAlign: TextAlign.center,
+          ),
         ),
       ],
     );
