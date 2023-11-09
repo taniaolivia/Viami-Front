@@ -17,18 +17,18 @@ import '../services/travelImage/travelsImages.service.dart';
 import '../widgets/expandable_text_widget.dart';
 import '../widgets/icon_and_text_widget.dart';
 
-class ActivityComponent extends StatefulWidget {
+class TravelComponent extends StatefulWidget {
   final String travelId;
   final bool isRecommended;
-  const ActivityComponent(
+  const TravelComponent(
       {Key? key, required this.travelId, required this.isRecommended})
       : super(key: key);
 
   @override
-  State<ActivityComponent> createState() => _ActivityComponentState();
+  State<TravelComponent> createState() => _TravelComponentState();
 }
 
-class _ActivityComponentState extends State<ActivityComponent> {
+class _TravelComponentState extends State<TravelComponent> {
   int selectedImage = 0;
   final storage = const FlutterSecureStorage();
 
