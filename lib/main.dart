@@ -10,7 +10,7 @@ import 'package:viami/screens/searchTravel.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
-import 'package:viami/screens/travel_page.dart';
+import 'package:viami/screens/travel_page_details.dart';
 import 'package:viami/screens/travels.dart';
 import 'package:viami/screens/updatePassword.dart';
 

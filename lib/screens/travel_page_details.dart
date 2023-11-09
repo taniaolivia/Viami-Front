@@ -14,15 +14,15 @@ import '../services/travelImage/travelsImages.service.dart';
 import '../widgets/expandable_text_widget.dart';
 import '../widgets/icon_and_text_widget.dart';
 
-class TravelPage extends StatefulWidget {
+class TravelPageDetails extends StatefulWidget {
   final String travelId;
-  const TravelPage({Key? key, required this.travelId}) : super(key: key);
+  const TravelPageDetails({Key? key, required this.travelId}) : super(key: key);
 
   @override
-  State<TravelPage> createState() => _TravelPageState();
+  State<TravelPageDetails> createState() => _TravelPageDetailsState();
 }
 
-class _TravelPageState extends State<TravelPage> {
+class _TravelPageDetailsState extends State<TravelPageDetails> {
   int selectedImage = 0;
   final storage = const FlutterSecureStorage();
 
@@ -284,9 +284,7 @@ class _TravelPageState extends State<TravelPage> {
                                         }
 
                                         travelsActivities = snapshot.data!;
-                                        print("acttt");
-                                        print(snapshot.data!);
-                                        print(travelsActivities);
+
                                         return ListView.builder(
                                             itemCount: travelsActivities
                                                 .travelActivities.length,
