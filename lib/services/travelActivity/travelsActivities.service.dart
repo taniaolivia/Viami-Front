@@ -26,8 +26,14 @@ class TravelsActivitiesService {
       headers: <String, String>{'Authorization': token},
     );
 
+    print(response);
+    print("body");
+    print(response.body);
+
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
+      print("ress");
+      print(res["travelActivities"]);
 
       return TravelsActivities.fromJson(res);
     } else {
