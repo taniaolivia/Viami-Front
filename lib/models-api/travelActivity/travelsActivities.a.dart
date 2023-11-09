@@ -29,10 +29,10 @@ Map<String?, dynamic> _$TravelActivityToJson(TravelActivity instance) =>
 
 TravelsActivities _$TravelsActivitiesFromJson(Map<String?, dynamic> json) =>
     TravelsActivities(
-      travelActivities: (json['travelsActivities'] as List<dynamic>)
+      travelActivities: (json['travelActivities'] as List<dynamic>)
           .map((e) => TravelActivity.fromJson(e as Map<String?, dynamic>))
           .toList(),
     );
 
 Map<String?, dynamic> _$TravelsActivitiesToJson(TravelsActivities instance) =>
-    <String?, dynamic>{'travelsActivities': instance.travelActivities};
+    <String?, dynamic>{'travelActivities': instance.travelActivities};
