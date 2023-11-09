@@ -133,6 +133,7 @@ class _RecommendationPageState extends State<RecommendationPage> {
                             itemBuilder: (context, index) {
                               var travel = snapshot.data!.travels[index];
                               return RecommandedCrd(
+                                id: travel.id.toString(),
                                 destination: travel.name,
                                 location: travel.location,
                                 imagePath: travel.image,
