@@ -4,7 +4,7 @@ import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/notifications_page.dart';
-import 'package:viami/screens/home.dart';
+import 'package:viami/screens/menus.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
@@ -58,7 +58,8 @@ class _DrawerPageState extends State<DrawerPage> {
               onPressed: () {
                 Navigator.pushNamed(context, "/login");
               },
-            ));
+            ),
+            null);
       });
     }
     return ZoomDrawer(
@@ -89,7 +90,7 @@ class _DrawerPageState extends State<DrawerPage> {
       case MenuItems.settings:
         return const SettingsPage();
       default:
-        return const HomePage();
+        return const MenusPage();
     }
   }
 }
