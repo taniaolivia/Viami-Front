@@ -2,17 +2,20 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/travel/travel.dart';
 
 import '../../models-api/travel/travels.dart';
 
 class RecommendedTravelsService {
-  Future<Travels> getAllRecommendedTravels() async {
+  Future<Travels> getAllRecommendedTravels(String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/recommended-travels'),
+      Uri.parse('${dotenv.env['API_URL']}/recommend/travels'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
     );
     print('Response status: ${response.statusCode}');
     print('Response body: ${response.body}');
+    print("serviceee");
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);

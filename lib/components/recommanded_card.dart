@@ -48,11 +48,20 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Image.asset(
-                      'assets/icon_recommended.png',
-                      width: 32.0,
-                      height: 32.0,
-                    ),
+                    child: GestureDetector(
+                        onTap: () {},
+                        child: Align(
+                            alignment: Alignment.topRight,
+                            child: Container(
+                                margin: const EdgeInsets.all(10),
+                                padding: const EdgeInsets.all(10),
+                                decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(40),
+                                    ),
+                                    color: Color.fromRGBO(0, 0, 0, 0.3)),
+                                child: Icon(Icons.favorite_border_rounded,
+                                    color: Colors.white, size: 15)))),
                   ),
                 ],
               ),
@@ -71,7 +80,7 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
                       style: const TextStyle(
                         color: Color(0xFF0A2753),
                         fontWeight: FontWeight.bold,
-                        fontFamily: "Montserrat",
+                        fontFamily: "Poppins",
                       ),
                       minFontSize: 20,
                       maxFontSize: 22,
@@ -84,11 +93,16 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
                           color: Colors.blue,
                         ),
                         SizedBox(width: 4.0),
-                        Text(
+                        AutoSizeText(
                           '${widget.interestedPeople}',
                           style: const TextStyle(
                             color: Color(0xFF6A778B),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Poppins",
                           ),
+                          minFontSize: 18,
+                          maxFontSize: 20,
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
@@ -102,11 +116,16 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
                       color: Colors.blue,
                     ),
                     SizedBox(width: 4.0),
-                    Text(
+                    AutoSizeText(
                       widget.location,
                       style: const TextStyle(
                         color: Color(0xFF6A778B),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: "Poppins",
                       ),
+                      minFontSize: 18,
+                      maxFontSize: 20,
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),

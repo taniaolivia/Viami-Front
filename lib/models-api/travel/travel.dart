@@ -22,5 +22,5 @@ class Travel {
   final String location;
   final String image;
   final int? nbPepInt;
-  final bool isRecommended;
+  final int isRecommended;
 }
