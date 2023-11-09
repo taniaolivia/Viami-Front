@@ -6,6 +6,7 @@ import 'package:viami/screens/login.dart';
 import 'package:viami/screens/profile_page.dart';
 import 'package:viami/screens/recommandation_page.dart';
 import 'package:viami/screens/register.dart';
+import 'package:viami/screens/searchTravel.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
+          "/search": (context) => const SearchTravelPage(),
           "/travels": (context) => const TravelsPage(),
         });
   }

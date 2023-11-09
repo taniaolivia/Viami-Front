@@ -95,7 +95,8 @@ class _SettingsPage extends State<SettingsPage> {
               onPressed: () {
                 Navigator.pushNamed(context, "/login");
               },
-            ));
+            ),
+            null);
       });
     }
     return Scaffold(
