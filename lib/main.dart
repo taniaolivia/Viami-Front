@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: RecommandationPage(),
+        home: IntroductionPage(),
         initialRoute: "/",
         title: 'Viami',
         debugShowCheckedModeBanner: false,
@@ -45,6 +45,7 @@ class MyApp extends StatelessWidget {
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
+          "/travels": (context) => TravelsPage()
         });
   }
 }
