@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/screens/drawer.dart';
+import 'package:viami/screens/travel_page_details.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
 class TravelsPage extends StatefulWidget {
@@ -60,7 +61,14 @@ class _TravelsPageState extends State<TravelsPage> {
                         return Column(children: [
                           GestureDetector(
                               onTap: () {
-                                // Redirect to travel detail page
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => TravelPageDetails(
+                                        travelId: travel.travels[index].id
+                                            .toString()),
+                                  ),
+                                );
                               },
                               child: Container(
                                   alignment: Alignment.center,
