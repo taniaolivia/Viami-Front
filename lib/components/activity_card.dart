@@ -1,13 +1,16 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
-import '../models/activity.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:viami/models-api/travelActivity/travelsActivities.dart';
 
 class ActivityCard extends StatelessWidget {
-  final Activity activity;
+  final TravelActivity activity;
 
-  const ActivityCard({Key? key, required this.activity}) : super(key: key);
+  const ActivityCard({
+    Key? key,
+    required this.activity,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -31,15 +34,30 @@ class ActivityCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   image: DecorationImage(
                     fit: BoxFit.cover,
-                    image: NetworkImage(activity.image),
+                    image: NetworkImage(
+                        '${dotenv.env['CDN_URL']}/assets/${activity.imageName}'),
                   ),
                 ),
+                child: GestureDetector(
+                    onTap: () {},
+                    child: Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                            margin: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(10),
+                            decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(40),
+                                ),
+                                color: Color.fromRGBO(0, 0, 0, 0.3)),
+                            child: Icon(Icons.favorite_border_rounded,
+                                color: Colors.white, size: 15)))),
               ),
               SizedBox(
                 height: 8.0,
               ),
               AutoSizeText(
-                activity.name,
+                activity.activityName,
                 style: TextStyle(
                   color: Color(0xFF0A2753),
                   fontWeight: FontWeight.bold,
@@ -59,7 +77,7 @@ class ActivityCard extends StatelessWidget {
                     color: Color(0xFF0081CF),
                   ),
                   AutoSizeText(
-                    activity.location,
+                    activity.activityLocation,
                     style: TextStyle(
                         color: Color(0xFF6A778B),
                         fontWeight: FontWeight.normal,
