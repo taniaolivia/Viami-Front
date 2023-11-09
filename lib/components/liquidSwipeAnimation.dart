@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:viami/models/introduction_item.dart';
 
@@ -68,8 +69,8 @@ class _LiquidSwipeAnimationState extends State<LiquidSwipeAnimation> {
                                   widget.data[index].text1!.toUpperCase(),
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
                                   minFontSize: 20,
                                   maxFontSize: 25,
                                 ),
@@ -79,59 +80,33 @@ class _LiquidSwipeAnimationState extends State<LiquidSwipeAnimation> {
                                   textAlign: TextAlign.center,
                                   minFontSize: 10,
                                   maxFontSize: 15,
+                                  style: const TextStyle(color: Colors.white),
                                 )
                               ]))
                     ],
                   ));
             },
             positionSlideIcon: 0.8,
-            slideIconWidget: const Icon(Icons.arrow_back_ios),
+            slideIconWidget:
+                const Icon(Icons.arrow_back_ios, color: Colors.white),
             onPageChangeCallback: pageChangeCallback,
             waveType: WaveType.liquidReveal,
             liquidController: liquidController,
             fullTransitionValue: 880,
             enableSideReveal: true,
             preferDragFromRevealedArea: true,
-            enableLoop: true,
+            enableLoop: false,
             ignoreUserGestureWhileAnimating: true,
           ),
-          liquidController.currentPage != widget.data.length - 2
-              ? Align(
-                  alignment: Alignment.bottomRight,
-                  child: Padding(
-                    padding: const EdgeInsets.all(25.0),
-                    child: TextButton(
-                      onPressed: () {
-                        if (liquidController.currentPage == 0) {
-                          liquidController.jumpToPage(
-                              page: liquidController.currentPage +
-                                  widget.data.length -
-                                  2);
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => widget.redirect),
-                          );
-                        }
-                      },
-                      style: TextButton.styleFrom(
-                          backgroundColor: Colors.white.withOpacity(0.01),
-                          foregroundColor: Colors.black),
-                      child: const AutoSizeText(
-                        "Passer à la fin",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
-                        minFontSize: 9,
-                        maxFontSize: 12,
-                      ),
-                    ),
-                  ),
-                )
-              : Container(),
+          Positioned(
+              bottom: 80,
+              right: 0,
+              child: Image.network(
+                "${dotenv.env['CDN_URL']}/assets/swipe.gif",
+                width: 90,
+              )),
           Align(
-            alignment: Alignment.bottomLeft,
+            alignment: Alignment.bottomRight,
             child: Padding(
               padding: const EdgeInsets.all(25.0),
               child: TextButton(
@@ -151,7 +126,8 @@ class _LiquidSwipeAnimationState extends State<LiquidSwipeAnimation> {
                     foregroundColor: Colors.black),
                 child: const AutoSizeText(
                   "Suivant",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, color: Colors.white),
                   minFontSize: 9,
                   maxFontSize: 12,
                 ),

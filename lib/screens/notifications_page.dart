@@ -44,7 +44,8 @@ class NotificationsPage extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, "/login");
               },
-            ));
+            ),
+            null);
       });
     }
     return Scaffold(

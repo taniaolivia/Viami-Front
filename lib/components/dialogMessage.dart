@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-Future<void> showDialogMessage(
-    BuildContext context, String title, Widget content, Widget button) async {
+Future<void> showDialogMessage(BuildContext context, String title,
+    Widget content, Widget button, Widget? button2) async {
   return showDialog<void>(
     context: context,
     barrierDismissible: false,
@@ -14,7 +14,11 @@ Future<void> showDialogMessage(
             children: <Widget>[content],
           ),
         ),
-        actions: <Widget>[button],
+        actions: <Widget>[
+          Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [button, button2!])
+        ],
       );
     },
   );
