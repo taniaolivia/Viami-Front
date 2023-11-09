@@ -21,19 +21,19 @@ class _IntroductionPageState extends State<IntroductionPage> {
           "Tu ne veux pas voyager seul ?",
           "Par obligation ou par choix",
           0.3,
-          const Color(0xFFFFF3F0)),
+          const Color(0xFF0081CF)),
       IntroductionItem(
           "assets/introduction/intro2.png",
           "Rencontre des voyageurs seuls",
           "Discute et apprends à les connaître",
           0.6,
-          const Color(0xFFDFFCDE)),
+          const Color(0xFF0081CF)),
       IntroductionItem(
           "assets/introduction/intro3.png",
           "Voyage avec de nouveaux amis",
           "Part découvrir le monde avec tes nouveaux amis",
           1.0,
-          const Color(0xFFFFF4E4)),
+          const Color(0xFF0081CF)),
       IntroductionItem("", "", "", 1.0, const Color(0xFF0081CF))
     ];
 

@@ -147,30 +147,51 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                             ),
                                           ],
                                         )),
-                                    TextButton(
-                                        child: const Text("Valider"),
-                                        onPressed: () async {
-                                          if (_formKey.currentState!
-                                              .validate()) {
-                                            var email = emailController.text;
+                                    Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: TextButton(
+                                                child: const Text("Annuler",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFFD42600))),
+                                                onPressed: () async {
+                                                  Navigator.pop(context);
+                                                }))),
+                                    Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: TextButton(
+                                                child: const Text("Valider"),
+                                                onPressed: () async {
+                                                  if (_formKey.currentState!
+                                                      .validate()) {
+                                                    var email =
+                                                        emailController.text;
 
-                                            var user = await UserService()
-                                                .forgetPassword(email);
+                                                    var user =
+                                                        await UserService()
+                                                            .forgetPassword(
+                                                                email);
 
-                                            if (user != null) {
-                                              if (user["message"] ==
-                                                  "Email sent") {
-                                                Navigator.pop(context);
+                                                    if (user != null) {
+                                                      if (user["message"] ==
+                                                          "Email sent") {
+                                                        Navigator.pop(context);
 
-                                                showSnackbar(
-                                                    context,
-                                                    "Un e-mail vous a été envoyé. Veuillez vérifier votre boîte de réception ou le courrier indésirable (spam) pour le trouver.",
-                                                    "D'accord",
-                                                    "");
-                                              }
-                                            }
-                                          }
-                                        }));
+                                                        showSnackbar(
+                                                            context,
+                                                            "Un e-mail vous a été envoyé. Veuillez vérifier votre boîte de réception ou le courrier indésirable (spam) pour le trouver.",
+                                                            "D'accord",
+                                                            "");
+                                                      }
+                                                    }
+                                                  }
+                                                }))));
                               })))
                   : Container(),
               widget.button,

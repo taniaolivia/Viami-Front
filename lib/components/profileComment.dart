@@ -50,7 +50,6 @@ class _ProfileCommentState extends State<ProfileComment> {
             var comment = snapshot.data!;
 
             commenterId = comment.userComments[0].commenterId;
-            print(getUser());
 
             return Column(children: [
               const Align(

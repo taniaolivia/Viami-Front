@@ -34,7 +34,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
     return Scaffold(
       body: GeneralTemplate(
-          imageHeight: 2,
+          contentHeight: 2,
+          imageHeight: 4.5,
           containerHeight: 2,
           image: image,
           content: Column(
