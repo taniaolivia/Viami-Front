@@ -5,7 +5,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/services/travelActivity/travelsActivities.service.dart';
 
-import '../components/activityComponent.dart';
+import '../components/travelComponent.dart';
 import '../components/activity_card.dart';
 import '../models-api/travel/travel.dart';
 import '../models-api/travelActivity/travelsActivities.dart';
@@ -26,9 +26,9 @@ class TravelPageDetails extends StatefulWidget {
 class _TravelPageDetailsState extends State<TravelPageDetails> {
   @override
   Widget build(BuildContext context) {
-    return ActivityComponent(
+    return TravelComponent(
       travelId: widget.travelId,
-      isRecommended: true,
+      isRecommended: false,
     );
   }
 }

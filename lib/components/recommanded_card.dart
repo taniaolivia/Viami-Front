@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+import '../screens/recommended_travel_page_details.dart';
 import '../screens/travel_page_details.dart';
 
 class RecommandedCrd extends StatefulWidget {
@@ -33,7 +34,8 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TravelPageDetails(travelId: widget.id),
+            builder: (context) =>
+                RecommendedTravelPageDetails(travelId: widget.id),
           ),
         );
       },
