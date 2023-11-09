@@ -54,7 +54,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 60, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
                           child: Image.network(
                             "${dotenv.env['CDN_URL']}/assets/viami.gif",
                             width: MediaQuery.of(context).size.width / 3.5,

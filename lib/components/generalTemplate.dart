@@ -50,7 +50,9 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
                         child: Container(
                             width: 40,
                             height: 40,
-                            margin: const EdgeInsets.fromLTRB(20, 40, 0, 0),
+                            margin: MediaQuery.of(context).size.width <= 320
+                                ? const EdgeInsets.fromLTRB(20, 20, 0, 0)
+                                : const EdgeInsets.fromLTRB(20, 40, 0, 0),
                             padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                             decoration: const BoxDecoration(
                                 color: Colors.white,

@@ -233,8 +233,8 @@ class _PhotoListState extends State<PhotoList> {
                                     Container(
                                       margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
                                       width: MediaQuery.of(context).size.width /
-                                          3.6,
-                                      height: 150,
+                                          3.8,
+                                      height: 130,
                                       decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.all(
                                             Radius.circular(15)),
@@ -250,7 +250,7 @@ class _PhotoListState extends State<PhotoList> {
                                     ),
                                     Positioned(
                                       bottom: 0,
-                                      right: 0,
+                                      right: 3,
                                       child: IconButton(
                                         onPressed: () async {
                                           setState(() {
@@ -266,9 +266,9 @@ class _PhotoListState extends State<PhotoList> {
                                         },
                                         icon: images.userImages.length != 0
                                             ? const Icon(Icons.create_rounded,
-                                                color: Colors.white, size: 30)
+                                                color: Colors.white, size: 20)
                                             : const Icon(Icons.add_circle,
-                                                color: Colors.blue, size: 30),
+                                                color: Colors.blue, size: 20),
                                       ),
                                     ),
                                   ],

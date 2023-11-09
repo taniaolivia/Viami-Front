@@ -161,9 +161,13 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                       ])));
                 }
 
-                return const Align(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator());
+                return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 2.3,
+                    padding: const EdgeInsets.fromLTRB(15, 40, 0, 0),
+                    child: const Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator()));
               })
         ])));
   }

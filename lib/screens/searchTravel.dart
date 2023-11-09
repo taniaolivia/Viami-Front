@@ -42,49 +42,52 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
         backgroundColor: Colors.white,
         body: GeneralTemplate(
           image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
-          imageHeight: 1.5,
+          imageHeight: MediaQuery.of(context).size.width <= 320 ? 3 : 1.5,
           content: Column(
             children: [
-              Row(children: [
-                const Icon(
-                  Icons.location_on,
-                  color: Colors.blue,
-                  size: 30.0,
-                ),
-                const SizedBox(width: 20),
-                FutureBuilder<Travels>(
-                    future: getListTravels(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var travel = snapshot.data!;
+              Wrap(children: [
+                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  const Icon(
+                    Icons.location_on,
+                    color: Colors.blue,
+                    size: 30.0,
+                  ),
+                  const SizedBox(width: 20),
+                  FutureBuilder<Travels>(
+                      future: getListTravels(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          var travel = snapshot.data!;
 
-                        for (int i = 0; i < travel.travels.length; i++) {
-                          if (!locationList
-                              .contains(travel.travels[i].location)) {
-                            locationList.add(travel.travels[i].location);
+                          for (int i = 0; i < travel.travels.length; i++) {
+                            if (!locationList
+                                .contains(travel.travels[i].location)) {
+                              locationList.add(travel.travels[i].location);
+                            }
                           }
+
+                          return DropdownMenu<String>(
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            menuHeight: 200,
+                            hintText: "Localisation*",
+                            onSelected: (String? value) {
+                              setState(() {
+                                selectedLocation = value!;
+                              });
+                            },
+                            dropdownMenuEntries: locationList
+                                .map<DropdownMenuEntry<String>>((value) {
+                              return DropdownMenuEntry<String>(
+                                  value: value, label: value);
+                            }).toList(),
+                          );
                         }
 
-                        return DropdownMenu<String>(
-                          width: MediaQuery.of(context).size.width / 1.4,
-                          hintText: "Localisation*",
-                          onSelected: (String? value) {
-                            setState(() {
-                              selectedLocation = value!;
-                            });
-                          },
-                          dropdownMenuEntries: locationList
-                              .map<DropdownMenuEntry<String>>((value) {
-                            return DropdownMenuEntry<String>(
-                                value: value, label: value);
-                          }).toList(),
-                        );
-                      }
-
-                      return const Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator());
-                    })
+                        return const Align(
+                            alignment: Alignment.center,
+                            child: CircularProgressIndicator());
+                      })
+                ]),
               ]),
               const SizedBox(height: 40),
               ElevatedButton(
@@ -120,8 +123,8 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
               const SizedBox(height: 10),
             ],
           ),
-          contentHeight: 1.6,
-          containerHeight: 2.5,
+          contentHeight: MediaQuery.of(context).size.width <= 320 ? 2.2 : 1.6,
+          containerHeight: MediaQuery.of(context).size.width <= 320 ? 1.7 : 2.5,
           title: "Recherche",
           redirect: "/home",
         ));

@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/screens/drawer.dart';
@@ -38,9 +39,10 @@ class _TravelsPageState extends State<TravelsPage> {
         drawer: const DrawerPage(),
         body: GeneralTemplate(
             image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
-            imageHeight: 3.5,
-            contentHeight: 5,
-            containerHeight: 1.25,
+            imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
+            contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.5,
+            containerHeight:
+                MediaQuery.of(context).size.width <= 320 ? 1.4 : 1.3,
             title: "Liste de voyages",
             content: SingleChildScrollView(
                 child: Padding(
@@ -65,8 +67,6 @@ class _TravelsPageState extends State<TravelsPage> {
                               child: Container(
                                   alignment: Alignment.center,
                                   width: MediaQuery.of(context).size.width,
-                                  height:
-                                      MediaQuery.of(context).size.height / 3.1,
                                   padding: const EdgeInsets.all(20),
                                   decoration: BoxDecoration(
                                       borderRadius: const BorderRadius.all(
@@ -93,8 +93,11 @@ class _TravelsPageState extends State<TravelsPage> {
                                         width: MediaQuery.of(context)
                                             .size
                                             .width,
-                                        height:
-                                            MediaQuery.of(context).size.height /
+                                        height: MediaQuery.of(context).size.width <=
+                                                320
+                                            ? MediaQuery.of(context).size.height /
+                                                4
+                                            : MediaQuery.of(context).size.height /
                                                 6,
                                         decoration: BoxDecoration(
                                             borderRadius:
@@ -136,12 +139,10 @@ class _TravelsPageState extends State<TravelsPage> {
                                             child: Align(
                                                 alignment: Alignment.topRight,
                                                 child: Container(
-                                                    margin:
-                                                        const EdgeInsets.all(
-                                                            10),
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            10),
+                                                    margin: const EdgeInsets.all(
+                                                        10),
+                                                    padding: const EdgeInsets.all(
+                                                        10),
                                                     decoration:
                                                         const BoxDecoration(
                                                             borderRadius:
@@ -150,12 +151,8 @@ class _TravelsPageState extends State<TravelsPage> {
                                                               Radius.circular(
                                                                   50),
                                                             ),
-                                                            color:
-                                                                Color.fromRGBO(
-                                                                    0,
-                                                                    0,
-                                                                    0,
-                                                                    0.3)),
+                                                            color: Color.fromRGBO(
+                                                                0, 0, 0, 0.3)),
                                                     child: Icon(
                                                         Icons
                                                             .favorite_border_rounded,
@@ -173,11 +170,14 @@ class _TravelsPageState extends State<TravelsPage> {
                                         children: [
                                           AutoSizeText(
                                               widget.travels != null
-                                                  ? widget.travels!
-                                                      .travels[index].name
-                                                  : travel.travels[index].name,
-                                              minFontSize: 20,
-                                              maxFontSize: 25,
+                                                  ? toBeginningOfSentenceCase(
+                                                      widget.travels!
+                                                          .travels[index].name)!
+                                                  : toBeginningOfSentenceCase(
+                                                      travel.travels[index]
+                                                          .name)!,
+                                              minFontSize: 16,
+                                              maxFontSize: 20,
                                               style: const TextStyle(
                                                   color: Color(0xFF0A2753))),
                                           Row(children: [
@@ -215,8 +215,8 @@ class _TravelsPageState extends State<TravelsPage> {
                                                         : travel.travels[index]
                                                             .nbPepInt
                                                             .toString(),
-                                                    minFontSize: 15,
-                                                    maxFontSize: 20,
+                                                    minFontSize: 12,
+                                                    maxFontSize: 18,
                                                     style: const TextStyle(
                                                         color:
                                                             Color(0xFF0A2753))),
@@ -239,12 +239,16 @@ class _TravelsPageState extends State<TravelsPage> {
                                           ),
                                           AutoSizeText(
                                               widget.travels != null
-                                                  ? widget.travels!
-                                                      .travels[index].location
-                                                  : travel
-                                                      .travels[index].location,
-                                              minFontSize: 15,
-                                              maxFontSize: 20,
+                                                  ? toBeginningOfSentenceCase(
+                                                      widget
+                                                          .travels!
+                                                          .travels[index]
+                                                          .location)!
+                                                  : toBeginningOfSentenceCase(
+                                                      travel.travels[index]
+                                                          .location)!,
+                                              minFontSize: 12,
+                                              maxFontSize: 18,
                                               style: const TextStyle(
                                                   color: Color(0xFF0A2753))),
                                         ])

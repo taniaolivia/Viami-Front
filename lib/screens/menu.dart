@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -33,10 +34,25 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildMenuItem(MenuItem item) => ListTile(
+          selectedTileColor: Colors.white,
+          selected: currentItem == item,
+          minLeadingWidth: 20,
+          leading: Icon(
+            item.icon,
+            size: MediaQuery.of(context).size.width <= 320 ? 20 : 25,
+          ),
+          title: AutoSizeText(item.title,
+              minFontSize: 10,
+              maxFontSize: 14,
+              style: const TextStyle(fontFamily: "Poppins")),
+          onTap: () => onSelectedItem(item),
+        );
+
     return Theme(
         data: ThemeData.dark(),
         child: Scaffold(
-            backgroundColor: Color(0xFF0081CF),
+            backgroundColor: const Color(0xFF0081CF),
             body: FutureBuilder<User>(
               future: getUser(),
               builder: (context, snapshot) {
@@ -71,6 +87,11 @@ class MenuPage extends StatelessWidget {
                                             width: 3.0,
                                           ),
                                         ),
+                                        width:
+                                            MediaQuery.of(context).size.width <=
+                                                    320
+                                                ? 80
+                                                : 100,
                                         child: CircleAvatar(
                                             backgroundImage: user
                                                         .profileImage !=
@@ -79,21 +100,29 @@ class MenuPage extends StatelessWidget {
                                                 : null,
                                             radius: 50.0,
                                             child: user.profileImage == null
-                                                ? const Icon(
+                                                ? Icon(
                                                     Icons.person,
-                                                    size: 70,
+                                                    size: MediaQuery.of(context)
+                                                                .size
+                                                                .width <=
+                                                            320
+                                                        ? 50
+                                                        : 70,
                                                   )
                                                 : null)))),
-                            const SizedBox(height: 10.0),
+                            SizedBox(
+                                height: MediaQuery.of(context).size.width <= 320
+                                    ? 0.0
+                                    : 10.0),
                             Padding(
                               padding:
                                   const EdgeInsets.only(left: 40.0, top: 10.0),
-                              child: Text(
+                              child: AutoSizeText(
                                 toBeginningOfSentenceCase(firstName)!,
+                                minFontSize: 16,
+                                maxFontSize: 19,
                                 style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19.0,
-                                ),
+                                    color: Colors.white, fontFamily: "Poppins"),
                               ),
                             ),
                             const Spacer(),
@@ -112,11 +141,20 @@ class MenuPage extends StatelessWidget {
                                     Navigator.pushNamed(context, '/login');
                                   }
                                 },
-                                icon: const Icon(Icons.logout,
-                                    color: Colors.white),
-                                label: const Text(
+                                icon: Icon(
+                                  Icons.logout,
+                                  color: Colors.white,
+                                  size: MediaQuery.of(context).size.width <= 320
+                                      ? 20
+                                      : 25,
+                                ),
+                                label: const AutoSizeText(
                                   "Se déconnecter",
-                                  style: TextStyle(color: Colors.white),
+                                  minFontSize: 10,
+                                  maxFontSize: 12,
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontFamily: "Poppins"),
                                 ),
                                 style: OutlinedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -136,13 +174,4 @@ class MenuPage extends StatelessWidget {
               },
             )));
   }
-
-  Widget buildMenuItem(MenuItem item) => ListTile(
-        selectedTileColor: Colors.white,
-        selected: currentItem == item,
-        minLeadingWidth: 20,
-        leading: Icon(item.icon),
-        title: Text(item.title),
-        onTap: () => onSelectedItem(item),
-      );
 }
