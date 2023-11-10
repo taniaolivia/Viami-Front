@@ -8,15 +8,15 @@ import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
-class TravelsPage extends StatefulWidget {
-  final Travels? travels;
-  const TravelsPage({Key? key, this.travels}) : super(key: key);
+class AllRecommendedTravelsPage extends StatefulWidget {
+  const AllRecommendedTravelsPage({Key? key}) : super(key: key);
 
   @override
-  State<TravelsPage> createState() => _TravelsPageState();
+  State<AllRecommendedTravelsPage> createState() =>
+      _AllRecommendedTravelsPageState();
 }
 
-class _TravelsPageState extends State<TravelsPage> {
+class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
@@ -24,14 +24,14 @@ class _TravelsPageState extends State<TravelsPage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<Travels> getListTravels() {
-      Future<Travels> getAllTravels() async {
+    Future<Travels> getListPopularTravels() {
+      Future<Travels> getAllPopularTravels() async {
         token = await storage.read(key: "token");
 
-        return TravelsService().getAllTravels(token.toString());
+        return TravelsService().getAllPopularTravels(token.toString());
       }
 
-      return getAllTravels();
+      return getAllPopularTravels();
     }
 
     return Scaffold(
@@ -43,22 +43,20 @@ class _TravelsPageState extends State<TravelsPage> {
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
             containerHeight:
                 MediaQuery.of(context).size.width <= 320 ? 1.4 : 1.3,
-            title: "Liste de voyages",
+            title: "Voyages Populaires",
             content: SingleChildScrollView(
                 child: Padding(
               padding: EdgeInsets.fromLTRB(
                   20, 50, 20, MediaQuery.of(context).size.height / 3.5),
               child: FutureBuilder<Travels>(
-                  future: getListTravels(),
+                  future: getListPopularTravels(),
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var travel = snapshot.data!;
 
                       return Column(
-                          children: List.generate(
-                              widget.travels != null
-                                  ? widget.travels!.travels.length
-                                  : travel.travels.length, (index) {
+                          children:
+                              List.generate(travel.travels.length, (index) {
                         return Column(children: [
                           GestureDetector(
                               onTap: () {
@@ -117,13 +115,9 @@ class _TravelsPageState extends State<TravelsPage> {
                                             ],
                                             image: DecorationImage(
                                                 fit: BoxFit.cover,
-                                                image: widget.travels != null
-                                                    ? NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/${widget.travels!.travels[index].image}",
-                                                      )
-                                                    : NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
-                                                      ))),
+                                                image: NetworkImage(
+                                                  "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
+                                                ))),
                                         child: GestureDetector(
                                             onTap: () {
                                               setState(() {
@@ -169,13 +163,8 @@ class _TravelsPageState extends State<TravelsPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           AutoSizeText(
-                                              widget.travels != null
-                                                  ? toBeginningOfSentenceCase(
-                                                      widget.travels!
-                                                          .travels[index].name)!
-                                                  : toBeginningOfSentenceCase(
-                                                      travel.travels[index]
-                                                          .name)!,
+                                              toBeginningOfSentenceCase(
+                                                  travel.travels[index].name)!,
                                               minFontSize: 16,
                                               maxFontSize: 20,
                                               style: const TextStyle(
@@ -189,37 +178,18 @@ class _TravelsPageState extends State<TravelsPage> {
                                             const SizedBox(
                                               width: 10,
                                             ),
-                                            widget.travels != null
-                                                ? AutoSizeText(
-                                                    widget
-                                                                .travels!
-                                                                .travels[index]
-                                                                .nbPepInt ==
-                                                            null
-                                                        ? 0.toString()
-                                                        : widget
-                                                            .travels!
-                                                            .travels[index]
-                                                            .nbPepInt
-                                                            .toString(),
-                                                    minFontSize: 15,
-                                                    maxFontSize: 20,
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF0A2753)))
-                                                : AutoSizeText(
-                                                    travel.travels[index]
-                                                                .nbPepInt ==
-                                                            null
-                                                        ? 0.toString()
-                                                        : travel.travels[index]
-                                                            .nbPepInt
-                                                            .toString(),
-                                                    minFontSize: 12,
-                                                    maxFontSize: 18,
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF0A2753))),
+                                            AutoSizeText(
+                                                travel.travels[index]
+                                                            .nbPepInt ==
+                                                        null
+                                                    ? 0.toString()
+                                                    : travel
+                                                        .travels[index].nbPepInt
+                                                        .toString(),
+                                                minFontSize: 12,
+                                                maxFontSize: 18,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF0A2753))),
                                           ])
                                         ]),
                                     const SizedBox(
@@ -238,15 +208,8 @@ class _TravelsPageState extends State<TravelsPage> {
                                             width: 10,
                                           ),
                                           AutoSizeText(
-                                              widget.travels != null
-                                                  ? toBeginningOfSentenceCase(
-                                                      widget
-                                                          .travels!
-                                                          .travels[index]
-                                                          .location)!
-                                                  : toBeginningOfSentenceCase(
-                                                      travel.travels[index]
-                                                          .location)!,
+                                              toBeginningOfSentenceCase(travel
+                                                  .travels[index].location)!,
                                               minFontSize: 12,
                                               maxFontSize: 18,
                                               style: const TextStyle(
