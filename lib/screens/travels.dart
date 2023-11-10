@@ -5,9 +5,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/screens/drawer.dart';
+import 'package:viami/screens/travel_page_details.dart';
 import 'package:viami/services/travel/travels.service.dart';
-
-import 'display_trip_details.dart';
 
 class TravelsPage extends StatefulWidget {
   final Travels? travels;
@@ -53,7 +52,6 @@ class _TravelsPageState extends State<TravelsPage> {
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       var travel = snapshot.data!;
-                     
 
                       return Column(
                           children: List.generate(
@@ -66,7 +64,7 @@ class _TravelsPageState extends State<TravelsPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => DisplayTravelPage(
+                                    builder: (context) => TravelPageDetails(
                                         travelId: travel.travels[index].id
                                             .toString()),
                                   ),

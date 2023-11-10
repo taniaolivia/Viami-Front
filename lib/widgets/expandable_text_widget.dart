@@ -1,9 +1,15 @@
+import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
+import '../components/activity_card.dart';
+import '../models/activity.dart';
 
 class ExpandableTextWidget extends StatefulWidget {
   final String? text;
 
-  const ExpandableTextWidget({Key? key, required this.text}) : super(key: key);
+  const ExpandableTextWidget({
+    Key? key,
+    required this.text,
+  }) : super(key: key);
 
   @override
   State<ExpandableTextWidget> createState() => _ExpandableTextWidgetState();
@@ -60,7 +66,11 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
                       )
                     ],
                   ),
-                )
+                ),
+                SizedBox(
+                  height:
+                      10, // Ajoutez un espacement entre le texte et le Swiper
+                ),
               ],
             ),
     );
