@@ -1,16 +1,12 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/services/travelActivity/travelsActivities.service.dart';
-
 import '../components/activity_card.dart';
 import '../models-api/travel/travel.dart';
 import '../models-api/travelActivity/travelsActivities.dart';
-import '../models/activity.dart';
 import '../services/travel/recommendedTravel.service.dart';
 import '../services/travel/travels.service.dart';
 import '../services/travelImage/travelsImages.service.dart';
@@ -186,7 +182,11 @@ class _TravelComponentState extends State<TravelComponent> {
 
                           travel = snapshot.data!;
 
-                          nbPeInt = travel.nbPepInt?.toString() ?? "0";
+                          if (travel.nbPepInt == null) {
+                            nbPeInt = "0";
+                          } else {
+                            nbPeInt = travel.nbPepInt.toString();
+                          }
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +240,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                     icon: Icons.location_on,
                                     text: travel.location,
                                     color: Colors.black,
-                                    iconColor: Color(0xFF0081CF),
+                                    iconColor: const Color(0xFF0081CF),
                                   )
                                 ],
                               ),
@@ -341,7 +341,7 @@ class _TravelComponentState extends State<TravelComponent> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AutoSizeText(
-                          "${nbPeInt} personnes intéressés",
+                          "$nbPeInt personnes intéressées",
                           minFontSize: 11,
                           maxFontSize: 13,
                           style: const TextStyle(
@@ -356,7 +356,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
   Widget buildDot({required int index}) {
     return Container(
-      margin: EdgeInsets.only(right: 5),
+      margin: const EdgeInsets.only(right: 5),
       height: 8,
       width: 8,
       decoration: BoxDecoration(

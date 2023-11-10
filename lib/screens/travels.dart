@@ -66,9 +66,14 @@ class _TravelsPageState extends State<TravelsPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => TravelPageDetails(
-                                        travelId: travel.travels[index].id
-                                            .toString()),
+                                    builder: (context) => widget.travels != null
+                                        ? TravelPageDetails(
+                                            travelId: widget
+                                                .travels!.travels[index].id
+                                                .toString())
+                                        : TravelPageDetails(
+                                            travelId: travel.travels[index].id
+                                                .toString()),
                                   ),
                                 );
                               },
