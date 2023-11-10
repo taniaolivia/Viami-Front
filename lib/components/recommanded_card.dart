@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:viami/components/pageTransition.dart';
 
 import '../screens/recommended_travel_page_details.dart';
 import '../screens/travel_page_details.dart';
@@ -33,9 +34,8 @@ class _RecommandedCrdState extends State<RecommandedCrd> {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) =>
-                RecommendedTravelPageDetails(travelId: widget.id),
+          FadePageRoute(
+            page: RecommendedTravelPageDetails(travelId: widget.id),
           ),
         );
       },

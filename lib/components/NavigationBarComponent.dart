@@ -14,29 +14,29 @@ class CustomCurvedNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final items = <Widget>[
-      const Icon(
+      Icon(
         Icons.search,
-        size: 30,
+        size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
-      const Icon(
+      Icon(
         Icons.star,
-        size: 30,
+        size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
-      const Icon(
+      Icon(
         Icons.home,
-        size: 30,
+        size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
-      const Icon(
+      Icon(
         Icons.message,
-        size: 30,
+        size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
-      const Icon(
+      Icon(
         Icons.person,
-        size: 30,
+        size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
     ];
@@ -48,7 +48,7 @@ class CustomCurvedNavigationBar extends StatelessWidget {
       animationCurve: Curves.bounceInOut,
       animationDuration: const Duration(milliseconds: 300),
       items: items,
-      height: 75,
+      height: MediaQuery.of(context).size.width <= 320 ? 55 : 65,
       index: currentIndex,
       onTap: onTap,
     );

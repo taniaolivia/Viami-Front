@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:viami/components/connectionTemplate.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/screens/completeRegister.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -206,8 +207,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => CompleteRegisterPage(
+                            FadePageRoute(
+                                page: CompleteRegisterPage(
                                     firstName: firstName,
                                     lastName: lastName,
                                     phone: phone,

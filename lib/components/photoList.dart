@@ -202,103 +202,111 @@ class _PhotoListState extends State<PhotoList> {
     return FutureBuilder(
         future: getUserImages(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var images = snapshot.data!;
-            userImagesLength = images.userImages.length;
-
-            return images.userImages.length != 0
-                ? SingleChildScrollView(
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                        Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: List.generate(images.userImages.length,
-                                (index) {
-                              return GestureDetector(
-                                onTap: () async {
-                                  setState(() {
-                                    if (userImagesLength == 3) {
-                                      status = "update";
-                                    } else {
-                                      status = "add";
-                                    }
-                                    clickedImageId =
-                                        images.userImages[index].imageId;
-                                  });
-                                  await showOptionsImages();
-                                },
-                                child: Stack(
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                                      width: MediaQuery.of(context).size.width /
-                                          3.6,
-                                      height: 150,
-                                      decoration: BoxDecoration(
-                                        borderRadius: const BorderRadius.all(
-                                            Radius.circular(15)),
-                                        color: const Color(0xFFD3D3D3),
-                                        image: images.userImages.length != 0
-                                            ? DecorationImage(
-                                                image: FileImage(File(images
-                                                    .userImages[index].image)),
-                                                fit: BoxFit.cover,
-                                              )
-                                            : null,
-                                      ),
-                                    ),
-                                    Positioned(
-                                      bottom: 0,
-                                      right: 0,
-                                      child: IconButton(
-                                        onPressed: () async {
-                                          setState(() {
-                                            if (userImagesLength == 3) {
-                                              status = "update";
-                                            } else {
-                                              status = "add";
-                                            }
-                                            clickedImageId = images
-                                                .userImages[index].imageId;
-                                          });
-                                          await showOptionsImages();
-                                        },
-                                        icon: images.userImages.length != 0
-                                            ? const Icon(Icons.create_rounded,
-                                                color: Colors.white, size: 30)
-                                            : const Icon(Icons.add_circle,
-                                                color: Colors.blue, size: 30),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            })),
-                        userImagesLength! < 3
-                            ? Container(
-                                width: MediaQuery.of(context).size.width / 3.5,
-                                height: 150,
-                                child: IconButton(
-                                    onPressed: () async {
-                                      await showOptions();
-                                    },
-                                    icon: const Icon(Icons.add_circle,
-                                        size: 50, color: Colors.blue)))
-                            : Container()
-                      ]))
-                : Container(
-                    width: MediaQuery.of(context).size.width / 3.6,
-                    height: 150,
-                    child: IconButton(
-                        onPressed: () async {
-                          await showOptions();
-                        },
-                        icon: const Icon(Icons.add_circle,
-                            size: 50, color: Colors.blue)));
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("");
           }
-          return const Align(
-              alignment: Alignment.center, child: CircularProgressIndicator());
+
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
+
+          if (!snapshot.hasData) {
+            return Text('');
+          }
+
+          var images = snapshot.data!;
+          userImagesLength = images.userImages.length;
+
+          return images.userImages.length != 0
+              ? SingleChildScrollView(
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children:
+                              List.generate(images.userImages.length, (index) {
+                            return GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  if (userImagesLength == 3) {
+                                    status = "update";
+                                  } else {
+                                    status = "add";
+                                  }
+                                  clickedImageId =
+                                      images.userImages[index].imageId;
+                                });
+                                await showOptionsImages();
+                              },
+                              child: Stack(
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                                    width:
+                                        MediaQuery.of(context).size.width / 3.8,
+                                    height: 130,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.all(
+                                          Radius.circular(15)),
+                                      color: const Color(0xFFD3D3D3),
+                                      image: images.userImages.length != 0
+                                          ? DecorationImage(
+                                              image: FileImage(File(images
+                                                  .userImages[index].image)),
+                                              fit: BoxFit.cover,
+                                            )
+                                          : null,
+                                    ),
+                                  ),
+                                  Positioned(
+                                    bottom: 0,
+                                    right: 3,
+                                    child: IconButton(
+                                      onPressed: () async {
+                                        setState(() {
+                                          if (userImagesLength == 3) {
+                                            status = "update";
+                                          } else {
+                                            status = "add";
+                                          }
+                                          clickedImageId =
+                                              images.userImages[index].imageId;
+                                        });
+                                        await showOptionsImages();
+                                      },
+                                      icon: images.userImages.length != 0
+                                          ? const Icon(Icons.create_rounded,
+                                              color: Colors.white, size: 20)
+                                          : const Icon(Icons.add_circle,
+                                              color: Colors.blue, size: 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          })),
+                      userImagesLength! < 3
+                          ? Container(
+                              width: MediaQuery.of(context).size.width / 3.5,
+                              height: 150,
+                              child: IconButton(
+                                  onPressed: () async {
+                                    await showOptions();
+                                  },
+                                  icon: const Icon(Icons.add_circle,
+                                      size: 50, color: Colors.blue)))
+                          : Container()
+                    ]))
+              : Container(
+                  width: MediaQuery.of(context).size.width / 3.6,
+                  height: 150,
+                  child: IconButton(
+                      onPressed: () async {
+                        await showOptions();
+                      },
+                      icon: const Icon(Icons.add_circle,
+                          size: 50, color: Colors.blue)));
         });
   }
 }

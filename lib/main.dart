@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:viami/screens/allPopularTravels.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/profile_page.dart';
-import 'package:viami/screens/recommandation_page.dart';
 import 'package:viami/screens/register.dart';
 import 'package:viami/screens/searchTravel.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications_page.dart';
-import 'package:viami/screens/travel_page_details.dart';
 import 'package:viami/screens/travels.dart';
 import 'package:viami/screens/updatePassword.dart';
 
@@ -45,7 +44,9 @@ class MyApp extends StatelessWidget {
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
-          "/travels": (context) => TravelsPage()
+          "/search": (context) => const SearchTravelPage(),
+          "/travels": (context) => const TravelsPage(),
+          "/travels/popular": (context) => const AllPopularTravelsPage()
         });
   }
 }

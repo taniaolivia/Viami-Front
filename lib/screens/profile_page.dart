@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/edit_profile_page.dart';
 import 'package:viami/screens/show_profile_page.dart';
@@ -65,8 +66,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
                 fontFamily: "Poppins"),
-            minFontSize: 18,
-            maxFontSize: 20,
+            minFontSize: 15,
+            maxFontSize: 18,
             textAlign: TextAlign.center,
           ),
           centerTitle: true,
@@ -84,69 +85,72 @@ class _ProfilePageState extends State<ProfilePage> {
             child: FutureBuilder<User>(
                 future: getUser(),
                 builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    var user = snapshot.data!;
-                    return SingleChildScrollView(
-                        child: Container(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
-                            child: Column(
-                              children: <Widget>[
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      DecoratedBox(
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              right: BorderSide(
-                                                  color: Colors.grey),
-                                            ),
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Text("");
+                  }
+
+                  if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  }
+
+                  if (!snapshot.hasData) {
+                    return Text('');
+                  }
+
+                  var user = snapshot.data!;
+                  return SingleChildScrollView(
+                      child: Container(
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
+                          child: Column(
+                            children: <Widget>[
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    DecoratedBox(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            right:
+                                                BorderSide(color: Colors.grey),
                                           ),
-                                          child: Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      25, 10, 25, 10),
-                                              child: AutoSizeText(
-                                                "Modifier",
-                                                minFontSize: 11,
-                                                maxFontSize: 13,
-                                                textAlign: TextAlign.center,
-                                                style: TextStyle(
-                                                    color: currentColor,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ))),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      ShowProfilePage(
-                                                          userId: userId!)));
-                                        },
-                                        child: const Padding(
-                                            padding: EdgeInsets.fromLTRB(
+                                        ),
+                                        child: Padding(
+                                            padding: const EdgeInsets.fromLTRB(
                                                 25, 10, 25, 10),
                                             child: AutoSizeText(
-                                              "Aperçu",
+                                              "Modifier",
                                               minFontSize: 11,
                                               maxFontSize: 13,
                                               textAlign: TextAlign.center,
                                               style: TextStyle(
-                                                  color: Colors.black,
+                                                  color: currentColor,
                                                   fontWeight: FontWeight.bold),
-                                            )),
-                                      )
-                                    ]),
-                                const SizedBox(height: 10),
-                                EditProfilePage(user: user)
-                              ],
-                            )));
-                  }
-
-                  return const Align(
-                      alignment: Alignment.center,
-                      child: CircularProgressIndicator());
+                                            ))),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                            context,
+                                            FadePageRoute(
+                                                page: ShowProfilePage(
+                                                    userId: userId!)));
+                                      },
+                                      child: const Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              25, 10, 25, 10),
+                                          child: AutoSizeText(
+                                            "Aperçu",
+                                            minFontSize: 11,
+                                            maxFontSize: 13,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold),
+                                          )),
+                                    )
+                                  ]),
+                              const SizedBox(height: 10),
+                              EditProfilePage(user: user)
+                            ],
+                          )));
                 })));
   }
 }

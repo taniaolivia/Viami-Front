@@ -52,118 +52,121 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
           FutureBuilder<List<Object>>(
               future: Future.wait([getUser(), getUserImages()]),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  var user = snapshot.data![0] as User;
-                  var images = snapshot.data![1] as UsersImages;
-
-                  return Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height,
-                      child: SingleChildScrollView(
-                          child: Column(children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 2.3,
-                          padding: const EdgeInsets.fromLTRB(15, 40, 0, 0),
-                          decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(30),
-                                  bottomRight: Radius.circular(30)),
-                              image: DecorationImage(
-                                  image: FileImage(
-                                      File(images.userImages[0].image)),
-                                  fit: BoxFit.cover,
-                                  alignment: Alignment.center)),
-                          alignment: Alignment.topLeft,
-                          child: IconButton(
-                              onPressed: () {
-                                Navigator.pushNamed(context, "/home");
-                              },
-                              icon: const Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.black,
-                                size: 25,
-                              )),
-                        ),
-                        Container(
-                            padding: const EdgeInsets.fromLTRB(30, 30, 30, 30),
-                            alignment: Alignment.bottomCenter,
-                            decoration: const BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(20))),
-                            child: SingleChildScrollView(
-                              child: Column(children: [
-                                ProfileData(user: user),
-                                InterestComponent(
-                                    page: "show", userId: widget.userId),
-                                LanguageComponent(
-                                    page: "show", userId: widget.userId),
-                                ProfileComment(user: user),
-                                const Align(
-                                    alignment: Alignment.topLeft,
-                                    child: AutoSizeText(
-                                      "Galerie de photos",
-                                      minFontSize: 11,
-                                      maxFontSize: 13,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontWeight: FontWeight.w600),
-                                    )),
-                                const SizedBox(height: 10),
-                                Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: List.generate(
-                                        images.userImages.length, (index) {
-                                      return Container(
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                4,
-                                        height: 150,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(10)),
-                                            image: DecorationImage(
-                                                image: FileImage(File(images
-                                                    .userImages[index].image)),
-                                                fit: BoxFit.cover,
-                                                alignment: Alignment.center)),
-                                      );
-                                    })),
-                                const SizedBox(height: 30),
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            30, 10, 30, 10),
-                                        backgroundColor: Colors.blue,
-                                        textStyle: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        shape: const RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.all(
-                                                Radius.circular(20)))),
-                                    onPressed: () async {
-                                      Navigator.pushNamed(context, "/profile");
-                                    },
-                                    child: const AutoSizeText(
-                                      "Modifier",
-                                      minFontSize: 11,
-                                      maxFontSize: 13,
-                                      style: TextStyle(
-                                          color: Colors.white,
-                                          fontFamily: "Poppins"),
-                                    )),
-                                const SizedBox(height: 50),
-                              ]),
-                            )),
-                      ])));
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("");
                 }
 
-                return const Align(
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator());
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                if (!snapshot.hasData) {
+                  return Text('');
+                }
+                var user = snapshot.data![0] as User;
+                var images = snapshot.data![1] as UsersImages;
+
+                return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    child: SingleChildScrollView(
+                        child: Column(children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 2.3,
+                        padding: const EdgeInsets.fromLTRB(15, 40, 0, 0),
+                        decoration: BoxDecoration(
+                            borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(30),
+                                bottomRight: Radius.circular(30)),
+                            image: DecorationImage(
+                                image:
+                                    FileImage(File(images.userImages[0].image)),
+                                fit: BoxFit.cover,
+                                alignment: Alignment.center)),
+                        alignment: Alignment.topLeft,
+                        child: IconButton(
+                            onPressed: () {
+                              Navigator.pushNamed(context, "/home");
+                            },
+                            icon: const Icon(
+                              Icons.arrow_back_ios,
+                              color: Colors.black,
+                              size: 25,
+                            )),
+                      ),
+                      Container(
+                          padding: const EdgeInsets.fromLTRB(30, 30, 30, 30),
+                          alignment: Alignment.bottomCenter,
+                          decoration: const BoxDecoration(
+                              color: Colors.white,
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(20))),
+                          child: SingleChildScrollView(
+                            child: Column(children: [
+                              ProfileData(user: user),
+                              InterestComponent(
+                                  page: "show", userId: widget.userId),
+                              LanguageComponent(
+                                  page: "show", userId: widget.userId),
+                              ProfileComment(user: user),
+                              const Align(
+                                  alignment: Alignment.topLeft,
+                                  child: AutoSizeText(
+                                    "Galerie de photos",
+                                    minFontSize: 11,
+                                    maxFontSize: 13,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                              const SizedBox(height: 10),
+                              Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: List.generate(
+                                      images.userImages.length, (index) {
+                                    return Container(
+                                      width:
+                                          MediaQuery.of(context).size.width / 4,
+                                      height: 150,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                              Radius.circular(10)),
+                                          image: DecorationImage(
+                                              image: FileImage(File(images
+                                                  .userImages[index].image)),
+                                              fit: BoxFit.cover,
+                                              alignment: Alignment.center)),
+                                    );
+                                  })),
+                              const SizedBox(height: 30),
+                              ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          30, 10, 30, 10),
+                                      backgroundColor: Colors.blue,
+                                      textStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                      shape: const RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(20)))),
+                                  onPressed: () async {
+                                    Navigator.pushNamed(context, "/profile");
+                                  },
+                                  child: const AutoSizeText(
+                                    "Modifier",
+                                    minFontSize: 11,
+                                    maxFontSize: 13,
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: "Poppins"),
+                                  )),
+                              const SizedBox(height: 50),
+                            ]),
+                          )),
+                    ])));
               })
         ])));
   }

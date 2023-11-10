@@ -1,16 +1,12 @@
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/services/travelActivity/travelsActivities.service.dart';
-
 import '../components/activity_card.dart';
 import '../models-api/travel/travel.dart';
 import '../models-api/travelActivity/travelsActivities.dart';
-import '../models/activity.dart';
 import '../services/travel/recommendedTravel.service.dart';
 import '../services/travel/travels.service.dart';
 import '../services/travelImage/travelsImages.service.dart';
@@ -72,8 +68,17 @@ class _TravelComponentState extends State<TravelComponent> {
   }
 
   Future<void> fetchData() async {
+    final travel = await getListTravelById();
+
+    setState(() {
+      if (travel.nbPepInt == null) {
+        nbPeInt = "0";
+      } else {
+        nbPeInt = travel.nbPepInt.toString();
+      }
+    });
+
     await getTravelImages();
-    await getListTravelById();
   }
 
   @override
@@ -177,16 +182,14 @@ class _TravelComponentState extends State<TravelComponent> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return const Text('');
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (!snapshot.hasData) {
-                            return const Text('No travel details available.');
+                            return const Text('');
                           }
 
                           travel = snapshot.data!;
-
-                          nbPeInt = travel.nbPepInt?.toString() ?? "0";
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -266,7 +269,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                 text: travel.description,
                               ),
                               const SizedBox(
-                                height: 20,
+                                height: 30,
                               ),
                               Row(
                                 children: const [
@@ -275,7 +278,6 @@ class _TravelComponentState extends State<TravelComponent> {
                                     style: TextStyle(
                                       color: Color(0xFF0A2753),
                                       fontWeight: FontWeight.bold,
-                                      fontFamily: "Montserrat",
                                     ),
                                     minFontSize: 25,
                                     maxFontSize: 28,
@@ -284,19 +286,18 @@ class _TravelComponentState extends State<TravelComponent> {
                                 ],
                               ),
                               Container(
-                                  height: 350,
+                                  height: 250,
                                   child: FutureBuilder<TravelsActivities>(
                                       future: getTravelActivities(),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
+                                          return const Text('');
                                         } else if (snapshot.hasError) {
                                           return Text(
                                               'Error: ${snapshot.error}');
                                         } else if (!snapshot.hasData) {
-                                          return const Text(
-                                              'No travel details available.');
+                                          return const Text('');
                                         }
 
                                         travelsActivities = snapshot.data!;
@@ -320,6 +321,9 @@ class _TravelComponentState extends State<TravelComponent> {
                                               );
                                             });
                                       })),
+                              const SizedBox(
+                                height: 70,
+                              ),
                             ],
                           );
                         })),
@@ -341,7 +345,7 @@ class _TravelComponentState extends State<TravelComponent> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AutoSizeText(
-                          "${nbPeInt} personnes intéressés",
+                          "$nbPeInt personnes intéressés",
                           minFontSize: 11,
                           maxFontSize: 13,
                           style: const TextStyle(

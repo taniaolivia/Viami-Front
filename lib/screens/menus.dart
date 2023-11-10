@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/NavigationBarComponent.dart';
 import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
@@ -107,34 +108,39 @@ class _MenusPageState extends State<MenusPage> {
                   child: FutureBuilder<User>(
                       future: getUser(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var user = snapshot.data!;
-
-                          userProfile = user.profileImage;
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image.network(
-                                '${dotenv.env['CDN_URL']}/assets/location.png',
-                                width: 20.0,
-                                height: 20.0,
-                                color: const Color(0xFF0081CF),
-                              ),
-                              const SizedBox(width: 8.0),
-                              AutoSizeText(
-                                user.location.split(',')[0],
-                                minFontSize: 11,
-                                maxFontSize: 13,
-                                style:
-                                    const TextStyle(color: Color(0xFF000000)),
-                              ),
-                            ],
-                          );
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Text("");
                         }
 
-                        return const Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator());
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+
+                        if (!snapshot.hasData) {
+                          return Text('');
+                        }
+                        var user = snapshot.data!;
+
+                        userProfile = user.profileImage;
+                        return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.network(
+                              '${dotenv.env['CDN_URL']}/assets/location.png',
+                              width: 20.0,
+                              height: 20.0,
+                              color: const Color(0xFF0081CF),
+                            ),
+                            const SizedBox(width: 8.0),
+                            AutoSizeText(
+                              user.location.split(',')[0],
+                              minFontSize: 11,
+                              maxFontSize: 13,
+                              style: const TextStyle(color: Color(0xFF000000)),
+                            ),
+                          ],
+                        );
                       })),
               iconTheme: const IconThemeData(color: Color(0xFF6D7D95)),
               actions: [
@@ -154,9 +160,8 @@ class _MenusPageState extends State<MenusPage> {
                         onTap: () {
                           Navigator.push(
                               context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      ShowProfilePage(userId: userId!)));
+                              FadePageRoute(
+                                  page: ShowProfilePage(userId: userId!)));
                         },
                         child: CircleAvatar(
                             backgroundImage: userProfile != null
@@ -172,20 +177,15 @@ class _MenusPageState extends State<MenusPage> {
             )
           : null,
       body: PageView(
-        controller: _pageController,
-        children: [
-          const SearchTravelPage(),
-          RecommendationPage(),
-          const HomePage(),
-          MessagePage(),
-          ShowProfilePage(userId: userId!),
-        ],
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            const SearchTravelPage(),
+            VipPage(),
+            const HomePage(),
+            MessagePage(),
+            ShowProfilePage(userId: userId!),
+          ]),
       drawer: const DrawerPage(),
       bottomNavigationBar: CustomCurvedNavigationBar(
         currentIndex: _currentIndex,

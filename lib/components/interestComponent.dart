@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/interestList.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/userInterest/usersInterests.dart';
 import 'package:viami/services/userInterest/usersInterests.service.dart';
 
@@ -20,22 +21,30 @@ class _InterestComponentState extends State<InterestComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
+  String? userId = "";
+
   int? userInterestsLength = 0;
   List<UserInterest>? userInterests = [];
 
-  @override
-  Widget build(BuildContext context) {
-    Future<UsersInterests> getUserInterests() {
-      Future<UsersInterests> getAllInterests() async {
-        token = await storage.read(key: "token");
+  Future<UsersInterests> getUserInterests() {
+    Future<UsersInterests> getAllInterests() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
 
-        return UsersInterestsService()
-            .getUserInterestsById(widget.userId, token.toString());
-      }
-
-      return getAllInterests();
+      return UsersInterestsService()
+          .getUserInterestsById(userId!, token.toString());
     }
 
+    return getAllInterests();
+  }
+
+  void initState() {
+    getUserInterests();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -54,8 +63,7 @@ class _InterestComponentState extends State<InterestComponent> {
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const InterestList()),
+                      FadePageRoute(page: const InterestList()),
                     );
                   },
                   child: Container(
@@ -77,8 +85,7 @@ class _InterestComponentState extends State<InterestComponent> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const InterestList()),
+                    FadePageRoute(page: const InterestList()),
                   );
                 },
                 child: Container(
@@ -91,45 +98,51 @@ class _InterestComponentState extends State<InterestComponent> {
                     child: FutureBuilder<UsersInterests>(
                         future: getUserInterests(),
                         builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            var data = snapshot.data!;
-
-                            userInterestsLength = data.userInterests.length;
-                            userInterests = data.userInterests;
-
-                            return Wrap(
-                                alignment: WrapAlignment.start,
-                                spacing: 0.0,
-                                runSpacing: 0.0,
-                                children: List.generate(
-                                    data.userInterests.length, (index) {
-                                  return Container(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          20, 10, 20, 10),
-                                      constraints: const BoxConstraints(
-                                          maxWidth: double.infinity),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        border: Border.all(
-                                            color: const Color(0xFF0081CF)),
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
-                                      child: AutoSizeText(
-                                        data.userInterests[index].interest,
-                                        style: const TextStyle(
-                                          color: Color(0xFF0081CF),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        minFontSize: 10,
-                                        maxFontSize: 12,
-                                      ));
-                                }).toList());
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Text("");
                           }
 
-                          return const Align(
-                              alignment: Alignment.center,
-                              child: CircularProgressIndicator());
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+
+                          if (!snapshot.hasData) {
+                            return Text('');
+                          }
+
+                          var data = snapshot.data!;
+
+                          userInterestsLength = data.userInterests.length;
+                          userInterests = data.userInterests;
+
+                          return Wrap(
+                              alignment: WrapAlignment.start,
+                              spacing: 0.0,
+                              runSpacing: 0.0,
+                              children: List.generate(data.userInterests.length,
+                                  (index) {
+                                return Container(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
+                                    constraints: const BoxConstraints(
+                                        maxWidth: double.infinity),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: const Color(0xFF0081CF)),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: AutoSizeText(
+                                      data.userInterests[index].interest,
+                                      style: const TextStyle(
+                                        color: Color(0xFF0081CF),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      minFontSize: 10,
+                                      maxFontSize: 12,
+                                    ));
+                              }).toList());
                         })))
             : Container(
                 width: MediaQuery.of(context).size.width,
@@ -138,44 +151,49 @@ class _InterestComponentState extends State<InterestComponent> {
                 child: FutureBuilder<UsersInterests>(
                     future: getUserInterests(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var data = snapshot.data!;
-
-                        userInterestsLength = data.userInterests.length;
-                        userInterests = data.userInterests;
-
-                        return Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: 0.0,
-                            runSpacing: 0.0,
-                            children: List.generate(data.userInterests.length,
-                                (index) {
-                              return Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                  constraints: const BoxConstraints(
-                                      maxWidth: double.infinity),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: const Color(0xFF0081CF)),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: AutoSizeText(
-                                    data.userInterests[index].interest,
-                                    style: const TextStyle(
-                                      color: Color(0xFF0081CF),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    minFontSize: 10,
-                                    maxFontSize: 12,
-                                  ));
-                            }).toList());
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text("");
                       }
 
-                      return const Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator());
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+
+                      if (!snapshot.hasData) {
+                        return Text('');
+                      }
+                      var data = snapshot.data!;
+
+                      userInterestsLength = data.userInterests.length;
+                      userInterests = data.userInterests;
+
+                      return Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: 0.0,
+                          runSpacing: 0.0,
+                          children:
+                              List.generate(data.userInterests.length, (index) {
+                            return Container(
+                                padding:
+                                    const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                constraints: const BoxConstraints(
+                                    maxWidth: double.infinity),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      color: const Color(0xFF0081CF)),
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: AutoSizeText(
+                                  data.userInterests[index].interest,
+                                  style: const TextStyle(
+                                    color: Color(0xFF0081CF),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  minFontSize: 10,
+                                  maxFontSize: 12,
+                                ));
+                          }).toList());
                     })),
         const SizedBox(height: 30),
       ],

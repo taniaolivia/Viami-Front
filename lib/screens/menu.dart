@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -5,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:viami/screens/show_profile_page.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import '../components/pageTransition.dart';
 import '../models-api/user/user.dart';
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
@@ -33,116 +35,149 @@ class MenuPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget buildMenuItem(MenuItem item) => ListTile(
+          selectedTileColor: Colors.white,
+          selected: currentItem == item,
+          minLeadingWidth: 20,
+          leading: Icon(
+            item.icon,
+            size: MediaQuery.of(context).size.width <= 320 ? 20 : 25,
+          ),
+          title: AutoSizeText(item.title,
+              minFontSize: 10,
+              maxFontSize: 14,
+              style: const TextStyle(fontFamily: "Poppins")),
+          onTap: () => onSelectedItem(item),
+        );
+
     return Theme(
         data: ThemeData.dark(),
         child: Scaffold(
-            backgroundColor: Color(0xFF0081CF),
+            backgroundColor: const Color(0xFF0081CF),
             body: FutureBuilder<User>(
               future: getUser(),
               builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  var user = snapshot.data!;
-                  var firstName = user.firstName;
-                  var idUser = user.id;
-
-                  return Stack(children: [
-                    // Menu Content
-                    SafeArea(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            const Spacer(),
-                            Padding(
-                                padding: const EdgeInsets.only(left: 16.0),
-                                child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  ShowProfilePage(
-                                                      userId: userId!)));
-                                    },
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          border: Border.all(
-                                            color: const Color(0xFFFFFFFF),
-                                            width: 3.0,
-                                          ),
-                                        ),
-                                        child: CircleAvatar(
-                                            backgroundImage: user
-                                                        .profileImage !=
-                                                    null
-                                                ? AssetImage(user.profileImage!)
-                                                : null,
-                                            radius: 50.0,
-                                            child: user.profileImage == null
-                                                ? const Icon(
-                                                    Icons.person,
-                                                    size: 70,
-                                                  )
-                                                : null)))),
-                            const SizedBox(height: 10.0),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(left: 40.0, top: 10.0),
-                              child: Text(
-                                toBeginningOfSentenceCase(firstName)!,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 19.0,
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                            ...MenuItems.all.map(buildMenuItem).toList(),
-                            const Spacer(flex: 2),
-                            const Spacer(),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: OutlinedButton.icon(
-                                onPressed: () async {
-                                  //change id after with get id by provider when connect user  is done
-                                  bool logoutSuccess =
-                                      await AuthService().logout(idUser);
-                                  if (logoutSuccess) {
-                                    Navigator.pushNamed(context, '/login');
-                                  }
-                                },
-                                icon: const Icon(Icons.logout,
-                                    color: Colors.white),
-                                label: const Text(
-                                  "Se déconnecter",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                  side: const BorderSide(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                            const Spacer(),
-                          ]),
-                    ),
-                  ]);
-                } else {
-                  return const CircularProgressIndicator();
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("");
                 }
+
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                if (!snapshot.hasData) {
+                  return Text('');
+                }
+
+                var user = snapshot.data!;
+                var firstName = user.firstName;
+                var idUser = user.id;
+
+                return Stack(children: [
+                  // Menu Content
+                  SafeArea(
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          const Spacer(),
+                          Padding(
+                              padding: const EdgeInsets.only(left: 16.0),
+                              child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        FadePageRoute(
+                                            page: ShowProfilePage(
+                                                userId: userId!)));
+                                  },
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: const Color(0xFFFFFFFF),
+                                          width: 3.0,
+                                        ),
+                                      ),
+                                      width:
+                                          MediaQuery.of(context).size.width <=
+                                                  320
+                                              ? 80
+                                              : 100,
+                                      child: CircleAvatar(
+                                          backgroundImage: user.profileImage !=
+                                                  null
+                                              ? AssetImage(user.profileImage!)
+                                              : null,
+                                          radius: 50.0,
+                                          child: user.profileImage == null
+                                              ? Icon(
+                                                  Icons.person,
+                                                  size: MediaQuery.of(context)
+                                                              .size
+                                                              .width <=
+                                                          320
+                                                      ? 50
+                                                      : 70,
+                                                )
+                                              : null)))),
+                          SizedBox(
+                              height: MediaQuery.of(context).size.width <= 320
+                                  ? 0.0
+                                  : 10.0),
+                          Padding(
+                            padding:
+                                const EdgeInsets.only(left: 40.0, top: 10.0),
+                            child: AutoSizeText(
+                              toBeginningOfSentenceCase(firstName)!,
+                              minFontSize: 16,
+                              maxFontSize: 19,
+                              style: const TextStyle(
+                                  color: Colors.white, fontFamily: "Poppins"),
+                            ),
+                          ),
+                          const Spacer(),
+                          ...MenuItems.all.map(buildMenuItem).toList(),
+                          const Spacer(flex: 2),
+                          const Spacer(),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            child: OutlinedButton.icon(
+                              onPressed: () async {
+                                //change id after with get id by provider when connect user  is done
+                                bool logoutSuccess =
+                                    await AuthService().logout(idUser);
+                                if (logoutSuccess) {
+                                  Navigator.pushNamed(context, '/login');
+                                }
+                              },
+                              icon: Icon(
+                                Icons.logout,
+                                color: Colors.white,
+                                size: MediaQuery.of(context).size.width <= 320
+                                    ? 20
+                                    : 25,
+                              ),
+                              label: const AutoSizeText(
+                                "Se déconnecter",
+                                minFontSize: 10,
+                                maxFontSize: 12,
+                                style: TextStyle(
+                                    color: Colors.white, fontFamily: "Poppins"),
+                              ),
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                ),
+                                side: const BorderSide(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                        ]),
+                  ),
+                ]);
               },
             )));
   }
-
-  Widget buildMenuItem(MenuItem item) => ListTile(
-        selectedTileColor: Colors.white,
-        selected: currentItem == item,
-        minLeadingWidth: 20,
-        leading: Icon(item.icon),
-        title: Text(item.title),
-        onTap: () => onSelectedItem(item),
-      );
 }

@@ -73,30 +73,37 @@ class _EditProfilePageState extends State<EditProfilePage> {
         FutureBuilder(
             future: getUser(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var user = snapshot.data!;
-
-                aboutMeController.text =
-                    toBeginningOfSentenceCase(user.description)!;
-
-                return Form(
-                    key: _formKey,
-                    child: TextFormField(
-                        textCapitalization: TextCapitalization.sentences,
-                        maxLength: 500,
-                        controller: aboutMeController,
-                        decoration: const InputDecoration(
-                          filled: true,
-                          fillColor: Color(0xFFF4F4F4),
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                          labelStyle: TextStyle(fontSize: 12),
-                        ),
-                        maxLines: null));
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text("");
               }
-              return const Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator());
+
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (!snapshot.hasData) {
+                return Text('');
+              }
+
+              var user = snapshot.data!;
+
+              aboutMeController.text =
+                  toBeginningOfSentenceCase(user.description)!;
+
+              return Form(
+                  key: _formKey,
+                  child: TextFormField(
+                      textCapitalization: TextCapitalization.sentences,
+                      maxLength: 500,
+                      controller: aboutMeController,
+                      decoration: const InputDecoration(
+                        filled: true,
+                        fillColor: Color(0xFFF4F4F4),
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                        labelStyle: TextStyle(fontSize: 12),
+                      ),
+                      maxLines: null));
             }),
         const SizedBox(height: 30),
         InterestComponent(page: "edit", userId: userId!),
