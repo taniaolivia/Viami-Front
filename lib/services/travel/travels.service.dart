@@ -38,6 +38,23 @@ class TravelsService {
     }
   }
 
+  Future<Travels> getAllPopularTravels(String token) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/popular/travels'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return Travels.fromJson(res);
+    } else {
+      throw Exception('Failed to load travels');
+    }
+  }
+
   Future<Travels> getFivePopularTravels(String token) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/popularFive/travels'),

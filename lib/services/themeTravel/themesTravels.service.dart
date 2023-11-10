@@ -21,4 +21,21 @@ class ThemesTravelsService {
       throw Exception('Failed to load travels');
     }
   }
+
+  Future<ThemesTravels> getAllTravelsByTheme(String token, int themeId) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/themes/$themeId/travels'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return ThemesTravels.fromJson(res);
+    } else {
+      throw Exception('Failed to load travels');
+    }
+  }
 }
