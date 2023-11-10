@@ -7,6 +7,7 @@ import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
 import 'package:viami/screens/home.dart';
+import 'package:viami/screens/recommandation_page.dart';
 import 'package:viami/screens/show_profile_page.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
