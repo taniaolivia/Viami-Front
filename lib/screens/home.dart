@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
@@ -40,6 +40,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    getUser();
   }
 
   @override
@@ -67,26 +68,33 @@ class _HomePageState extends State<HomePage> {
         FutureBuilder<User>(
             future: getUser(),
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                var user = snapshot.data!;
-
-                return Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
-                    child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: AutoSizeText(
-                          "Salut ${toBeginningOfSentenceCase(user.firstName)},",
-                          minFontSize: 15,
-                          maxFontSize: 18,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                              color: Color(0xFF39414B),
-                              fontWeight: FontWeight.w300),
-                        )));
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Text("");
               }
-              return const Align(
-                  alignment: Alignment.center,
-                  child: CircularProgressIndicator());
+
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (!snapshot.hasData) {
+                return Text('');
+              }
+
+              var user = snapshot.data!;
+
+              return Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AutoSizeText(
+                        "Salut ${toBeginningOfSentenceCase(user.firstName)},",
+                        minFontSize: 15,
+                        maxFontSize: 18,
+                        textAlign: TextAlign.left,
+                        style: const TextStyle(
+                            color: Color(0xFF39414B),
+                            fontWeight: FontWeight.w300),
+                      )));
             }),
         const Padding(
             padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
