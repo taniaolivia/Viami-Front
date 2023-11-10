@@ -164,8 +164,8 @@ class _PopularThemePageState extends State<PopularThemePage> {
                 itemCount: clicked == "popular"
                     ? travel.travels.length
                     : themeTravelImage.length,
-                itemWidth: MediaQuery.of(context).size.width / 1.2,
-                itemHeight: MediaQuery.of(context).size.height / 2.8,
+                itemWidth: MediaQuery.of(context).size.width,
+                itemHeight: MediaQuery.of(context).size.height / 2.9,
                 layout: SwiperLayout.TINDER,
                 pagination: SwiperPagination(
                     builder: const DotSwiperPaginationBuilder(
@@ -174,7 +174,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                         activeSize: 15.0),
                     alignment: Alignment.center,
                     margin: EdgeInsets.fromLTRB(
-                        0, MediaQuery.of(context).size.height / 2.6, 0, 0)),
+                        0, MediaQuery.of(context).size.height / 2.7, 0, 0)),
               ),
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
