@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/screens/popularTheme.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
@@ -56,6 +57,11 @@ class _HomePageState extends State<HomePage> {
             null);
       });
     }
-    return Scaffold(backgroundColor: Colors.white, body: Container());
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: SingleChildScrollView(
+          child: Column(children: const [PopularThemePage()])),
+    );
   }
 }
