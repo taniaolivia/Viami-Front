@@ -171,20 +171,15 @@ class _MenusPageState extends State<MenusPage> {
             )
           : null,
       body: PageView(
-        controller: _pageController,
-        children: [
-          const SearchTravelPage(),
-          VipPage(),
-          const HomePage(),
-          MessagePage(),
-          ShowProfilePage(userId: userId!),
-        ],
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-      ),
+          controller: _pageController,
+          physics: const NeverScrollableScrollPhysics(),
+          children: [
+            const SearchTravelPage(),
+            VipPage(),
+            const HomePage(),
+            MessagePage(),
+            ShowProfilePage(userId: userId!),
+          ]),
       drawer: const DrawerPage(),
       bottomNavigationBar: CustomCurvedNavigationBar(
         currentIndex: _currentIndex,
