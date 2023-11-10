@@ -56,36 +56,43 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                   FutureBuilder<Travels>(
                       future: getListTravels(),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var travel = snapshot.data!;
-
-                          for (int i = 0; i < travel.travels.length; i++) {
-                            if (!locationList
-                                .contains(travel.travels[i].location)) {
-                              locationList.add(travel.travels[i].location);
-                            }
-                          }
-
-                          return DropdownMenu<String>(
-                            width: MediaQuery.of(context).size.width / 1.5,
-                            menuHeight: 200,
-                            hintText: "Localisation*",
-                            onSelected: (String? value) {
-                              setState(() {
-                                selectedLocation = value!;
-                              });
-                            },
-                            dropdownMenuEntries: locationList
-                                .map<DropdownMenuEntry<String>>((value) {
-                              return DropdownMenuEntry<String>(
-                                  value: value, label: value);
-                            }).toList(),
-                          );
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          //return Text("");
                         }
 
-                        return const Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator());
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+
+                        if (!snapshot.hasData) {
+                          return Text('');
+                        }
+
+                        var travel = snapshot.data!;
+
+                        for (int i = 0; i < travel.travels.length; i++) {
+                          if (!locationList
+                              .contains(travel.travels[i].location)) {
+                            locationList.add(travel.travels[i].location);
+                          }
+                        }
+
+                        return DropdownMenu<String>(
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          menuHeight: 200,
+                          hintText: "Localisation*",
+                          onSelected: (String? value) {
+                            setState(() {
+                              selectedLocation = value!;
+                            });
+                          },
+                          dropdownMenuEntries: locationList
+                              .map<DropdownMenuEntry<String>>((value) {
+                            return DropdownMenuEntry<String>(
+                                value: value, label: value);
+                          }).toList(),
+                        );
                       })
                 ]),
               ]),
