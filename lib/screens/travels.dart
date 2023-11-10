@@ -4,6 +4,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/travel_page_details.dart';
@@ -23,18 +24,24 @@ class _TravelsPageState extends State<TravelsPage> {
   String? token = "";
   List likedList = [];
 
-  @override
-  Widget build(BuildContext context) {
-    Future<Travels> getListTravels() {
-      Future<Travels> getAllTravels() async {
-        token = await storage.read(key: "token");
+  Future<Travels> getListTravels() {
+    Future<Travels> getAllTravels() async {
+      token = await storage.read(key: "token");
 
-        return TravelsService().getAllTravels(token.toString());
-      }
-
-      return getAllTravels();
+      return TravelsService().getAllTravels(token.toString());
     }
 
+    return getAllTravels();
+  }
+
+  @override
+  void initState() {
+    getListTravels();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
@@ -52,230 +59,228 @@ class _TravelsPageState extends State<TravelsPage> {
               child: FutureBuilder<Travels>(
                   future: getListTravels(),
                   builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      var travel = snapshot.data!;
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("");
+                    }
 
-                      return Column(
-                          children: List.generate(
-                              widget.travels != null
-                                  ? widget.travels!.travels.length
-                                  : travel.travels.length, (index) {
-                        return Column(children: [
-                          GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => widget.travels != null
-                                        ? TravelPageDetails(
-                                            travelId: widget
-                                                .travels!.travels[index].id
-                                                .toString())
-                                        : TravelPageDetails(
-                                            travelId: travel.travels[index].id
-                                                .toString()),
-                                  ),
-                                );
-                              },
-                              child: Container(
-                                  alignment: Alignment.center,
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: const EdgeInsets.all(20),
-                                  decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                        Radius.circular(20),
-                                      ),
-                                      border: Border.all(
-                                        width: 2,
-                                        color: const Color(0xFFDADADA),
-                                      ),
-                                      color: const Color(0xFFEDEEEF),
-                                      boxShadow: const [
-                                        BoxShadow(
-                                          color: Colors.grey,
-                                          blurRadius: 10.0,
-                                          spreadRadius: 3.0,
-                                          offset: Offset(
-                                            5.0,
-                                            5.0,
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (!snapshot.hasData) {
+                      return Text("");
+                    }
+
+                    var travel = snapshot.data!;
+
+                    return Column(
+                        children: List.generate(
+                            widget.travels != null
+                                ? widget.travels!.travels.length
+                                : travel.travels.length, (index) {
+                      return Column(children: [
+                        GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                FadePageRoute(
+                                  page: widget.travels != null
+                                      ? TravelPageDetails(
+                                          travelId: widget
+                                              .travels!.travels[index].id
+                                              .toString())
+                                      : TravelPageDetails(
+                                          travelId: travel.travels[index].id
+                                              .toString()),
+                                ),
+                              );
+                            },
+                            child: Container(
+                                alignment: Alignment.center,
+                                width: MediaQuery.of(context).size.width,
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                    borderRadius: const BorderRadius.all(
+                                      Radius.circular(20),
+                                    ),
+                                    border: Border.all(
+                                      width: 2,
+                                      color: const Color(0xFFDADADA),
+                                    ),
+                                    color: const Color(0xFFEDEEEF),
+                                    boxShadow: const [
+                                      BoxShadow(
+                                        color: Colors.grey,
+                                        blurRadius: 10.0,
+                                        spreadRadius: 3.0,
+                                        offset: Offset(
+                                          5.0,
+                                          5.0,
+                                        ),
+                                      )
+                                    ]),
+                                child: Column(children: [
+                                  Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: MediaQuery.of(context).size.width <=
+                                              320
+                                          ? MediaQuery.of(context).size.height /
+                                              4
+                                          : MediaQuery.of(context).size.height /
+                                              6,
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.all(
+                                            Radius.circular(10),
                                           ),
-                                        )
-                                      ]),
-                                  child: Column(children: [
-                                    Container(
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width,
-                                        height: MediaQuery.of(context).size.width <=
-                                                320
-                                            ? MediaQuery.of(context).size.height /
-                                                4
-                                            : MediaQuery.of(context).size.height /
-                                                6,
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(10),
-                                            ),
-                                            boxShadow: const [
-                                              BoxShadow(
-                                                color: Colors.grey,
-                                                blurRadius: 10.0,
-                                                spreadRadius: 0.0,
-                                                offset: Offset(
-                                                  5.0,
-                                                  5.0,
-                                                ),
-                                              )
-                                            ],
-                                            image: DecorationImage(
-                                                fit: BoxFit.cover,
-                                                image: widget.travels != null
-                                                    ? NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/${widget.travels!.travels[index].image}",
-                                                      )
-                                                    : NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
-                                                      ))),
-                                        child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                if (likedList.contains(index)) {
-                                                  likedList.removeWhere(
-                                                      (element) =>
-                                                          element == index);
-                                                } else {
-                                                  likedList.add(index);
-                                                }
-                                              });
-                                            },
-                                            child: Align(
-                                                alignment: Alignment.topRight,
-                                                child: Container(
-                                                    margin: const EdgeInsets.all(
-                                                        10),
-                                                    padding: const EdgeInsets.all(
-                                                        10),
-                                                    decoration:
-                                                        const BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .all(
-                                                              Radius.circular(
-                                                                  50),
-                                                            ),
-                                                            color: Color.fromRGBO(
-                                                                0, 0, 0, 0.3)),
-                                                    child: Icon(
-                                                        Icons
-                                                            .favorite_border_rounded,
-                                                        color: likedList
-                                                                .contains(index)
-                                                            ? Colors.pink
-                                                            : Colors.white,
-                                                        size: 20))))),
-                                    const SizedBox(
-                                      height: 25,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          AutoSizeText(
-                                              widget.travels != null
-                                                  ? toBeginningOfSentenceCase(
-                                                      widget.travels!
-                                                          .travels[index].name)!
-                                                  : toBeginningOfSentenceCase(
-                                                      travel.travels[index]
-                                                          .name)!,
-                                              minFontSize: 16,
-                                              maxFontSize: 20,
-                                              style: const TextStyle(
-                                                  color: Color(0xFF0A2753))),
-                                          Row(children: [
-                                            const Icon(
-                                              Icons.people_alt,
-                                              size: 20,
-                                              color: Color(0xFF0081CF),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
+                                          boxShadow: const [
+                                            BoxShadow(
+                                              color: Colors.grey,
+                                              blurRadius: 10.0,
+                                              spreadRadius: 0.0,
+                                              offset: Offset(
+                                                5.0,
+                                                5.0,
+                                              ),
+                                            )
+                                          ],
+                                          image: DecorationImage(
+                                              fit: BoxFit.cover,
+                                              image: widget.travels != null
+                                                  ? NetworkImage(
+                                                      "${dotenv.env['CDN_URL']}/assets/${widget.travels!.travels[index].image}",
+                                                    )
+                                                  : NetworkImage(
+                                                      "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
+                                                    ))),
+                                      child: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              if (likedList.contains(index)) {
+                                                likedList.removeWhere(
+                                                    (element) =>
+                                                        element == index);
+                                              } else {
+                                                likedList.add(index);
+                                              }
+                                            });
+                                          },
+                                          child: Align(
+                                              alignment: Alignment.topRight,
+                                              child: Container(
+                                                  margin:
+                                                      const EdgeInsets.all(10),
+                                                  padding:
+                                                      const EdgeInsets.all(10),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                            Radius.circular(50),
+                                                          ),
+                                                          color: Color.fromRGBO(
+                                                              0, 0, 0, 0.3)),
+                                                  child: Icon(
+                                                      Icons
+                                                          .favorite_border_rounded,
+                                                      color: likedList
+                                                              .contains(index)
+                                                          ? Colors.pink
+                                                          : Colors.white,
+                                                      size: 20))))),
+                                  const SizedBox(
+                                    height: 25,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        AutoSizeText(
                                             widget.travels != null
-                                                ? AutoSizeText(
-                                                    widget
-                                                                .travels!
-                                                                .travels[index]
-                                                                .nbPepInt ==
-                                                            null
-                                                        ? 0.toString()
-                                                        : widget
-                                                            .travels!
-                                                            .travels[index]
-                                                            .nbPepInt
-                                                            .toString(),
-                                                    minFontSize: 15,
-                                                    maxFontSize: 20,
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF0A2753)))
-                                                : AutoSizeText(
-                                                    travel.travels[index]
-                                                                .nbPepInt ==
-                                                            null
-                                                        ? 0.toString()
-                                                        : travel.travels[index]
-                                                            .nbPepInt
-                                                            .toString(),
-                                                    minFontSize: 12,
-                                                    maxFontSize: 18,
-                                                    style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF0A2753))),
-                                          ])
-                                        ]),
-                                    const SizedBox(
-                                      height: 10,
-                                    ),
-                                    Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: [
+                                                ? toBeginningOfSentenceCase(
+                                                    widget.travels!
+                                                        .travels[index].name)!
+                                                : toBeginningOfSentenceCase(
+                                                    travel
+                                                        .travels[index].name)!,
+                                            minFontSize: 16,
+                                            maxFontSize: 20,
+                                            style: const TextStyle(
+                                                color: Color(0xFF0A2753))),
+                                        Row(children: [
                                           const Icon(
-                                            Icons.location_on,
+                                            Icons.people_alt,
                                             size: 20,
                                             color: Color(0xFF0081CF),
                                           ),
                                           const SizedBox(
                                             width: 10,
                                           ),
-                                          AutoSizeText(
-                                              widget.travels != null
-                                                  ? toBeginningOfSentenceCase(
-                                                      widget
+                                          widget.travels != null
+                                              ? AutoSizeText(
+                                                  widget.travels!.travels[index]
+                                                              .nbPepInt ==
+                                                          null
+                                                      ? 0.toString()
+                                                      : widget
                                                           .travels!
                                                           .travels[index]
-                                                          .location)!
-                                                  : toBeginningOfSentenceCase(
-                                                      travel.travels[index]
-                                                          .location)!,
-                                              minFontSize: 12,
-                                              maxFontSize: 18,
-                                              style: const TextStyle(
-                                                  color: Color(0xFF0A2753))),
+                                                          .nbPepInt
+                                                          .toString(),
+                                                  minFontSize: 15,
+                                                  maxFontSize: 20,
+                                                  style: const TextStyle(
+                                                      color: Color(0xFF0A2753)))
+                                              : AutoSizeText(
+                                                  travel.travels[index]
+                                                              .nbPepInt ==
+                                                          null
+                                                      ? 0.toString()
+                                                      : travel.travels[index]
+                                                          .nbPepInt
+                                                          .toString(),
+                                                  minFontSize: 12,
+                                                  maxFontSize: 18,
+                                                  style: const TextStyle(
+                                                      color:
+                                                          Color(0xFF0A2753))),
                                         ])
-                                  ]))),
-                          const SizedBox(
-                            height: 40,
-                          )
-                        ]);
-                      }).toList());
-                    }
-
-                    return const Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator());
+                                      ]),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: [
+                                        const Icon(
+                                          Icons.location_on,
+                                          size: 20,
+                                          color: Color(0xFF0081CF),
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        AutoSizeText(
+                                            widget.travels != null
+                                                ? toBeginningOfSentenceCase(
+                                                    widget
+                                                        .travels!
+                                                        .travels[index]
+                                                        .location)!
+                                                : toBeginningOfSentenceCase(
+                                                    travel.travels[index]
+                                                        .location)!,
+                                            minFontSize: 12,
+                                            maxFontSize: 18,
+                                            style: const TextStyle(
+                                                color: Color(0xFF0A2753))),
+                                      ])
+                                ]))),
+                        const SizedBox(
+                          height: 40,
+                        )
+                      ]);
+                    }).toList());
                   }),
             ))));
   }
