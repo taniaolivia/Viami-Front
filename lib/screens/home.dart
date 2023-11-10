@@ -1,5 +1,7 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/popularTheme.dart';
@@ -61,7 +63,43 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-          child: Column(children: const [PopularThemePage()])),
+          child: Column(children: [
+        FutureBuilder<User>(
+            future: getUser(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var user = snapshot.data!;
+
+                return Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: AutoSizeText(
+                          "Salut ${toBeginningOfSentenceCase(user.firstName)},",
+                          minFontSize: 15,
+                          maxFontSize: 18,
+                          textAlign: TextAlign.left,
+                          style: const TextStyle(
+                              color: Color(0xFF39414B),
+                              fontWeight: FontWeight.w300),
+                        )));
+              }
+              return const Align(
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator());
+            }),
+        const Padding(
+            padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
+            child: AutoSizeText(
+              "Trouve ton / ta partenaire pour voyager ?",
+              minFontSize: 22,
+              maxFontSize: 25,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                  color: Color(0xFF0A2753), fontWeight: FontWeight.bold),
+            )),
+        const PopularThemePage()
+      ])),
     );
   }
 }
