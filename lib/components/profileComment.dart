@@ -46,88 +46,101 @@ class _ProfileCommentState extends State<ProfileComment> {
     return FutureBuilder<UsersComments>(
         future: getUserComments(),
         builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            var comment = snapshot.data!;
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Text("");
+          }
 
-            commenterId = comment.userComments[0].commenterId;
+          if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          }
 
-            return Column(children: [
-              const Align(
-                  alignment: Alignment.topLeft,
-                  child: AutoSizeText(
-                    "Avis",
-                    minFontSize: 11,
-                    maxFontSize: 13,
-                    style: TextStyle(
-                        color: Colors.black, fontWeight: FontWeight.w600),
-                  )),
-              const SizedBox(height: 10),
-              SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                      children:
-                          List.generate(comment.userComments.length, (index) {
-                    return Container(
-                        width: MediaQuery.of(context).size.width / 1.2,
-                        constraints: const BoxConstraints(
-                            minHeight: 100, maxHeight: double.infinity),
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(10))),
-                        child: Column(
-                          children: [
-                            FutureBuilder<User>(
-                                future: getUser(),
-                                builder: (context, snapshot) {
-                                  if (snapshot.hasData) {
-                                    var commenter = snapshot.data!;
-                                    return Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          AutoSizeText(
-                                            "${commenter.firstName} ${commenter.lastName}",
-                                            minFontSize: 11,
-                                            maxFontSize: 13,
-                                            style: const TextStyle(
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          CircleAvatar(
-                                              backgroundImage: commenter
-                                                          .profileImage !=
-                                                      null
+          if (!snapshot.hasData) {
+            return Text('');
+          }
+
+          var comment = snapshot.data!;
+
+          commenterId = comment.userComments[0].commenterId;
+
+          return Column(children: [
+            const Align(
+                alignment: Alignment.topLeft,
+                child: AutoSizeText(
+                  "Avis",
+                  minFontSize: 11,
+                  maxFontSize: 13,
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w600),
+                )),
+            const SizedBox(height: 10),
+            SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                    children:
+                        List.generate(comment.userComments.length, (index) {
+                  return Container(
+                      width: MediaQuery.of(context).size.width / 1.2,
+                      constraints: const BoxConstraints(
+                          minHeight: 100, maxHeight: double.infinity),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius:
+                              const BorderRadius.all(Radius.circular(10))),
+                      child: Column(
+                        children: [
+                          FutureBuilder<User>(
+                              future: getUser(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  return Text("");
+                                }
+
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+
+                                if (!snapshot.hasData) {
+                                  return Text('');
+                                }
+
+                                var commenter = snapshot.data!;
+                                return Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      AutoSizeText(
+                                        "${commenter.firstName} ${commenter.lastName}",
+                                        minFontSize: 11,
+                                        maxFontSize: 13,
+                                        style: const TextStyle(
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      CircleAvatar(
+                                          backgroundImage:
+                                              commenter.profileImage != null
                                                   ? AssetImage(
                                                       commenter.profileImage!)
                                                   : null,
-                                              child:
-                                                  commenter.profileImage == null
-                                                      ? const Icon(Icons.person)
-                                                      : null)
-                                        ]);
-                                  }
-                                  return const Align(
-                                      alignment: Alignment.center,
-                                      child: CircularProgressIndicator());
-                                }),
-                            const SizedBox(height: 10),
-                            AutoSizeText(comment.userComments[index].comment,
-                                minFontSize: 11,
-                                maxFontSize: 13,
-                                style: const TextStyle(
-                                  color: Colors.black,
-                                )),
-                          ],
-                        ));
-                  }))),
-              const SizedBox(height: 30),
-            ]);
-          }
-          return const Align(
-              alignment: Alignment.center, child: CircularProgressIndicator());
+                                          child: commenter.profileImage == null
+                                              ? const Icon(Icons.person)
+                                              : null)
+                                    ]);
+                              }),
+                          const SizedBox(height: 10),
+                          AutoSizeText(comment.userComments[index].comment,
+                              minFontSize: 11,
+                              maxFontSize: 13,
+                              style: const TextStyle(
+                                color: Colors.black,
+                              )),
+                        ],
+                      ));
+                }))),
+            const SizedBox(height: 30),
+          ]);
         });
   }
 }

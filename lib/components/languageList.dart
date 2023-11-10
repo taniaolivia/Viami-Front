@@ -111,129 +111,135 @@ class _LanguageListState extends State<LanguageList> {
                   FutureBuilder(
                       future: Future.wait([getLanguages(), getUserLanguages()]),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var language = snapshot.data![0] as Languages;
-                          var data = snapshot.data![1] as UsersLanguages;
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Text("");
+                        }
 
-                          languageList =
-                              List.generate(language.languages.length, (index) {
-                            return language.languages[index].language;
-                          });
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
 
-                          isCheckedList = List.generate(
-                              language.languages.length, (index) => false);
+                        if (!snapshot.hasData) {
+                          return Text('');
+                        }
 
-                          userLanguageLength = data.userLanguages.length;
+                        var language = snapshot.data![0] as Languages;
+                        var data = snapshot.data![1] as UsersLanguages;
 
-                          for (int i = 0; i < data.userLanguages.length; i++) {
-                            if (languageList
-                                .contains(data.userLanguages[i].language)) {
-                              if (!languageIndex.contains(languageList
-                                  .indexOf(data.userLanguages[i].language))) {
-                                languageIndex.add(languageList
-                                    .indexOf(data.userLanguages[i].language));
-                              }
+                        languageList =
+                            List.generate(language.languages.length, (index) {
+                          return language.languages[index].language;
+                        });
+
+                        isCheckedList = List.generate(
+                            language.languages.length, (index) => false);
+
+                        userLanguageLength = data.userLanguages.length;
+
+                        for (int i = 0; i < data.userLanguages.length; i++) {
+                          if (languageList
+                              .contains(data.userLanguages[i].language)) {
+                            if (!languageIndex.contains(languageList
+                                .indexOf(data.userLanguages[i].language))) {
+                              languageIndex.add(languageList
+                                  .indexOf(data.userLanguages[i].language));
                             }
                           }
+                        }
 
-                          return Wrap(
-                              alignment: WrapAlignment.start,
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: List.generate(language.languages.length,
-                                  (index) {
-                                if (languageIndex.contains(index)) {
-                                  isCheckedList[index] = true;
-                                }
+                        return Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: List.generate(language.languages.length,
+                                (index) {
+                              if (languageIndex.contains(index)) {
+                                isCheckedList[index] = true;
+                              }
 
-                                return GestureDetector(
-                                  onTap: () async {
-                                    setState(() {
-                                      if (languageIndex.contains(index)) {
-                                        languageIndex.remove(index);
-                                        isCheckedList[index] = false;
-                                      } else {
-                                        languageIndex.add(index);
-                                        isCheckedList[index] = true;
-                                      }
-                                    });
-
-                                    if (isCheckedList[index] == true) {
-                                      if (languageIndex.length < 6) {
-                                        await UserLanguageService()
-                                            .addUserLanguage(
-                                                userId!,
-                                                language.languages[index].id!,
-                                                token!);
-                                      } else {
-                                        languageIndex.remove(index);
-                                        isCheckedList[index] = false;
-                                        showSnackbar(
-                                            context,
-                                            "Vous avez dépassé la limite ! Vous ne pouvez que choisir cinq au maximum.",
-                                            "D'accord",
-                                            "");
-                                      }
+                              return GestureDetector(
+                                onTap: () async {
+                                  setState(() {
+                                    if (languageIndex.contains(index)) {
+                                      languageIndex.remove(index);
+                                      isCheckedList[index] = false;
                                     } else {
+                                      languageIndex.add(index);
+                                      isCheckedList[index] = true;
+                                    }
+                                  });
+
+                                  if (isCheckedList[index] == true) {
+                                    if (languageIndex.length < 6) {
                                       await UserLanguageService()
-                                          .deleteUserLanguage(
+                                          .addUserLanguage(
                                               userId!,
                                               language.languages[index].id!,
                                               token!);
+                                    } else {
+                                      languageIndex.remove(index);
+                                      isCheckedList[index] = false;
+                                      showSnackbar(
+                                          context,
+                                          "Vous avez dépassé la limite ! Vous ne pouvez que choisir cinq au maximum.",
+                                          "D'accord",
+                                          "");
                                     }
-                                  },
-                                  child: Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          2.7,
-                                      height: 90,
-                                      decoration: BoxDecoration(
-                                          border: Border.all(
-                                            width: 2,
-                                          ),
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          image: DecorationImage(
-                                              fit: BoxFit.fill,
-                                              colorFilter: isCheckedList[index]
-                                                  ? ColorFilter.mode(
-                                                      const Color(0xFFFFDAA2)
-                                                          .withOpacity(0.5),
-                                                      BlendMode.dstATop)
-                                                  : null,
-                                              image: NetworkImage(
-                                                  "${dotenv.env['CDN_URL']}/assets/language/${language.languages[index].imageName}"))),
-                                      child: Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      10, 5, 10, 5),
-                                              decoration: BoxDecoration(
-                                                color: isCheckedList[index] ==
-                                                        true
-                                                    ? const Color(0xFFFFDAA2)
-                                                    : Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
+                                  } else {
+                                    await UserLanguageService()
+                                        .deleteUserLanguage(
+                                            userId!,
+                                            language.languages[index].id!,
+                                            token!);
+                                  }
+                                },
+                                child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.7,
+                                    height: 90,
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 2,
+                                        ),
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        image: DecorationImage(
+                                            fit: BoxFit.fill,
+                                            colorFilter: isCheckedList[index]
+                                                ? ColorFilter.mode(
+                                                    const Color(0xFFFFDAA2)
+                                                        .withOpacity(0.5),
+                                                    BlendMode.dstATop)
+                                                : null,
+                                            image: NetworkImage(
+                                                "${dotenv.env['CDN_URL']}/assets/language/${language.languages[index].imageName}"))),
+                                    child: Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 5, 10, 5),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isCheckedList[index] == true
+                                                      ? const Color(0xFFFFDAA2)
+                                                      : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            child: AutoSizeText(
+                                              language
+                                                  .languages[index].language,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                              child: AutoSizeText(
-                                                language
-                                                    .languages[index].language,
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                minFontSize: 7,
-                                                maxFontSize: 12,
-                                                textAlign: TextAlign.center,
-                                              )))),
-                                );
-                              }).toList());
-                        }
-
-                        return const Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator());
+                                              minFontSize: 7,
+                                              maxFontSize: 12,
+                                              textAlign: TextAlign.center,
+                                            )))),
+                              );
+                            }).toList());
                       }),
                   const SizedBox(height: 20),
                 ]))),

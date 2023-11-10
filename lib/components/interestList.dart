@@ -111,125 +111,130 @@ class _InterestListState extends State<InterestList> {
                   FutureBuilder(
                       future: Future.wait([getInterests(), getUserInterests()]),
                       builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          var interest = snapshot.data![0] as Interests;
-                          var data = snapshot.data![1] as UsersInterests;
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return Text("");
+                        }
 
-                          interestList =
-                              List.generate(interest.interests.length, (index) {
-                            return interest.interests[index].interest;
-                          });
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
 
-                          isCheckedList = List.generate(
-                              interest.interests.length, (index) => false);
+                        if (!snapshot.hasData) {
+                          return Text('');
+                        }
+                        var interest = snapshot.data![0] as Interests;
+                        var data = snapshot.data![1] as UsersInterests;
 
-                          userInterestLength = data.userInterests.length;
+                        interestList =
+                            List.generate(interest.interests.length, (index) {
+                          return interest.interests[index].interest;
+                        });
 
-                          for (int i = 0; i < data.userInterests.length; i++) {
-                            if (interestList
-                                .contains(data.userInterests[i].interest)) {
-                              if (!interestIndex.contains(interestList
-                                  .indexOf(data.userInterests[i].interest))) {
-                                interestIndex.add(interestList
-                                    .indexOf(data.userInterests[i].interest));
-                              }
+                        isCheckedList = List.generate(
+                            interest.interests.length, (index) => false);
+
+                        userInterestLength = data.userInterests.length;
+
+                        for (int i = 0; i < data.userInterests.length; i++) {
+                          if (interestList
+                              .contains(data.userInterests[i].interest)) {
+                            if (!interestIndex.contains(interestList
+                                .indexOf(data.userInterests[i].interest))) {
+                              interestIndex.add(interestList
+                                  .indexOf(data.userInterests[i].interest));
                             }
                           }
+                        }
 
-                          return Wrap(
-                              alignment: WrapAlignment.start,
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: List.generate(interest.interests.length,
-                                  (index) {
-                                if (interestIndex.contains(index)) {
-                                  isCheckedList[index] = true;
-                                }
-                                return GestureDetector(
-                                  onTap: () async {
-                                    setState(() {
-                                      if (interestIndex.contains(index)) {
-                                        interestIndex.remove(index);
-                                        isCheckedList[index] = false;
-                                      } else {
-                                        interestIndex.add(index);
-                                        isCheckedList[index] = true;
-                                      }
-                                    });
-
-                                    if (isCheckedList[index] == true) {
-                                      if (interestIndex.length < 6) {
-                                        await UserInterestService()
-                                            .addUserInterest(
-                                                userId!,
-                                                interest.interests[index].id!,
-                                                token!);
-                                      } else {
-                                        interestIndex.remove(index);
-                                        isCheckedList[index] = false;
-                                        showSnackbar(
-                                            context,
-                                            "Vous avez dépassé la limite ! Vous ne pouvez que choisir cinq au maximum.",
-                                            "D'accord",
-                                            "");
-                                      }
+                        return Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: List.generate(interest.interests.length,
+                                (index) {
+                              if (interestIndex.contains(index)) {
+                                isCheckedList[index] = true;
+                              }
+                              return GestureDetector(
+                                onTap: () async {
+                                  setState(() {
+                                    if (interestIndex.contains(index)) {
+                                      interestIndex.remove(index);
+                                      isCheckedList[index] = false;
                                     } else {
+                                      interestIndex.add(index);
+                                      isCheckedList[index] = true;
+                                    }
+                                  });
+
+                                  if (isCheckedList[index] == true) {
+                                    if (interestIndex.length < 6) {
                                       await UserInterestService()
-                                          .deleteUserInterest(
+                                          .addUserInterest(
                                               userId!,
                                               interest.interests[index].id!,
                                               token!);
+                                    } else {
+                                      interestIndex.remove(index);
+                                      isCheckedList[index] = false;
+                                      showSnackbar(
+                                          context,
+                                          "Vous avez dépassé la limite ! Vous ne pouvez que choisir cinq au maximum.",
+                                          "D'accord",
+                                          "");
                                     }
-                                  },
-                                  child: Container(
-                                      width: MediaQuery.of(context).size.width /
-                                          2.5,
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10.0),
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              colorFilter: isCheckedList[index]
-                                                  ? ColorFilter.mode(
-                                                      const Color(0xFFFFDAA2)
-                                                          .withOpacity(0.5),
-                                                      BlendMode.dstATop)
-                                                  : null,
-                                              image: NetworkImage(
-                                                  "${dotenv.env['CDN_URL']}/assets/interest/${interest.interests[index].imageName}"))),
-                                      child: Align(
-                                          alignment: Alignment.center,
-                                          child: Container(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      10, 5, 10, 5),
-                                              decoration: BoxDecoration(
-                                                color: isCheckedList[index] ==
-                                                        true
-                                                    ? const Color(0xFFFFDAA2)
-                                                    : Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(50.0),
+                                  } else {
+                                    await UserInterestService()
+                                        .deleteUserInterest(
+                                            userId!,
+                                            interest.interests[index].id!,
+                                            token!);
+                                  }
+                                },
+                                child: Container(
+                                    width:
+                                        MediaQuery.of(context).size.width / 2.5,
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            colorFilter: isCheckedList[index]
+                                                ? ColorFilter.mode(
+                                                    const Color(0xFFFFDAA2)
+                                                        .withOpacity(0.5),
+                                                    BlendMode.dstATop)
+                                                : null,
+                                            image: NetworkImage(
+                                                "${dotenv.env['CDN_URL']}/assets/interest/${interest.interests[index].imageName}"))),
+                                    child: Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                10, 5, 10, 5),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  isCheckedList[index] == true
+                                                      ? const Color(0xFFFFDAA2)
+                                                      : Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(50.0),
+                                            ),
+                                            child: AutoSizeText(
+                                              interest
+                                                  .interests[index].interest,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
                                               ),
-                                              child: AutoSizeText(
-                                                interest
-                                                    .interests[index].interest,
-                                                style: const TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                minFontSize: 8,
-                                                maxFontSize: 12,
-                                                textAlign: TextAlign.center,
-                                              )))),
-                                );
-                              }).toList());
-                        }
-
-                        return const Align(
-                            alignment: Alignment.center,
-                            child: CircularProgressIndicator());
+                                              minFontSize: 8,
+                                              maxFontSize: 12,
+                                              textAlign: TextAlign.center,
+                                            )))),
+                              );
+                            }).toList());
                       }),
                   const SizedBox(height: 20),
                 ]))),

@@ -68,8 +68,17 @@ class _TravelComponentState extends State<TravelComponent> {
   }
 
   Future<void> fetchData() async {
+    final travel = await getListTravelById();
+
+    setState(() {
+      if (travel.nbPepInt == null) {
+        nbPeInt = "0";
+      } else {
+        nbPeInt = travel.nbPepInt.toString();
+      }
+    });
+
     await getTravelImages();
-    await getListTravelById();
   }
 
   @override
@@ -173,20 +182,14 @@ class _TravelComponentState extends State<TravelComponent> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
+                            return const Text('');
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (!snapshot.hasData) {
-                            return const Text('No travel details available.');
+                            return const Text('');
                           }
 
                           travel = snapshot.data!;
-
-                          if (travel.nbPepInt == null) {
-                            nbPeInt = "0";
-                          } else {
-                            nbPeInt = travel.nbPepInt.toString();
-                          }
 
                           return Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -240,7 +243,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                     icon: Icons.location_on,
                                     text: travel.location,
                                     color: Colors.black,
-                                    iconColor: const Color(0xFF0081CF),
+                                    iconColor: Color(0xFF0081CF),
                                   )
                                 ],
                               ),
@@ -266,7 +269,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                 text: travel.description,
                               ),
                               const SizedBox(
-                                height: 20,
+                                height: 30,
                               ),
                               Row(
                                 children: const [
@@ -275,7 +278,6 @@ class _TravelComponentState extends State<TravelComponent> {
                                     style: TextStyle(
                                       color: Color(0xFF0A2753),
                                       fontWeight: FontWeight.bold,
-                                      fontFamily: "Montserrat",
                                     ),
                                     minFontSize: 25,
                                     maxFontSize: 28,
@@ -284,19 +286,18 @@ class _TravelComponentState extends State<TravelComponent> {
                                 ],
                               ),
                               Container(
-                                  height: 350,
+                                  height: 250,
                                   child: FutureBuilder<TravelsActivities>(
                                       future: getTravelActivities(),
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const CircularProgressIndicator();
+                                          return const Text('');
                                         } else if (snapshot.hasError) {
                                           return Text(
                                               'Error: ${snapshot.error}');
                                         } else if (!snapshot.hasData) {
-                                          return const Text(
-                                              'No travel details available.');
+                                          return const Text('');
                                         }
 
                                         travelsActivities = snapshot.data!;
@@ -320,6 +321,9 @@ class _TravelComponentState extends State<TravelComponent> {
                                               );
                                             });
                                       })),
+                              const SizedBox(
+                                height: 70,
+                              ),
                             ],
                           );
                         })),
@@ -341,7 +345,7 @@ class _TravelComponentState extends State<TravelComponent> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AutoSizeText(
-                          "$nbPeInt personnes intéressées",
+                          "$nbPeInt personnes intéressés",
                           minFontSize: 11,
                           maxFontSize: 13,
                           style: const TextStyle(
@@ -356,7 +360,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
   Widget buildDot({required int index}) {
     return Container(
-      margin: const EdgeInsets.only(right: 5),
+      margin: EdgeInsets.only(right: 5),
       height: 8,
       width: 8,
       decoration: BoxDecoration(

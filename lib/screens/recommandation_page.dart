@@ -121,12 +121,12 @@ class _RecommendationPageState extends State<RecommendationPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return CircularProgressIndicator();
+                          return Text("");
                         } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
                         } else if (!snapshot.hasData ||
                             snapshot.data!.travels.isEmpty) {
-                          return Text('No recommended travels available.');
+                          return Text('');
                         } else {
                           return ListView.builder(
                             itemCount: snapshot.data!.travels.length,

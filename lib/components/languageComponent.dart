@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/languageList.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/userLanguage/usersLanguages.dart';
 import 'package:viami/services/userLanguage/usersLanguages.service.dart';
 
@@ -61,8 +62,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => const LanguageList()),
+                    FadePageRoute(page: const LanguageList()),
                   );
                 },
                 child: Container(
@@ -84,7 +84,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const LanguageList()),
+                  FadePageRoute(page: const LanguageList()),
                 );
               },
               child: Container(
@@ -97,54 +97,18 @@ class _LanguageComponentState extends State<LanguageComponent> {
                 child: FutureBuilder<UsersLanguages>(
                     future: getUserLanguages(),
                     builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        var data = snapshot.data!;
-
-                        userLanguagesLength = data.userLanguages.length;
-                        userLanguages = data.userLanguages;
-
-                        return Wrap(
-                            alignment: WrapAlignment.start,
-                            spacing: 0.0,
-                            runSpacing: 0.0,
-                            children: List.generate(data.userLanguages.length,
-                                (index) {
-                              return Container(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                  constraints: const BoxConstraints(
-                                      maxWidth: double.infinity),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    border: Border.all(
-                                        color: const Color(0xFF0081CF)),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                  child: AutoSizeText(
-                                    data.userLanguages[index].language,
-                                    style: const TextStyle(
-                                      color: Color(0xFF0081CF),
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    minFontSize: 10,
-                                    maxFontSize: 12,
-                                  ));
-                            }).toList());
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Text("");
                       }
 
-                      return const Align(
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator());
-                    }),
-              ))
-          : Container(
-              width: MediaQuery.of(context).size.width,
-              constraints: const BoxConstraints(
-                  minHeight: 45, maxHeight: double.infinity),
-              child: FutureBuilder<UsersLanguages>(
-                  future: getUserLanguages(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
+                      if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      }
+
+                      if (!snapshot.hasData) {
+                        return Text('');
+                      }
+
                       var data = snapshot.data!;
 
                       userLanguagesLength = data.userLanguages.length;
@@ -177,11 +141,59 @@ class _LanguageComponentState extends State<LanguageComponent> {
                                   maxFontSize: 12,
                                 ));
                           }).toList());
+                    }),
+              ))
+          : Container(
+              width: MediaQuery.of(context).size.width,
+              constraints: const BoxConstraints(
+                  minHeight: 45, maxHeight: double.infinity),
+              child: FutureBuilder<UsersLanguages>(
+                  future: getUserLanguages(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Text("");
                     }
 
-                    return const Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator());
+                    if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    }
+
+                    if (!snapshot.hasData) {
+                      return Text('');
+                    }
+
+                    var data = snapshot.data!;
+
+                    userLanguagesLength = data.userLanguages.length;
+                    userLanguages = data.userLanguages;
+
+                    return Wrap(
+                        alignment: WrapAlignment.start,
+                        spacing: 0.0,
+                        runSpacing: 0.0,
+                        children:
+                            List.generate(data.userLanguages.length, (index) {
+                          return Container(
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                              constraints: const BoxConstraints(
+                                  maxWidth: double.infinity),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: const Color(0xFF0081CF)),
+                                borderRadius: BorderRadius.circular(10.0),
+                              ),
+                              child: AutoSizeText(
+                                data.userLanguages[index].language,
+                                style: const TextStyle(
+                                  color: Color(0xFF0081CF),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                minFontSize: 10,
+                                maxFontSize: 12,
+                              ));
+                        }).toList());
                   }),
             ),
       const SizedBox(height: 40)
