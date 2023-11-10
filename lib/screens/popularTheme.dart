@@ -8,6 +8,7 @@ import 'package:viami/models-api/theme/themes.dart';
 import 'package:viami/models-api/themeTravel/themesTravels.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/screens/allThemeTravels.dart';
 import 'package:viami/services/theme/themes.service.dart';
 import 'package:viami/services/themeTravel/themesTravels.service.dart';
 import 'package:viami/services/travel/travels.service.dart';
@@ -32,6 +33,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
   List themeTravelName = [];
   List themeTravelLocation = [];
   int? currentIndex;
+  int? clickedThemeId;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -176,6 +178,30 @@ class _PopularThemePageState extends State<PopularThemePage> {
                     margin: EdgeInsets.fromLTRB(
                         0, MediaQuery.of(context).size.height / 2.7, 0, 0)),
               ),
+              TextButton(
+                  onPressed: () {
+                    if (clicked == "popular") {
+                      Navigator.pushNamed(context, "/travels/popular");
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                AllThemeTravelsPage(themeId: clickedThemeId!)),
+                      );
+                    }
+                  },
+                  child: const AutoSizeText(
+                    "Voir tout",
+                    maxLines: 1,
+                    minFontSize: 11,
+                    maxFontSize: 13,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        fontFamily: "Poppins",
+                        color: Color(0xFF6A778B)),
+                  )),
               SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -233,12 +259,14 @@ class _PopularThemePageState extends State<PopularThemePage> {
                             children:
                                 List.generate(theme.themes.length, (index) {
                           return Container(
-                              margin: const EdgeInsets.fromLTRB(6, 10, 0, 10),
+                              margin: const EdgeInsets.fromLTRB(6, 5, 0, 5),
                               child: ElevatedButton(
                                 onPressed: () async {
                                   themeTravelImage = [];
                                   themeTravelName = [];
                                   themeTravelLocation = [];
+
+                                  clickedThemeId = theme.themes[index].id;
 
                                   var themeTravel =
                                       await getFirstFiveThemeTravels(
