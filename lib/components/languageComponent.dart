@@ -98,7 +98,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
                     future: getUserLanguages(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Text("");
+                        return Container(height: 45);
                       }
 
                       if (snapshot.hasError) {
@@ -116,8 +116,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
 
                       return Wrap(
                           alignment: WrapAlignment.start,
-                          spacing: 0.0,
-                          runSpacing: 0.0,
+                          spacing: 7.0,
+                          runSpacing: 7.0,
                           children:
                               List.generate(data.userLanguages.length, (index) {
                             return Container(
@@ -169,8 +169,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
 
                     return Wrap(
                         alignment: WrapAlignment.start,
-                        spacing: 0.0,
-                        runSpacing: 0.0,
+                        spacing: 7.0,
+                        runSpacing: 7.0,
                         children:
                             List.generate(data.userLanguages.length, (index) {
                           return Container(

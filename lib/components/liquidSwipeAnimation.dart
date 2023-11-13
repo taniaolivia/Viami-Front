@@ -49,10 +49,10 @@ class _LiquidSwipeAnimationState extends State<LiquidSwipeAnimation> {
                               bottomLeft: Radius.circular(80),
                               bottomRight: Radius.circular(80)),
                           child: widget.data[index].image != ""
-                              ? Image.asset(
+                              ? Image.network(
                                   widget.data[index].image!,
                                   height:
-                                      MediaQuery.of(context).size.height / 1.6,
+                                      MediaQuery.of(context).size.height / 1.7,
                                 )
                               : Container()),
                       Container(
@@ -98,13 +98,6 @@ class _LiquidSwipeAnimationState extends State<LiquidSwipeAnimation> {
             enableLoop: false,
             ignoreUserGestureWhileAnimating: true,
           ),
-          Positioned(
-              bottom: 80,
-              right: 0,
-              child: Image.network(
-                "${dotenv.env['CDN_URL']}/assets/swipe.gif",
-                width: 90,
-              )),
           Align(
             alignment: Alignment.bottomRight,
             child: Padding(

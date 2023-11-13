@@ -3,21 +3,27 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/services/travel/travel.service.dart';
 import 'package:viami/services/travelActivity/travelsActivities.service.dart';
+import 'package:viami/services/userDateLocation/usersDateLocation.service.dart';
 import '../components/activity_card.dart';
 import '../models-api/travel/travel.dart';
 import '../models-api/travelActivity/travelsActivities.dart';
-import '../services/travel/recommendedTravel.service.dart';
-import '../services/travel/travels.service.dart';
 import '../services/travelImage/travelsImages.service.dart';
 import '../widgets/expandable_text_widget.dart';
 import '../widgets/icon_and_text_widget.dart';
 
 class TravelComponent extends StatefulWidget {
-  final String travelId;
-  final bool isRecommended;
+  final int travelId;
+  final int? nbParticipant;
+  final String? location;
+  final String? date;
   const TravelComponent(
-      {Key? key, required this.travelId, required this.isRecommended})
+      {Key? key,
+      required this.travelId,
+      this.nbParticipant,
+      this.location,
+      this.date})
       : super(key: key);
 
   @override
@@ -29,23 +35,20 @@ class _TravelComponentState extends State<TravelComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
-  String? nbPeInt;
+  String? userId = "";
+  String? nbParticipant;
 
   List<String> travelImages = [];
 
-  Future<Travel> getListTravelById() {
-    Future<Travel> getAllTravel() async {
+  Future<Travel> getTravelById() {
+    Future<Travel> getTravel() async {
       token = await storage.read(key: "token");
-      if (widget.isRecommended) {
-        return RecommendedTravelsService()
-            .getRecommendTravelById(widget.travelId, token.toString());
-      } else {
-        return TravelsService()
-            .getTravelById(widget.travelId, token.toString());
-      }
+      userId = await storage.read(key: "userId");
+
+      return TravelService().getTravelById(widget.travelId, token.toString());
     }
 
-    return getAllTravel();
+    return getTravel();
   }
 
   Future<void> getTravelImages() async {
@@ -61,40 +64,40 @@ class _TravelComponentState extends State<TravelComponent> {
     });
   }
 
+  Future<TravelsActivities> getTravelActivities() {
+    Future<TravelsActivities> getTravelActivitiesList() async {
+      token = await storage.read(key: "token");
+      return TravelsActivitiesService()
+          .getTravelActivitiesById(widget.travelId, token.toString());
+    }
+
+    return getTravelActivitiesList();
+  }
+
+  Future<void> fetchData() async {
+    await getTravelById();
+    await getTravelImages();
+  }
+
   @override
   void initState() {
     fetchData();
     super.initState();
   }
 
-  Future<void> fetchData() async {
-    final travel = await getListTravelById();
+  @override
+  Widget build(BuildContext context) {
+    Travel travel;
+    TravelsActivities travelsActivities;
 
     setState(() {
-      if (travel.nbPepInt == null) {
-        nbPeInt = "0";
+      if (widget.nbParticipant == null) {
+        nbParticipant = "0";
       } else {
-        nbPeInt = travel.nbPepInt.toString();
+        nbParticipant = widget.nbParticipant.toString();
       }
     });
 
-    await getTravelImages();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Future<TravelsActivities> getTravelActivities() {
-      Future<TravelsActivities> getTravelActivitiesList() async {
-        token = await storage.read(key: "token");
-        return TravelsActivitiesService()
-            .getTravelActivitiesById(widget.travelId, token.toString());
-      }
-
-      return getTravelActivitiesList();
-    }
-
-    Travel travel;
-    TravelsActivities travelsActivities;
     return Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
@@ -152,23 +155,31 @@ class _TravelComponentState extends State<TravelComponent> {
                       ),
                     ),
                     Positioned(
-                      top: 45,
-                      left: 20,
-                      child: Container(
-                        width: 20,
-                        height: 20,
-                        child: IconButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          icon: const Icon(
-                            Icons.arrow_back_ios,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                        ),
-                      ),
-                    ),
+                        top: 0,
+                        child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Container(
+                                width: 50,
+                                height: 50,
+                                margin: MediaQuery.of(context).size.width <= 320
+                                    ? const EdgeInsets.fromLTRB(20, 20, 0, 0)
+                                    : const EdgeInsets.fromLTRB(20, 30, 0, 0),
+                                padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
+                                decoration: const BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(10))),
+                                child: Column(children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      icon: const Icon(
+                                        Icons.arrow_back_ios,
+                                        color: Color.fromRGBO(0, 0, 0, 0.4),
+                                        size: 20,
+                                      ))
+                                ])))),
                   ],
                 ),
                 Container(
@@ -178,7 +189,7 @@ class _TravelComponentState extends State<TravelComponent> {
                       color: Colors.white,
                     ),
                     child: FutureBuilder<Travel>(
-                        future: getListTravelById(),
+                        future: getTravelById(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -243,7 +254,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                     icon: Icons.location_on,
                                     text: travel.location,
                                     color: Colors.black,
-                                    iconColor: Color(0xFF0081CF),
+                                    iconColor: const Color(0xFF0081CF),
                                   )
                                 ],
                               ),
@@ -256,7 +267,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                 children: [
                                   IconAndTextWidget(
                                     icon: Icons.person,
-                                    text: travel.nbPepInt?.toString() ?? "0",
+                                    text: nbParticipant!,
                                     color: Colors.black,
                                     iconColor: Colors.blue,
                                   ),
@@ -309,6 +320,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                             itemBuilder: (context, index) {
                                               final activity = travelsActivities
                                                   .travelActivities[index];
+
                                               return Padding(
                                                 padding: const EdgeInsets.only(
                                                     left: 5, right: 15),
@@ -338,14 +350,16 @@ class _TravelComponentState extends State<TravelComponent> {
                 child: FloatingActionButton(
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))),
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/profile");
+                    onPressed: () async {
+                      await UsersDateLocationService().joinTravel(
+                          token!, userId!, widget.location!, widget.date!);
+                      Navigator.pushNamed(context, "/home");
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         AutoSizeText(
-                          "$nbPeInt personnes intéressés",
+                          "$nbParticipant personnes intéressés",
                           minFontSize: 11,
                           maxFontSize: 13,
                           style: const TextStyle(
