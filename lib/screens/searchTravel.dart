@@ -1,10 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
-import 'package:viami/screens/travels.dart';
+import 'package:viami/screens/travel_page_details.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
 class SearchTravelPage extends StatefulWidget {
@@ -16,9 +18,12 @@ class SearchTravelPage extends StatefulWidget {
 
 class _SearchTravelPageState extends State<SearchTravelPage> {
   final storage = const FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController dateController = TextEditingController();
   String? token;
   String? selectedLocation;
-  List locationList = [];
+  List locationList = [""];
+  String fillDestination = "";
 
   Future<Travels> getListTravels() {
     Future<Travels> getAllTravels() async {
@@ -32,8 +37,9 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
 
   @override
   void initState() {
-    super.initState();
+    fillDestination = "";
     getListTravels();
+    super.initState();
   }
 
   @override
@@ -45,57 +51,108 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
           imageHeight: MediaQuery.of(context).size.width <= 320 ? 3 : 1.5,
           content: Column(
             children: [
-              Wrap(children: [
-                Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  const Icon(
-                    Icons.location_on,
-                    color: Colors.blue,
-                    size: 30.0,
-                  ),
-                  const SizedBox(width: 20),
-                  FutureBuilder<Travels>(
-                      future: getListTravels(),
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          //return Text("");
+              Form(
+                  key: _formKey,
+                  child: Column(children: [
+                    TextFormField(
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Veuillez choisir votre date de départ';
                         }
-
-                        if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
-                        }
-
-                        if (!snapshot.hasData) {
-                          return Text('');
-                        }
-
-                        var travel = snapshot.data!;
-
-                        for (int i = 0; i < travel.travels.length; i++) {
-                          if (!locationList
-                              .contains(travel.travels[i].location)) {
-                            locationList.add(travel.travels[i].location);
-                          }
-                        }
-
-                        return DropdownMenu<String>(
-                          width: MediaQuery.of(context).size.width / 1.5,
-                          menuHeight: 200,
-                          hintText: "Localisation*",
-                          onSelected: (String? value) {
-                            setState(() {
-                              selectedLocation = value!;
-                            });
+                        return null;
+                      },
+                      controller: dateController,
+                      readOnly: true,
+                      decoration: const InputDecoration(
+                          border: UnderlineInputBorder(),
+                          labelText: 'Date de départ*',
+                          labelStyle: TextStyle(fontSize: 14),
+                          icon: Icon(
+                            Icons.calendar_month_outlined,
+                            color: Colors.blue,
+                            size: 30.0,
+                          ),
+                          contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 5)),
+                      onTap: () {
+                        BottomPicker.date(
+                          title: "Choisissez votre date de départ",
+                          titleStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                              color: Colors.blue),
+                          onChange: (index) {
+                            dateController.text =
+                                DateFormat('yyyy-MM-dd').format(index);
                           },
-                          dropdownMenuEntries: locationList
-                              .map<DropdownMenuEntry<String>>((value) {
-                            return DropdownMenuEntry<String>(
-                                value: value, label: value);
-                          }).toList(),
-                        );
-                      })
-                ]),
-              ]),
+                          onSubmit: (index) {
+                            dateController.text =
+                                DateFormat('yyyy-MM-dd').format(index);
+                          },
+                        ).show(context);
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Row(children: [
+                      const Icon(
+                        Icons.location_on,
+                        color: Colors.blue,
+                        size: 30.0,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Expanded(
+                          child: FutureBuilder<Travels>(
+                              future: getListTravels(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.waiting) {
+                                  //return Text("");
+                                }
+
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+
+                                if (!snapshot.hasData) {
+                                  return Text('');
+                                }
+
+                                var travel = snapshot.data!;
+
+                                for (int i = 0;
+                                    i < travel.travels.length;
+                                    i++) {
+                                  if (!locationList
+                                      .contains(travel.travels[i].location)) {
+                                    locationList
+                                        .add(travel.travels[i].location);
+                                  }
+                                }
+
+                                return DropdownButtonFormField<String>(
+                                    menuMaxHeight: 130,
+                                    value: selectedLocation,
+                                    hint: const Text("Destination*"),
+                                    onChanged: (value) => setState(
+                                        () => selectedLocation = value),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Veuillez choisir votre destination';
+                                      }
+                                      return null;
+                                    },
+                                    items: locationList
+                                        .map<DropdownMenuItem<String>>(
+                                            (dynamic value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value.toString(),
+                                        child: Text(value.toString()),
+                                      );
+                                    }).toList());
+                              })),
+                    ])
+                  ])),
               const SizedBox(height: 40),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -115,23 +172,29 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                   style: TextStyle(fontFamily: "Poppins"),
                 ),
                 onPressed: () async {
-                  var travels = await TravelsService()
-                      .searchTravels(token!, selectedLocation!);
+                  if (_formKey.currentState!.validate()) {
+                    var date = dateController.text;
 
-                  if (travels != null) {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                TravelsPage(travels: travels)));
+                    var travels = await TravelsService()
+                        .searchTravels(token!, selectedLocation!);
+
+                    if (travels != null) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => TravelPageDetails(
+                                  travelId: travels.travels[0].id,
+                                  date: date,
+                                  location: selectedLocation)));
+                    }
                   }
                 },
               ),
               const SizedBox(height: 10),
             ],
           ),
-          contentHeight: MediaQuery.of(context).size.width <= 320 ? 2.2 : 1.6,
-          containerHeight: MediaQuery.of(context).size.width <= 320 ? 1.7 : 2.5,
+          contentHeight: MediaQuery.of(context).size.width <= 320 ? 2.2 : 2.0,
+          containerHeight: MediaQuery.of(context).size.width <= 320 ? 1.7 : 2,
           title: "Recherche",
           redirect: "/home",
         ));
