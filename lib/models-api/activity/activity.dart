@@ -11,7 +11,8 @@ class Activity {
       required this.location,
       required this.isRecommended,
       this.nbParticipant,
-      this.description});
+      this.description,
+      this.note});
 
   factory Activity.fromJson(Map<String?, dynamic> json) =>
       _$ActivityFromJson(json);
@@ -24,4 +25,5 @@ class Activity {
   final int isRecommended;
   final int? nbParticipant;
   final String? description;
+  final int? note;
 }
