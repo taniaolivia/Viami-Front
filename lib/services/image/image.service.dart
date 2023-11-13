@@ -1,5 +1,5 @@
-import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/models-api/image/image.dart';
 
@@ -39,22 +39,43 @@ class ImageService {
     }
   }
 
-  Future<Map<String?, dynamic>> updateImageById(
-      int imageId, String image, String token) async {
-    final response =
-        await http.patch(Uri.parse('${dotenv.env['API_URL']}/images/$imageId'),
-            headers: <String, String>{
-              "Content-Type": "application/json",
-              'Authorization': token,
-            },
-            body: jsonEncode(<String, dynamic>{"image": image}));
+  updateImageById(int imageId, List<int> image, String token) async {
+    final request = http.MultipartRequest(
+      'PATCH',
+      Uri.parse('${dotenv.env['API_URL']}/images/$imageId'),
+    );
+    request.headers['Authorization'] = token;
 
-    if (response.statusCode == 200) {
-      var res = json.decode(response.body);
+    var file = http.MultipartFile.fromBytes(
+      'image',
+      image,
+      filename: 'image.jpg',
+    );
 
-      return res;
-    } else {
-      throw Exception('Failed to load user');
+    request.files.add(file);
+
+    try {
+      final response = await http.Response.fromStream(await request.send());
+
+      if (response.statusCode == 200) {
+        print('Response Status Code: ${response.statusCode}');
+        print('Response Body: ${response.body}');
+
+        final Map<String, dynamic> decodedResponse = json.decode(response.body);
+
+        print('Decoded Response: $decodedResponse');
+
+        return decodedResponse;
+      } else if (response.statusCode == 404) {
+        print('Image not found');
+        throw Exception('Image not found');
+      } else {
+        print('Unexpected error: ${response.statusCode}');
+        throw Exception('Failed to update image');
+      }
+    } catch (error) {
+      print('Error updating image: $error');
+      throw Exception('Failed to update image');
     }
   }
 }
