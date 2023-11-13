@@ -4,7 +4,7 @@ part 'travelActivity.a.dart';
 
 @JsonSerializable()
 class TravelActivity {
-  TravelActivity({this.id, required this.idTravel, this.idImage});
+  TravelActivity({this.id, required this.idTravel, this.idActivity});
 
   factory TravelActivity.fromJson(Map<String?, dynamic> json) =>
       _$TravelActivityFromJson(json);
@@ -12,5 +12,5 @@ class TravelActivity {
 
   final String? id;
   final String idTravel;
-  final String? idImage;
+  final String? idActivity;
 }

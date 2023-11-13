@@ -1,12 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/models-api/activity/activities.dart';
 
-class TravelsService {
-  Future<Travels> getAllTravels(String token) async {
+class ActivitiesService {
+  Future<Activities> getAllPopularActivities(String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/travels'),
+      Uri.parse('${dotenv.env['API_URL']}/popular/activities'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -15,15 +15,15 @@ class TravelsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return Travels.fromJson(res);
+      return Activities.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load activities');
     }
   }
 
-  Future<Travels> searchTravels(String token, String location) async {
+  Future<Activities> getFivePopularActivities(String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/search/travels?location=$location'),
+      Uri.parse('${dotenv.env['API_URL']}/popularFive/activities'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -32,9 +32,9 @@ class TravelsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return Travels.fromJson(res);
+      return Activities.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load activities');
     }
   }
 }

@@ -7,7 +7,7 @@ TravelImage _$TravelImageFromJson(Map<String?, dynamic> json) => TravelImage(
       name: json["name"],
       travelDescription: json["travelDescription"],
       location: json['location'],
-      nbPepInt: json['nbPepInt'],
+      nbParticipant: json['nbParticipant'],
       imageName: json['imageName'],
     );
 
@@ -19,7 +19,7 @@ Map<String?, dynamic> _$TravelImageToJson(TravelImage instance) =>
       'name': instance.name,
       'travelDescription': instance.travelDescription,
       'location': instance.location,
-      'nbPepInt': instance.nbPepInt,
+      'nbParticipant': instance.nbParticipant,
       'imageName': instance.imageName,
     };
 

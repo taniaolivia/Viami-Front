@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../models-api/travelActivity/travelsActivities.dart';
+import 'package:viami/models-api/travelActivity/travelsActivities.dart';
 
 class TravelsActivitiesService {
   Future<TravelsActivities> getAllTravelActivities(String token) async {
@@ -20,7 +20,7 @@ class TravelsActivitiesService {
   }
 
   Future<TravelsActivities> getTravelActivitiesById(
-      String travelId, String token) async {
+      int travelId, String token) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/travels/$travelId/activities'),
       headers: <String, String>{'Authorization': token},

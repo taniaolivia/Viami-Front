@@ -1,12 +1,12 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/theme/themes.dart';
+import 'package:viami/models-api/travel/travel.dart';
 
-class ThemessService {
-  Future<Themes> getAllThemes(String token) async {
+class TravelService {
+  Future<Travel> getTravelById(int travelId, String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/themes'),
+      Uri.parse('${dotenv.env['API_URL']}/travels/$travelId'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -15,9 +15,9 @@ class ThemessService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return Themes.fromJson(res);
+      return Travel.fromJson(res['travel'][0]);
     } else {
-      throw Exception('Failed to load themes');
+      throw Exception('Failed to load travel');
     }
   }
 }

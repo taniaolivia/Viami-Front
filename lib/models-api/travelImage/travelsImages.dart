@@ -11,7 +11,7 @@ class TravelImage {
     required this.name,
     required this.travelDescription,
     required this.location,
-    this.nbPepInt,
+    this.nbParticipant,
     required this.imageName,
   });
 
@@ -25,7 +25,7 @@ class TravelImage {
   final String name;
   final String travelDescription;
   final String location;
-  final int? nbPepInt;
+  final int? nbParticipant;
   final String imageName;
 }
 
