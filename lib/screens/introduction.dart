@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/components/liquidSwipeAnimation.dart';
 import 'package:viami/models/introduction_item.dart';
 import 'package:viami/screens/start.dart';
@@ -17,19 +18,19 @@ class _IntroductionPageState extends State<IntroductionPage> {
   Widget build(BuildContext context) {
     List<IntroductionItem> data = [
       IntroductionItem(
-          "assets/introduction/intro1.png",
+          "${dotenv.env['CDN_URL']}/assets/viami-world.gif",
           "Tu ne veux pas voyager seul ?",
           "Par obligation ou par choix",
           0.3,
           const Color(0xFF0081CF)),
       IntroductionItem(
-          "assets/introduction/intro2.png",
+          "${dotenv.env['CDN_URL']}/assets/viami-world.gif",
           "Rencontre des voyageurs seuls",
           "Discute et apprends à les connaître",
           0.6,
           const Color(0xFF0081CF)),
       IntroductionItem(
-          "assets/introduction/intro3.png",
+          "${dotenv.env['CDN_URL']}/assets/viami-world.gif",
           "Voyage avec de nouveaux amis",
           "Part découvrir le monde avec tes nouveaux amis",
           1.0,
