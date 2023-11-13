@@ -5,22 +5,21 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/components/pageTransition.dart';
-import 'package:viami/models-api/themeTravel/themesTravels.dart';
-import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/models-api/themeActivity/themeActivities.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/travel_page_details.dart';
-import 'package:viami/services/themeTravel/themesTravels.service.dart';
+import 'package:viami/services/themeActivity/themesActivities.service.dart';
 
-class AllThemeTravelsPage extends StatefulWidget {
+class AllThemeActivitiesPage extends StatefulWidget {
   final int themeId;
-  const AllThemeTravelsPage({Key? key, required this.themeId})
+  const AllThemeActivitiesPage({Key? key, required this.themeId})
       : super(key: key);
 
   @override
-  State<AllThemeTravelsPage> createState() => _AllThemeTravelsPageState();
+  State<AllThemeActivitiesPage> createState() => _AllThemeActivitiesPageState();
 }
 
-class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
+class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
@@ -28,15 +27,15 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
 
   @override
   Widget build(BuildContext context) {
-    Future<ThemesTravels> getListTravelsByTheme() {
-      Future<ThemesTravels> getAllTravelsByTheme() async {
+    Future<ThemeActivities> getListActivitiesByTheme() {
+      Future<ThemeActivities> getAllActivitiesByTheme() async {
         token = await storage.read(key: "token");
 
-        return ThemesTravelsService()
-            .getAllTravelsByTheme(token.toString(), widget.themeId);
+        return ThemesActivitiesService()
+            .getAllActivitiesByTheme(token.toString(), widget.themeId);
       }
 
-      return getAllTravelsByTheme();
+      return getAllActivitiesByTheme();
     }
 
     return Scaffold(
@@ -53,11 +52,11 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                 child: Padding(
               padding: EdgeInsets.fromLTRB(
                   20, 50, 20, MediaQuery.of(context).size.height / 3.5),
-              child: FutureBuilder<ThemesTravels>(
-                  future: getListTravelsByTheme(),
+              child: FutureBuilder<ThemeActivities>(
+                  future: getListActivitiesByTheme(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text("");
+                      return SizedBox.shrink();
                     }
 
                     if (snapshot.hasError) {
@@ -67,10 +66,11 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                     if (!snapshot.hasData) {
                       return Text('');
                     }
-                    var travel = snapshot.data!;
+                    var activity = snapshot.data!;
 
                     return Column(
-                        children: List.generate(travel.travels.length, (index) {
+                        children:
+                            List.generate(activity.activities.length, (index) {
                       return Column(children: [
                         GestureDetector(
                             onTap: () {
@@ -78,8 +78,7 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                                 context,
                                 FadePageRoute(
                                   page: TravelPageDetails(
-                                      travelId:
-                                          travel.travels[index].id.toString()),
+                                      travelId: activity.activities[index].id),
                                 ),
                               );
                             },
@@ -134,7 +133,7 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
+                                                "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
                                               ))),
                                       child: GestureDetector(
                                           onTap: () {
@@ -179,8 +178,8 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         AutoSizeText(
-                                            toBeginningOfSentenceCase(
-                                                travel.travels[index].name)!,
+                                            toBeginningOfSentenceCase(activity
+                                                .activities[index].name)!,
                                             minFontSize: 16,
                                             maxFontSize: 20,
                                             style: const TextStyle(
@@ -195,11 +194,12 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                                             width: 10,
                                           ),
                                           AutoSizeText(
-                                              travel.travels[index].nbPepInt ==
+                                              activity.activities[index]
+                                                          .nbParticipant ==
                                                       null
                                                   ? 0.toString()
-                                                  : travel
-                                                      .travels[index].nbPepInt
+                                                  : activity.activities[index]
+                                                      .nbParticipant
                                                       .toString(),
                                               minFontSize: 12,
                                               maxFontSize: 18,
@@ -223,8 +223,8 @@ class _AllThemeTravelsPageState extends State<AllThemeTravelsPage> {
                                           width: 10,
                                         ),
                                         AutoSizeText(
-                                            toBeginningOfSentenceCase(travel
-                                                .travels[index].location)!,
+                                            toBeginningOfSentenceCase(activity
+                                                .activities[index].location)!,
                                             minFontSize: 12,
                                             maxFontSize: 18,
                                             style: const TextStyle(

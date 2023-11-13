@@ -74,7 +74,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             future: getUser(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("");
+                return Container(height: 75);
               }
 
               if (snapshot.hasError) {

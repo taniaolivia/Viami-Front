@@ -3,12 +3,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
-import 'package:viami/screens/notifications_page.dart';
+import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/menus.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
-
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
 import 'menu.dart';

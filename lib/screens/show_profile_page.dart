@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -72,29 +71,41 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                     child: SingleChildScrollView(
                         child: Column(children: [
                       Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height / 2.3,
-                        padding: const EdgeInsets.fromLTRB(15, 40, 0, 0),
-                        decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(30),
-                                bottomRight: Radius.circular(30)),
-                            image: DecorationImage(
-                                image:
-                                    FileImage(File(images.userImages[0].image)),
-                                fit: BoxFit.cover,
-                                alignment: Alignment.center)),
-                        alignment: Alignment.topLeft,
-                        child: IconButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, "/home");
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              color: Colors.black,
-                              size: 25,
-                            )),
-                      ),
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height / 2.3,
+                          padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
+                          decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(30),
+                                  bottomRight: Radius.circular(30)),
+                              image: images.userImages.length != 0
+                                  ? DecorationImage(
+                                      image: NetworkImage(
+                                          images.userImages[0].image),
+                                      fit: BoxFit.cover,
+                                    )
+                                  : const DecorationImage(
+                                      image: AssetImage("assets/profil.png"),
+                                      fit: BoxFit.cover,
+                                      alignment: Alignment.center)),
+                          alignment: Alignment.topLeft,
+                          child: Container(
+                              width: 50,
+                              height: 50,
+                              padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
+                              decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10))),
+                              child: IconButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, "/home");
+                                  },
+                                  icon: const Icon(
+                                    Icons.arrow_back_ios,
+                                    color: Color.fromRGBO(0, 0, 0, 0.4),
+                                    size: 20,
+                                  )))),
                       Container(
                           padding: const EdgeInsets.fromLTRB(30, 30, 30, 30),
                           alignment: Alignment.bottomCenter,
@@ -121,25 +132,40 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                         fontWeight: FontWeight.w600),
                                   )),
                               const SizedBox(height: 10),
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: List.generate(
-                                      images.userImages.length, (index) {
-                                    return Container(
-                                      width:
-                                          MediaQuery.of(context).size.width / 4,
-                                      height: 150,
-                                      decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                              Radius.circular(10)),
-                                          image: DecorationImage(
-                                              image: FileImage(File(images
-                                                  .userImages[index].image)),
-                                              fit: BoxFit.cover,
-                                              alignment: Alignment.center)),
-                                    );
-                                  })),
+                              images.userImages.length == 0
+                                  ? Container()
+                                  : Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: List.generate(
+                                          images.userImages.length, (index) {
+                                        return Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                4,
+                                            height: 150,
+                                            decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(10)),
+                                                image:
+                                                    images.userImages.length !=
+                                                            0
+                                                        ? DecorationImage(
+                                                            image: NetworkImage(
+                                                                images
+                                                                    .userImages[
+                                                                        index]
+                                                                    .image),
+                                                            fit: BoxFit.cover,
+                                                          )
+                                                        : const DecorationImage(
+                                                            image: AssetImage(
+                                                                "assets/profil.png"),
+                                                            fit: BoxFit.cover,
+                                                          )));
+                                      })),
                               const SizedBox(height: 30),
                               ElevatedButton(
                                   style: ElevatedButton.styleFrom(

@@ -24,7 +24,7 @@ class _PhotoListState extends State<PhotoList> {
 
   String? token = "";
   String? userId = "";
-  int? userImagesLength;
+  int? userImagesLength = 0;
   String status = "add";
   int? clickedImageId;
   List<UserImage> userImages = [];
@@ -37,9 +37,12 @@ class _PhotoListState extends State<PhotoList> {
         .getUserImagesById(userId.toString(), token.toString());
 
     setState(() {
+      userImagesLength = images.userImages.length;
+
       userImages = images.userImages;
     });
 
+    print(userImages);
     return images;
   }
 
@@ -50,8 +53,7 @@ class _PhotoListState extends State<PhotoList> {
     return UserImageService().addUserImage(userId!, path, token!);
   }
 
-  Future<Map<String?, dynamic>> updateImageById(
-      int imageId, String path) async {
+  updateImageById(int imageId, List<int> path) async {
     token = await storage.read(key: "token");
 
     return ImageService().updateImageById(imageId, path, token!);
@@ -71,7 +73,8 @@ class _PhotoListState extends State<PhotoList> {
   }
 
   Future getImageFromGallery() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await picker.pickImage(source: ImageSource.gallery, imageQuality: 80);
     Directory directory = await getApplicationDocumentsDirectory();
     String documentDirectoryPath = directory.path;
 
@@ -85,11 +88,12 @@ class _PhotoListState extends State<PhotoList> {
     try {
       final File imageFile = File(pickedFile.path);
       await imageFile.copy(newPath);
+      final List<int> imageBytes = await imageFile.readAsBytes();
 
       if (status == "add") {
         addNewImage(newPath);
       } else {
-        updateImageById(clickedImageId!, newPath);
+        updateImageById(clickedImageId!, imageBytes);
       }
 
       setState(() {
@@ -101,27 +105,35 @@ class _PhotoListState extends State<PhotoList> {
   }
 
   Future getImageFromCamera() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.camera);
-    final appDocDirPath = await getApplicationDocumentsDirectoryPath();
-    final newPath = '$appDocDirPath/image.jpg';
+    final pickedFile =
+        await picker.pickImage(source: ImageSource.camera, imageQuality: 80);
+    Directory directory = await getApplicationDocumentsDirectory();
+    String documentDirectoryPath = directory.path;
 
-    setState(() {
-      if (pickedFile != null) {
-        final File imageFile = File(pickedFile.path);
+    String imageName = generateRandomImageName();
+    String newPath = '$documentDirectoryPath/$imageName';
 
-        imageFile.copy(newPath);
+    if (pickedFile == null) {
+      return;
+    }
 
-        print(newPath);
+    try {
+      final File imageFile = File(pickedFile.path);
+      await imageFile.copy(newPath);
+      final List<int> imageBytes = await imageFile.readAsBytes();
 
-        if (status == "add") {
-          addNewImage(newPath);
-          getUserImages();
-        } else {
-          updateImageById(clickedImageId!, newPath);
-          getUserImages();
-        }
+      if (status == "add") {
+        addNewImage(newPath);
+      } else {
+        updateImageById(clickedImageId!, imageBytes);
       }
-    });
+
+      setState(() {
+        getUserImages();
+      });
+    } catch (e) {
+      print("Error copying image: $e");
+    }
   }
 
   Future showOptions() async {
@@ -193,120 +205,98 @@ class _PhotoListState extends State<PhotoList> {
 
   @override
   void initState() {
-    super.initState();
     getUserImages();
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: getUserImages(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("");
-          }
-
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
-
-          if (!snapshot.hasData) {
-            return Text('');
-          }
-
-          var images = snapshot.data!;
-          userImagesLength = images.userImages.length;
-
-          return images.userImages.length != 0
-              ? SingleChildScrollView(
-                  child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                      Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children:
-                              List.generate(images.userImages.length, (index) {
-                            return GestureDetector(
-                              onTap: () async {
-                                setState(() {
-                                  if (userImagesLength == 3) {
-                                    status = "update";
-                                  } else {
-                                    status = "add";
-                                  }
-                                  clickedImageId =
-                                      images.userImages[index].imageId;
-                                });
-                                await showOptionsImages();
-                              },
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
-                                    width:
-                                        MediaQuery.of(context).size.width / 3.8,
-                                    height: 130,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.all(
-                                          Radius.circular(15)),
-                                      color: const Color(0xFFD3D3D3),
-                                      image: images.userImages.length != 0
-                                          ? DecorationImage(
-                                              image: FileImage(File(images
-                                                  .userImages[index].image)),
-                                              fit: BoxFit.cover,
-                                            )
-                                          : null,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 3,
-                                    child: IconButton(
-                                      onPressed: () async {
-                                        setState(() {
-                                          if (userImagesLength == 3) {
-                                            status = "update";
-                                          } else {
-                                            status = "add";
-                                          }
-                                          clickedImageId =
-                                              images.userImages[index].imageId;
-                                        });
-                                        await showOptionsImages();
-                                      },
-                                      icon: images.userImages.length != 0
-                                          ? const Icon(Icons.create_rounded,
-                                              color: Colors.white, size: 20)
-                                          : const Icon(Icons.add_circle,
-                                              color: Colors.blue, size: 20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          })),
-                      userImagesLength! < 3
-                          ? Container(
-                              width: MediaQuery.of(context).size.width / 3.5,
-                              height: 150,
+    return userImagesLength != 0
+        ? SingleChildScrollView(
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: List.generate(userImages.length, (index) {
+                      return GestureDetector(
+                        onTap: () async {
+                          setState(() {
+                            if (userImagesLength == 3) {
+                              status = "update";
+                            } else {
+                              status = "add";
+                            }
+                            clickedImageId = userImages[index].imageId;
+                          });
+                          await showOptionsImages();
+                        },
+                        child: Stack(
+                          children: [
+                            Container(
+                              margin: EdgeInsets.fromLTRB(0, 0, 8, 0),
+                              width: MediaQuery.of(context).size.width / 3.8,
+                              height: 130,
+                              decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                      Radius.circular(15)),
+                                  color: const Color(0xFFD3D3D3),
+                                  image: DecorationImage(
+                                    image:
+                                        NetworkImage(userImages[index].image),
+                                    fit: BoxFit.cover,
+                                  )),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              right: 3,
                               child: IconButton(
-                                  onPressed: () async {
-                                    await showOptions();
-                                  },
-                                  icon: const Icon(Icons.add_circle,
-                                      size: 50, color: Colors.blue)))
-                          : Container()
-                    ]))
-              : Container(
-                  width: MediaQuery.of(context).size.width / 3.6,
-                  height: 150,
-                  child: IconButton(
-                      onPressed: () async {
-                        await showOptions();
-                      },
-                      icon: const Icon(Icons.add_circle,
-                          size: 50, color: Colors.blue)));
-        });
+                                onPressed: () async {
+                                  setState(() {
+                                    if (userImagesLength == 3) {
+                                      status = "update";
+                                    } else {
+                                      status = "add";
+                                    }
+                                    clickedImageId = userImages[index].imageId;
+                                  });
+                                  await showOptionsImages();
+                                },
+                                icon: userImages.length != 0
+                                    ? const Icon(Icons.create_rounded,
+                                        color: Colors.white, size: 20)
+                                    : const Icon(Icons.add_circle,
+                                        color: Colors.blue, size: 20),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    })),
+                userImagesLength! < 3
+                    ? Container(
+                        width: MediaQuery.of(context).size.width / 3.5,
+                        height: 150,
+                        child: IconButton(
+                            onPressed: () async {
+                              await showOptions();
+                            },
+                            icon: const Icon(Icons.add_circle,
+                                size: 50, color: Colors.blue)))
+                    : Container()
+              ]))
+        : Container(
+            width: MediaQuery.of(context).size.width / 3.6,
+            height: 130,
+            decoration: const BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(15)),
+              color: Color.fromARGB(255, 222, 221, 221),
+            ),
+            child: IconButton(
+                onPressed: () async {
+                  await showOptions();
+                },
+                icon: const Icon(Icons.add_circle,
+                    size: 50, color: Colors.blue)));
   }
 }

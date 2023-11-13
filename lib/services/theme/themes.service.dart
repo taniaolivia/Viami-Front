@@ -17,7 +17,7 @@ class ThemessService {
 
       return Themes.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load themes');
     }
   }
 }

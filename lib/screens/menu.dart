@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/screens/show_profile_page.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import 'package:viami/services/userImage/usersImages.service.dart';
 import '../components/pageTransition.dart';
 import '../models-api/user/user.dart';
 import '../models/menu_item.dart';
@@ -33,6 +35,14 @@ class MenuPage extends StatelessWidget {
     return getConnectedUser();
   }
 
+  Future<UsersImages> getUserImages() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    return UsersImagesService()
+        .getUserImagesById(userId.toString(), token.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget buildMenuItem(MenuItem item) => ListTile(
@@ -54,8 +64,8 @@ class MenuPage extends StatelessWidget {
         data: ThemeData.dark(),
         child: Scaffold(
             backgroundColor: const Color(0xFF0081CF),
-            body: FutureBuilder<User>(
-              future: getUser(),
+            body: FutureBuilder<List<Object>>(
+              future: Future.wait([getUser(), getUserImages()]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Text("");
@@ -69,7 +79,8 @@ class MenuPage extends StatelessWidget {
                   return Text('');
                 }
 
-                var user = snapshot.data!;
+                var user = snapshot.data![0] as User;
+                var images = snapshot.data![1] as UsersImages;
                 var firstName = user.firstName;
                 var idUser = user.id;
 
@@ -103,23 +114,23 @@ class MenuPage extends StatelessWidget {
                                                   320
                                               ? 80
                                               : 100,
-                                      child: CircleAvatar(
-                                          backgroundImage: user.profileImage !=
-                                                  null
-                                              ? AssetImage(user.profileImage!)
-                                              : null,
-                                          radius: 50.0,
-                                          child: user.profileImage == null
-                                              ? Icon(
-                                                  Icons.person,
-                                                  size: MediaQuery.of(context)
-                                                              .size
-                                                              .width <=
-                                                          320
-                                                      ? 50
-                                                      : 70,
-                                                )
-                                              : null)))),
+                                      child: images.userImages.length != 0
+                                          ? CircleAvatar(
+                                              backgroundImage: NetworkImage(
+                                                  images.userImages[0].image),
+                                              radius: 50.0,
+                                            )
+                                          : CircleAvatar(
+                                              radius: 50.0,
+                                              child: Icon(
+                                                Icons.person,
+                                                size: MediaQuery.of(context)
+                                                            .size
+                                                            .width <=
+                                                        320
+                                                    ? 50
+                                                    : 70,
+                                              ))))),
                           SizedBox(
                               height: MediaQuery.of(context).size.width <= 320
                                   ? 0.0
@@ -144,7 +155,6 @@ class MenuPage extends StatelessWidget {
                                 const EdgeInsets.symmetric(horizontal: 16.0),
                             child: OutlinedButton.icon(
                               onPressed: () async {
-                                //change id after with get id by provider when connect user  is done
                                 bool logoutSuccess =
                                     await AuthService().logout(idUser);
                                 if (logoutSuccess) {

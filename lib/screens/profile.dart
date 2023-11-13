@@ -4,7 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
-import 'package:viami/screens/edit_profile_page.dart';
+import 'package:viami/screens/profileEdit.dart';
 import 'package:viami/screens/show_profile_page.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';

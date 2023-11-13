@@ -5,15 +5,15 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/pageTransition.dart';
+import 'package:viami/models-api/activity/activities.dart';
 import 'package:viami/models-api/theme/themes.dart';
-import 'package:viami/models-api/themeTravel/themesTravels.dart';
-import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/models-api/themeActivity/themeActivities.dart';
 import 'package:viami/models-api/user/user.dart';
-import 'package:viami/screens/allThemeTravels.dart';
-import 'package:viami/screens/travel_page_details.dart';
+import 'package:viami/screens/activityDetails.dart';
+import 'package:viami/screens/allThemeActivities.dart';
+import 'package:viami/services/activity/activities.service.dart';
 import 'package:viami/services/theme/themes.service.dart';
-import 'package:viami/services/themeTravel/themesTravels.service.dart';
-import 'package:viami/services/travel/travels.service.dart';
+import 'package:viami/services/themeActivity/themesActivities.service.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
@@ -31,9 +31,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
   String? userId = "";
   bool? tokenExpired;
   String clicked = "popular";
-  List themeTravelImage = [];
-  List themeTravelName = [];
-  List themeTravelLocation = [];
+  List themeActivityImage = [];
+  List themeActivityName = [];
+  List themeActivityLocation = [];
   int? currentIndex;
   int? clickedThemeId;
 
@@ -58,17 +58,35 @@ class _PopularThemePageState extends State<PopularThemePage> {
     return ThemessService().getAllThemes(token.toString());
   }
 
-  Future<Travels> getTopFivePopularTravels() async {
+  Future<Activities> getTopFivePopularTravels() async {
     token = await storage.read(key: "token");
 
-    return TravelsService().getFivePopularTravels(token.toString());
+    return ActivitiesService().getFivePopularActivities(token.toString());
   }
 
-  Future<ThemesTravels> getFirstFiveThemeTravels(int themeId) async {
+  Future<ThemeActivities> getFirstFiveThemeActivities(int themeId) async {
     token = await storage.read(key: "token");
 
-    return ThemesTravelsService()
-        .getFirstFiveTravelsByTheme(token.toString(), themeId);
+    return ThemesActivitiesService()
+        .getFirstFiveActivitiesByTheme(token.toString(), themeId);
+  }
+
+  IconData getIconDataFromName(String iconName) {
+    if (iconName == 'beach') {
+      return Icons.beach_access;
+    } else if (iconName == 'museum') {
+      return Icons.museum;
+    } else if (iconName == 'sport') {
+      return Icons.sports_soccer;
+    } else if (iconName == 'attraction') {
+      return Icons.attractions;
+    } else if (iconName == 'fastfood') {
+      return Icons.fastfood;
+    } else if (iconName == 'game') {
+      return Icons.sports_esports;
+    }
+
+    return Icons.beach_access;
   }
 
   @override
@@ -82,7 +100,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
         future: Future.wait([getTopFivePopularTravels(), getAllThemes()]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("");
+            return Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height / 1.78);
           }
 
           if (snapshot.hasError) {
@@ -93,7 +113,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
             return Text('');
           }
 
-          var travel = snapshot.data![0] as Travels;
+          var activity = snapshot.data![0] as Activities;
           var theme = snapshot.data![1] as Themes;
 
           return Column(children: [
@@ -104,8 +124,8 @@ class _PopularThemePageState extends State<PopularThemePage> {
                       Navigator.push(
                         context,
                         FadePageRoute(
-                          page: TravelPageDetails(
-                              travelId: travel.travels[index].id.toString()),
+                          page: ActivityDetailsPage(
+                              activityId: activity.activities[index].id),
                         ),
                       );
                     },
@@ -118,10 +138,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 fit: BoxFit.cover,
                                 image: clicked == "popular"
                                     ? NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
+                                        "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
                                       )
                                     : NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/${themeTravelImage[index]}",
+                                        "${dotenv.env['CDN_URL']}/assets/${themeActivityImage[index]}",
                                       ))),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -129,9 +149,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                               AutoSizeText(
                                 clicked == "popular"
                                     ? toBeginningOfSentenceCase(
-                                        travel.travels[index].name)!
+                                        activity.activities[index].name)!
                                     : toBeginningOfSentenceCase(
-                                        themeTravelName[index])!,
+                                        themeActivityName[index])!,
                                 minFontSize: 25,
                                 maxFontSize: 30,
                                 style: const TextStyle(
@@ -159,10 +179,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                     ),
                                     AutoSizeText(
                                       clicked == "popular"
-                                          ? toBeginningOfSentenceCase(
-                                              travel.travels[index].location)!
+                                          ? toBeginningOfSentenceCase(activity
+                                              .activities[index].location)!
                                           : toBeginningOfSentenceCase(
-                                              themeTravelLocation[index])!,
+                                              themeActivityLocation[index])!,
                                       minFontSize: 20,
                                       maxFontSize: 25,
                                       style: const TextStyle(
@@ -185,8 +205,8 @@ class _PopularThemePageState extends State<PopularThemePage> {
               },
               autoplay: true,
               itemCount: clicked == "popular"
-                  ? travel.travels.length
-                  : themeTravelImage.length,
+                  ? activity.activities.length
+                  : themeActivityImage.length,
               itemWidth: MediaQuery.of(context).size.width,
               itemHeight: MediaQuery.of(context).size.height / 2.9,
               layout: SwiperLayout.TINDER,
@@ -202,12 +222,13 @@ class _PopularThemePageState extends State<PopularThemePage> {
             TextButton(
                 onPressed: () {
                   if (clicked == "popular") {
-                    Navigator.pushNamed(context, "/travels/popular");
+                    Navigator.pushNamed(context, "/activities/popular");
                   } else {
                     Navigator.push(
                       context,
                       FadePageRoute(
-                          page: AllThemeTravelsPage(themeId: clickedThemeId!)),
+                          page:
+                              AllThemeActivitiesPage(themeId: clickedThemeId!)),
                     );
                   }
                 },
@@ -281,24 +302,24 @@ class _PopularThemePageState extends State<PopularThemePage> {
                             margin: const EdgeInsets.fromLTRB(6, 5, 0, 5),
                             child: ElevatedButton(
                               onPressed: () async {
-                                themeTravelImage = [];
-                                themeTravelName = [];
-                                themeTravelLocation = [];
+                                themeActivityImage = [];
+                                themeActivityName = [];
+                                themeActivityLocation = [];
 
                                 clickedThemeId = theme.themes[index].id;
 
                                 var themeTravel =
-                                    await getFirstFiveThemeTravels(
+                                    await getFirstFiveThemeActivities(
                                         theme.themes[index].id);
 
-                                List.generate(themeTravel.travels.length,
+                                List.generate(themeTravel.activities.length,
                                     (index) {
-                                  themeTravelImage
-                                      .add(themeTravel.travels[index].image);
-                                  themeTravelName
-                                      .add(themeTravel.travels[index].name);
-                                  themeTravelLocation
-                                      .add(themeTravel.travels[index].location);
+                                  themeActivityImage.add(
+                                      themeTravel.activities[index].imageName);
+                                  themeActivityName
+                                      .add(themeTravel.activities[index].name);
+                                  themeActivityLocation.add(
+                                      themeTravel.activities[index].location);
                                 }).toList();
 
                                 setState(() {
@@ -329,7 +350,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                               child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.water,
+                                    Icon(
+                                        getIconDataFromName(
+                                            theme.themes[index].icon),
                                         color: clicked == "theme" &&
                                                 currentIndex == index
                                             ? Colors.white

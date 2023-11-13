@@ -4,36 +4,46 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
-import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/components/pageTransition.dart';
+import 'package:viami/models-api/activity/activities.dart';
+import 'package:viami/screens/activityDetails.dart';
 import 'package:viami/screens/drawer.dart';
-import 'package:viami/services/travel/travels.service.dart';
+import 'package:viami/services/activity/recommendedActivities.service.dart';
 
-class AllRecommendedTravelsPage extends StatefulWidget {
-  const AllRecommendedTravelsPage({Key? key}) : super(key: key);
+class AllRecommendedActivitiesPage extends StatefulWidget {
+  const AllRecommendedActivitiesPage({Key? key}) : super(key: key);
 
   @override
-  State<AllRecommendedTravelsPage> createState() =>
-      _AllRecommendedTravelsPageState();
+  State<AllRecommendedActivitiesPage> createState() =>
+      _AllRecommendedActivitiesPageState();
 }
 
-class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
+class _AllRecommendedActivitiesPageState
+    extends State<AllRecommendedActivitiesPage> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
   List likedList = [];
 
-  @override
-  Widget build(BuildContext context) {
-    Future<Travels> getListPopularTravels() {
-      Future<Travels> getAllPopularTravels() async {
-        token = await storage.read(key: "token");
+  Future<Activities> getListRecommendedActivities() {
+    Future<Activities> getAllRActivities() async {
+      token = await storage.read(key: "token");
 
-        return TravelsService().getAllPopularTravels(token.toString());
-      }
-
-      return getAllPopularTravels();
+      return RecommendedActivitiesService()
+          .getAllRecommendedActivities(token.toString());
     }
 
+    return getAllRActivities();
+  }
+
+  @override
+  void initState() {
+    getListRecommendedActivities();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
@@ -43,13 +53,13 @@ class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
             containerHeight:
                 MediaQuery.of(context).size.width <= 320 ? 1.4 : 1.3,
-            title: "Voyages Populaires",
+            title: "Nos recommendations",
             content: SingleChildScrollView(
                 child: Padding(
               padding: EdgeInsets.fromLTRB(
                   20, 50, 20, MediaQuery.of(context).size.height / 3.5),
-              child: FutureBuilder<Travels>(
-                  future: getListPopularTravels(),
+              child: FutureBuilder<Activities>(
+                  future: getListRecommendedActivities(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text("");
@@ -60,16 +70,25 @@ class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
                     }
 
                     if (!snapshot.hasData) {
-                      return Text('');
+                      return Text("");
                     }
-                    var travel = snapshot.data!;
+
+                    var activity = snapshot.data!;
 
                     return Column(
-                        children: List.generate(travel.travels.length, (index) {
+                        children:
+                            List.generate(activity.activities.length, (index) {
                       return Column(children: [
                         GestureDetector(
                             onTap: () {
-                              // Redirect to travel detail page
+                              Navigator.push(
+                                context,
+                                FadePageRoute(
+                                  page: ActivityDetailsPage(
+                                      activityId:
+                                          activity.activities[index].id),
+                                ),
+                              );
                             },
                             child: Container(
                                 alignment: Alignment.center,
@@ -122,7 +141,7 @@ class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
                                           image: DecorationImage(
                                               fit: BoxFit.cover,
                                               image: NetworkImage(
-                                                "${dotenv.env['CDN_URL']}/assets/${travel.travels[index].image}",
+                                                "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
                                               ))),
                                       child: GestureDetector(
                                           onTap: () {
@@ -167,8 +186,8 @@ class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         AutoSizeText(
-                                            toBeginningOfSentenceCase(
-                                                travel.travels[index].name)!,
+                                            toBeginningOfSentenceCase(activity
+                                                .activities[index].name)!,
                                             minFontSize: 16,
                                             maxFontSize: 20,
                                             style: const TextStyle(
@@ -183,11 +202,12 @@ class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
                                             width: 10,
                                           ),
                                           AutoSizeText(
-                                              travel.travels[index].nbPepInt ==
+                                              activity.activities[index]
+                                                          .nbParticipant ==
                                                       null
                                                   ? 0.toString()
-                                                  : travel
-                                                      .travels[index].nbPepInt
+                                                  : activity.activities[index]
+                                                      .nbParticipant
                                                       .toString(),
                                               minFontSize: 12,
                                               maxFontSize: 18,
@@ -211,8 +231,8 @@ class _AllRecommendedTravelsPageState extends State<AllRecommendedTravelsPage> {
                                           width: 10,
                                         ),
                                         AutoSizeText(
-                                            toBeginningOfSentenceCase(travel
-                                                .travels[index].location)!,
+                                            toBeginningOfSentenceCase(activity
+                                                .activities[index].location)!,
                                             minFontSize: 12,
                                             maxFontSize: 18,
                                             style: const TextStyle(

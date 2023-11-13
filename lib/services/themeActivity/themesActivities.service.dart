@@ -1,13 +1,13 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/themeTravel/themesTravels.dart';
+import 'package:viami/models-api/themeActivity/themeActivities.dart';
 
-class ThemesTravelsService {
-  Future<ThemesTravels> getFirstFiveTravelsByTheme(
+class ThemesActivitiesService {
+  Future<ThemeActivities> getFirstFiveActivitiesByTheme(
       String token, int themeId) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/themesFive/$themeId/travels'),
+      Uri.parse('${dotenv.env['API_URL']}/themesFive/$themeId/activities'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -16,15 +16,16 @@ class ThemesTravelsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return ThemesTravels.fromJson(res);
+      return ThemeActivities.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception("Failed to load theme's activities");
     }
   }
 
-  Future<ThemesTravels> getAllTravelsByTheme(String token, int themeId) async {
+  Future<ThemeActivities> getAllActivitiesByTheme(
+      String token, int themeId) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/themes/$themeId/travels'),
+      Uri.parse('${dotenv.env['API_URL']}/themes/$themeId/activities'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -33,9 +34,9 @@ class ThemesTravelsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return ThemesTravels.fromJson(res);
+      return ThemeActivities.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception("Failed to load theme's activities");
     }
   }
 }

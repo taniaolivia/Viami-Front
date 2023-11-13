@@ -4,7 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/screens/faq.dart';
 import 'package:viami/screens/popularTheme.dart';
+import 'package:viami/screens/recommendationActivity.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
@@ -69,7 +71,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             future: getUser(),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Text("");
+                return Container(height: 28);
               }
 
               if (snapshot.hasError) {
@@ -106,7 +108,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               style: TextStyle(
                   color: Color(0xFF0A2753), fontWeight: FontWeight.bold),
             )),
-        const PopularThemePage()
+        const PopularThemePage(),
+        const RecommendationActivityPage(),
+        const FaqPage()
       ])),
     );
   }

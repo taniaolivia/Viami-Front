@@ -4,18 +4,19 @@ part 'travelsActivities.a.dart';
 
 @JsonSerializable()
 class TravelActivity {
-  TravelActivity({
-    required this.id,
-    required this.idActivity,
-    required this.idTravel,
-    required this.name,
-    required this.travelDescription,
-    required this.location,
-    this.nbPepInt,
-    required this.activityName,
-    required this.imageName,
-    required this.activityLocation,
-  });
+  TravelActivity(
+      {required this.id,
+      required this.idActivity,
+      required this.idTravel,
+      required this.name,
+      required this.travelDescription,
+      required this.location,
+      this.nbParticipant,
+      required this.activityName,
+      required this.imageName,
+      required this.activityLocation,
+      required this.isRecommended,
+      this.activityNbParticipant});
 
   factory TravelActivity.fromJson(Map<String?, dynamic> json) =>
       _$TravelActivityFromJson(json);
@@ -27,10 +28,12 @@ class TravelActivity {
   final String name;
   final String travelDescription;
   final String location;
-  final int? nbPepInt;
+  final int? nbParticipant;
   final String activityName;
   final String imageName;
   final String activityLocation;
+  final int isRecommended;
+  final int? activityNbParticipant;
 }
 
 class TravelsActivities {

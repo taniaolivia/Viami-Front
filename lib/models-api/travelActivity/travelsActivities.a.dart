@@ -8,9 +8,11 @@ TravelActivity _$TravelActivityFromJson(Map<String?, dynamic> json) =>
         name: json["name"],
         travelDescription: json["travelDescription"],
         location: json['location'],
-        nbPepInt: json['nbPepInt'],
+        nbParticipant: json['nbParticipant'],
         activityName: json['activityName'],
         imageName: json['imageName'],
+        isRecommended: json['isRecommended'],
+        activityNbParticipant: json["activityNbParticipant"],
         activityLocation: json['activityLocation']);
 
 Map<String?, dynamic> _$TravelActivityToJson(TravelActivity instance) =>
@@ -21,9 +23,11 @@ Map<String?, dynamic> _$TravelActivityToJson(TravelActivity instance) =>
       'name': instance.name,
       'travelDescription': instance.travelDescription,
       'location': instance.location,
-      'nbPepInt': instance.nbPepInt,
+      'nbParticipant': instance.nbParticipant,
       'activityName': instance.activityName,
       'imageName': instance.imageName,
+      'isRecommended': instance.isRecommended,
+      'activityNbParticipant': instance.activityNbParticipant,
       'activityLocation': instance.activityLocation
     };
 

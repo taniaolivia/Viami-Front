@@ -20,8 +20,7 @@ class TravelsImagesService {
     }
   }
 
-  Future<TravelsImages> getTravelImagesById(
-      String travelId, String token) async {
+  Future<TravelsImages> getTravelImagesById(int travelId, String token) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/travels/$travelId/images'),
       headers: <String, String>{'Authorization': token},

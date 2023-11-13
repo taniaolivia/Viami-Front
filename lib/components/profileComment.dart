@@ -81,7 +81,7 @@ class _ProfileCommentState extends State<ProfileComment> {
                   return Container(
                       width: MediaQuery.of(context).size.width / 1.2,
                       constraints: const BoxConstraints(
-                          minHeight: 100, maxHeight: double.infinity),
+                          minHeight: 150, maxHeight: double.infinity),
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                       decoration: BoxDecoration(
                           border: Border.all(color: Colors.grey),
@@ -133,6 +133,7 @@ class _ProfileCommentState extends State<ProfileComment> {
                           AutoSizeText(comment.userComments[index].comment,
                               minFontSize: 11,
                               maxFontSize: 13,
+                              textAlign: TextAlign.justify,
                               style: const TextStyle(
                                 color: Colors.black,
                               )),
