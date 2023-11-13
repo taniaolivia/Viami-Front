@@ -5,19 +5,21 @@ import 'package:viami/components/NavigationBarComponent.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
 import 'package:viami/screens/home.dart';
-import 'package:viami/screens/recommandation_page.dart';
+import 'package:viami/screens/allRecommendedActivities.dart';
 import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/screens/vip.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
-import 'message_page.dart';
+import 'message.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'searchTravel.dart';
-import 'vip_page.dart';
 
 class MenusPage extends StatefulWidget {
   const MenusPage({super.key});
@@ -52,9 +54,26 @@ class _MenusPageState extends State<MenusPage> {
     return getConnectedUser();
   }
 
+  Future<UsersImages> getUserImages() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    var images = await UsersImagesService()
+        .getUserImagesById(userId.toString(), token.toString());
+
+    setState(() {
+      userProfile = images.userImages[0].image;
+    });
+
+    return images;
+  }
+
   @override
   void initState() {
+    getUser();
+    getUserImages();
     super.initState();
+
     _pageController = PageController(initialPage: _currentIndex);
   }
 
@@ -98,6 +117,7 @@ class _MenusPageState extends State<MenusPage> {
             null);
       });
     }
+    ;
     return Scaffold(
       appBar: _currentIndex != 4 && _currentIndex != 0
           ? AppBar(
@@ -105,8 +125,8 @@ class _MenusPageState extends State<MenusPage> {
               elevation: 0,
               backgroundColor: Colors.white,
               title: Center(
-                  child: FutureBuilder<User>(
-                      future: getUser(),
+                  child: FutureBuilder<List<Object>>(
+                      future: Future.wait([getUser(), getUserImages()]),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -120,9 +140,11 @@ class _MenusPageState extends State<MenusPage> {
                         if (!snapshot.hasData) {
                           return Text('');
                         }
-                        var user = snapshot.data!;
+                        var user = snapshot.data![0] as User;
+                        var images = snapshot.data![1] as UsersImages;
 
-                        userProfile = user.profileImage;
+                        userProfile = images.userImages[0].image;
+
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -157,20 +179,21 @@ class _MenusPageState extends State<MenusPage> {
                       ),
                     ),
                     child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              FadePageRoute(
-                                  page: ShowProfilePage(userId: userId!)));
-                        },
-                        child: CircleAvatar(
-                            backgroundImage: userProfile != null
-                                ? AssetImage(userProfile!)
-                                : null,
-                            radius: 20,
-                            child: userProfile == null
-                                ? const Icon(Icons.person)
-                                : null)),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            FadePageRoute(
+                                page: ShowProfilePage(userId: userId!)));
+                      },
+                      child: userProfile != null
+                          ? CircleAvatar(
+                              backgroundImage: NetworkImage(userProfile!),
+                              radius: 20)
+                          : const CircleAvatar(
+                              radius: 20,
+                              child: Icon(Icons.person),
+                            ),
+                    ),
                   ),
                 )
               ],
