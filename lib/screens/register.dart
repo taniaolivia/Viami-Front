@@ -86,8 +86,15 @@ class _RegisterPageState extends State<RegisterPage> {
                       const SizedBox(height: 10),
                       TextFormField(
                         validator: (value) {
+                          String pattern = r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+                          RegExp regex = RegExp(pattern);
+
                           if (value == null || value.isEmpty) {
                             return 'Veuillez remplir votre email';
+                          } else if (!regex.hasMatch(value)) {
+                            String message =
+                                "Veuillez remplir un email valide. \nExample : example@gmail.com";
+                            return message;
                           }
                           return null;
                         },
