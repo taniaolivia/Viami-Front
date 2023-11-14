@@ -4,22 +4,23 @@ import 'package:viami/components/travelComponent.dart';
 import 'package:viami/models-api/userDateLocation/usersDateLocation.dart';
 import 'package:viami/services/userDateLocation/usersDateLocation.service.dart';
 
-class TravelPageDetails extends StatefulWidget {
+class TravelDetailsPage extends StatefulWidget {
   final int travelId;
   final String? date;
   final String? location;
-  const TravelPageDetails(
+  const TravelDetailsPage(
       {Key? key, required this.travelId, this.date, this.location})
       : super(key: key);
 
   @override
-  State<TravelPageDetails> createState() => _TravelPageDetailsState();
+  State<TravelDetailsPage> createState() => _TravelDetailsPageState();
 }
 
-class _TravelPageDetailsState extends State<TravelPageDetails> {
+class _TravelDetailsPageState extends State<TravelDetailsPage> {
   final storage = const FlutterSecureStorage();
   String? token;
   String? userId;
+  List? users;
   int? nbParticipant;
 
   Future<UsersDateLocation> getTravelParticipants() {
@@ -36,7 +37,9 @@ class _TravelPageDetailsState extends State<TravelPageDetails> {
 
   Future<void> fetchData() async {
     final participant = await getTravelParticipants();
+
     setState(() {
+      users = participant.users;
       nbParticipant = participant.nbParticipant;
     });
   }
@@ -52,6 +55,7 @@ class _TravelPageDetailsState extends State<TravelPageDetails> {
     return TravelComponent(
         travelId: widget.travelId,
         nbParticipant: nbParticipant,
+        users: users,
         location: widget.location,
         date: widget.date);
   }

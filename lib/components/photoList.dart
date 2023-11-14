@@ -38,11 +38,9 @@ class _PhotoListState extends State<PhotoList> {
 
     setState(() {
       userImagesLength = images.userImages.length;
-
       userImages = images.userImages;
     });
 
-    print(userImages);
     return images;
   }
 

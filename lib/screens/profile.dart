@@ -5,7 +5,7 @@ import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/profileEdit.dart';
-import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
@@ -59,25 +59,14 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: const AutoSizeText(
-            "Mon profil",
-            style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontFamily: "Poppins"),
-            minFontSize: 15,
-            maxFontSize: 18,
-            textAlign: TextAlign.center,
-          ),
-          centerTitle: true,
+          backgroundColor: const Color(0xFF0081CF),
           leading: IconButton(
               onPressed: () {
                 Navigator.pop(context);
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
-                color: Colors.black,
+                color: Colors.white,
                 size: 20,
               )),
         ),
@@ -86,7 +75,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 future: getUser(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Text("");
+                    return const Text("");
                   }
 
                   if (snapshot.hasError) {
@@ -94,10 +83,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   if (!snapshot.hasData) {
-                    return Text('');
+                    return const Text('');
                   }
 
                   var user = snapshot.data!;
+
                   return SingleChildScrollView(
                       child: Container(
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),

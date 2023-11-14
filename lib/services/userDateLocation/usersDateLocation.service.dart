@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/themeActivity/themeActivities.dart';
 import 'package:viami/models-api/userDateLocation/usersDateLocation.dart';
 
 class UsersDateLocationService {

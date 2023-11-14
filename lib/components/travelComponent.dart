@@ -3,6 +3,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/screens/listTravelers.dart';
 import 'package:viami/services/travel/travel.service.dart';
 import 'package:viami/services/travelActivity/travelsActivities.service.dart';
 import 'package:viami/services/userDateLocation/usersDateLocation.service.dart';
@@ -18,9 +19,12 @@ class TravelComponent extends StatefulWidget {
   final int? nbParticipant;
   final String? location;
   final String? date;
+  final List? users;
+
   const TravelComponent(
       {Key? key,
       required this.travelId,
+      this.users,
       this.nbParticipant,
       this.location,
       this.date})
@@ -77,6 +81,7 @@ class _TravelComponentState extends State<TravelComponent> {
   Future<void> fetchData() async {
     await getTravelById();
     await getTravelImages();
+
   }
 
   @override
@@ -353,7 +358,12 @@ class _TravelComponentState extends State<TravelComponent> {
                     onPressed: () async {
                       await UsersDateLocationService().joinTravel(
                           token!, userId!, widget.location!, widget.date!);
-                      Navigator.pushNamed(context, "/home");
+
+                          //print(widget.users);
+
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => 
+                        ListTravelersPage(users: widget.users!)
+                      ));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
