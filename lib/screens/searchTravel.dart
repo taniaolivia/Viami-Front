@@ -6,7 +6,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
-import 'package:viami/screens/travel_page_details.dart';
+import 'package:viami/screens/travelDetails.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
 class SearchTravelPage extends StatefulWidget {
@@ -50,6 +50,7 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
           image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
           imageHeight: MediaQuery.of(context).size.width <= 320 ? 3 : 1.5,
           content: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Form(
                   key: _formKey,
@@ -182,7 +183,7 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => TravelPageDetails(
+                              builder: (context) => TravelDetailsPage(
                                   travelId: travels.travels[0].id,
                                   date: date,
                                   location: selectedLocation)));
@@ -193,7 +194,7 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
               const SizedBox(height: 10),
             ],
           ),
-          contentHeight: MediaQuery.of(context).size.width <= 320 ? 2.2 : 2.0,
+          contentHeight: MediaQuery.of(context).size.width <= 320 ? 4.2 : 6.0,
           containerHeight: MediaQuery.of(context).size.width <= 320 ? 1.7 : 2,
           title: "Recherche",
           redirect: "/home",
