@@ -7,7 +7,8 @@ Activity _$ActivityFromJson(Map<String?, dynamic> json) => Activity(
     location: json['location'],
     isRecommended: json['isRecommended'],
     nbParticipant: json['nbParticipant'],
-    description: json['description']);
+    description: json['description'],
+    note: json['note']);
 
 Map<String?, dynamic> _$ActivityToJson(Activity instance) => <String?, dynamic>{
       'id': instance.id,
@@ -16,5 +17,6 @@ Map<String?, dynamic> _$ActivityToJson(Activity instance) => <String?, dynamic>{
       'location': instance.location,
       'isRecommended': instance.isRecommended,
       'nbParticipant': instance.nbParticipant,
-      'description': instance.description
+      'description': instance.description,
+      'note': instance.note
     };

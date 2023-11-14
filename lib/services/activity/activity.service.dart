@@ -18,4 +18,23 @@ class ActivityService {
       throw Exception('Failed to load activity');
     }
   }
+
+  Future<void> updateActivityNote(
+      int activityId, double newNote, String token) async {
+    try {
+      final response = await http.post(
+        Uri.parse('${dotenv.env['API_URL']}/newNote/$activityId'),
+        headers: <String, String>{'Authorization': token},
+        body: {'note': newNote.toString()},
+      );
+
+      if (response.statusCode == 200) {
+        print('Note mise à jour avec succès');
+      } else {
+        print('Échec de la mise à jour de la note');
+      }
+    } catch (error) {
+      print('Erreur lors de la mise à jour de la note: $error');
+    }
+  }
 }

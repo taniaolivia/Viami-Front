@@ -2,6 +2,7 @@ import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/models-api/activity/activity.dart';
 import 'package:viami/services/activity/activity.service.dart';
@@ -23,7 +24,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
-  String? nbParticipant;
+  double? note;
 
   List<String> activityImages = [];
 
@@ -55,10 +56,10 @@ class _ActivityComponentState extends State<ActivityComponent> {
     final activity = await getActivityById();
 
     setState(() {
-      if (activity.nbParticipant == null) {
-        nbParticipant = "0";
+      if (activity.note == null) {
+        note = 0;
       } else {
-        nbParticipant = activity.nbParticipant.toString();
+        note = activity.note as double?;
       }
     });
 
@@ -242,10 +243,62 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   IconAndTextWidget(
-                                    icon: Icons.person,
-                                    text: nbParticipant!,
+                                    icon: Icons.star,
+                                    text: note.toString(),
                                     color: Colors.black,
-                                    iconColor: Colors.blue,
+                                    iconColor: Colors.yellow,
+                                    onTap: () {
+                                      showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                                title: Text(
+                                                    'Notez cette activité'),
+                                                content: RatingBar.builder(
+                                                  initialRating: note ?? 0,
+                                                  minRating: 1,
+                                                  direction: Axis.horizontal,
+                                                  allowHalfRating: false,
+                                                  itemCount: 5,
+                                                  itemSize: 40,
+                                                  itemBuilder: (context, _) =>
+                                                      Icon(
+                                                    Icons.star,
+                                                    color: Colors.amber,
+                                                  ),
+                                                  onRatingUpdate: (value) {
+                                                    setState(() {
+                                                      note = value;
+                                                    });
+                                                  },
+                                                ),
+                                                actions: <Widget>[
+                                                  TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Annuler'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      await ActivityService()
+                                                          .updateActivityNote(
+                                                              widget.activityId,
+                                                              note as double,
+                                                              token.toString());
+                                                      print(
+                                                          'Nouvelle note : $note');
+
+                                                      // Fermer la boîte de dialogue
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text('Enregistrer'),
+                                                  ),
+                                                ]);
+                                          });
+                                    },
                                   ),
                                 ],
                               ),
