@@ -7,7 +7,7 @@ import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/themeActivity/themeActivities.dart';
 import 'package:viami/screens/drawer.dart';
-import 'package:viami/screens/travel_page_details.dart';
+import 'package:viami/screens/travelDetails.dart';
 import 'package:viami/services/themeActivity/themesActivities.service.dart';
 
 class AllThemeActivitiesPage extends StatefulWidget {
@@ -77,7 +77,7 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                               Navigator.push(
                                 context,
                                 FadePageRoute(
-                                  page: TravelPageDetails(
+                                  page: TravelDetailsPage(
                                       travelId: activity.activities[index].id),
                                 ),
                               );

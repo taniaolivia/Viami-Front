@@ -1,7 +1,6 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/themeActivity/themeActivities.dart';
 import 'package:viami/models-api/userDateLocation/usersDateLocation.dart';
 
 class UsersDateLocationService {
@@ -15,11 +14,9 @@ class UsersDateLocationService {
       },
     );
 
-
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-print(res["userDateLocation"]);
       return UsersDateLocation.fromJson(res["userDateLocation"]);
     } else {
       throw Exception("Failed to load date location's users");
