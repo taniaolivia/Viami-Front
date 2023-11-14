@@ -9,8 +9,7 @@ import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
 import 'package:viami/screens/home.dart';
-import 'package:viami/screens/allRecommendedActivities.dart';
-import 'package:viami/screens/show_profile_page.dart';
+import 'package:viami/screens/showProfile.dart';
 import 'package:viami/screens/vip.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
@@ -54,24 +53,9 @@ class _MenusPageState extends State<MenusPage> {
     return getConnectedUser();
   }
 
-  Future<UsersImages> getUserImages() async {
-    token = await storage.read(key: "token");
-    userId = await storage.read(key: "userId");
-
-    var images = await UsersImagesService()
-        .getUserImagesById(userId.toString(), token.toString());
-
-    setState(() {
-      userProfile = images.userImages[0].image;
-    });
-
-    return images;
-  }
-
   @override
   void initState() {
     getUser();
-    getUserImages();
     super.initState();
 
     _pageController = PageController(initialPage: _currentIndex);
@@ -125,8 +109,8 @@ class _MenusPageState extends State<MenusPage> {
               elevation: 0,
               backgroundColor: Colors.white,
               title: Center(
-                  child: FutureBuilder<List<Object>>(
-                      future: Future.wait([getUser(), getUserImages()]),
+                  child: FutureBuilder<User>(
+                      future: getUser(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -140,10 +124,7 @@ class _MenusPageState extends State<MenusPage> {
                         if (!snapshot.hasData) {
                           return Text('');
                         }
-                        var user = snapshot.data![0] as User;
-                        var images = snapshot.data![1] as UsersImages;
-
-                        userProfile = images.userImages[0].image;
+                        var user = snapshot.data!;
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -170,32 +151,13 @@ class _MenusPageState extends State<MenusPage> {
                   padding: const EdgeInsets.only(
                     right: 16.0,
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: const Color(0xFFFFFFFF),
-                        width: 2.0,
-                      ),
-                    ),
-                    child: GestureDetector(
+                  child: GestureDetector(
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            FadePageRoute(
-                                page: ShowProfilePage(userId: userId!)));
+                        Navigator.pushNamed(context, "/home");
                       },
-                      child: userProfile != null
-                          ? CircleAvatar(
-                              backgroundImage: NetworkImage(userProfile!),
-                              radius: 20)
-                          : const CircleAvatar(
-                              radius: 20,
-                              child: Icon(Icons.person),
-                            ),
-                    ),
-                  ),
-                )
+                      child: const Icon(Icons.favorite_border_outlined,
+                          color: Color(0xFF0081CF))),
+                ),
               ],
             )
           : null,
