@@ -15,9 +15,11 @@ class UsersDateLocationService {
       },
     );
 
+
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
+print(res["userDateLocation"]);
       return UsersDateLocation.fromJson(res["userDateLocation"]);
     } else {
       throw Exception("Failed to load date location's users");

@@ -20,6 +20,7 @@ class _TravelPageDetailsState extends State<TravelPageDetails> {
   final storage = const FlutterSecureStorage();
   String? token;
   String? userId;
+  List? users;
   int? nbParticipant;
 
   Future<UsersDateLocation> getTravelParticipants() {
@@ -36,7 +37,9 @@ class _TravelPageDetailsState extends State<TravelPageDetails> {
 
   Future<void> fetchData() async {
     final participant = await getTravelParticipants();
+
     setState(() {
+      users = participant.users;
       nbParticipant = participant.nbParticipant;
     });
   }
@@ -52,6 +55,7 @@ class _TravelPageDetailsState extends State<TravelPageDetails> {
     return TravelComponent(
         travelId: widget.travelId,
         nbParticipant: nbParticipant,
+        users: users,
         location: widget.location,
         date: widget.date);
   }
