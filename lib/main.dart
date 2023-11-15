@@ -4,6 +4,7 @@ import 'package:viami/screens/allPopularActivities.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
+import 'package:viami/screens/message.dart';
 import 'package:viami/screens/profile.dart';
 import 'package:viami/screens/allRecommendedActivities.dart';
 import 'package:viami/screens/register.dart';
@@ -47,7 +48,8 @@ class MyApp extends StatelessWidget {
           "/search": (context) => const SearchTravelPage(),
           "/activities/popular": (context) => const AllPopularActivitiesPage(),
           "/activities/recommend": (context) =>
-              const AllRecommendedActivitiesPage()
+              const AllRecommendedActivitiesPage(),
+          "/messages": (context) => const MessagesPage()
         });
   }
 }
