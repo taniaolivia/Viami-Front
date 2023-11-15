@@ -20,6 +20,7 @@ class TravelComponent extends StatefulWidget {
   final String? location;
   final String? date;
   final List? users;
+  final String? connectedUserPlan;
 
   const TravelComponent(
       {Key? key,
@@ -27,7 +28,8 @@ class TravelComponent extends StatefulWidget {
       this.users,
       this.nbParticipant,
       this.location,
-      this.date})
+      this.date,
+      this.connectedUserPlan})
       : super(key: key);
 
   @override
@@ -81,7 +83,6 @@ class _TravelComponentState extends State<TravelComponent> {
   Future<void> fetchData() async {
     await getTravelById();
     await getTravelImages();
-
   }
 
   @override
@@ -107,7 +108,6 @@ class _TravelComponentState extends State<TravelComponent> {
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Stack(
                   children: [
@@ -359,11 +359,13 @@ class _TravelComponentState extends State<TravelComponent> {
                       await UsersDateLocationService().joinTravel(
                           token!, userId!, widget.location!, widget.date!);
 
-                          //print(widget.users);
-
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => 
-                        ListTravelersPage(users: widget.users!)
-                      ));
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ListTravelersPage(
+                                    users: widget.users!,
+                                    connectedUserPlan: widget.connectedUserPlan,
+                                  )));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -384,7 +386,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
   Widget buildDot({required int index}) {
     return Container(
-      margin: EdgeInsets.only(right: 5),
+      margin: const EdgeInsets.only(right: 5),
       height: 8,
       width: 8,
       decoration: BoxDecoration(

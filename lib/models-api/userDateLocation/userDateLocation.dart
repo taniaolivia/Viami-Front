@@ -24,7 +24,8 @@ class UserDateLocation {
       this.verifyEmailToken,
       this.emailVerified,
       required this.date,
-      required this.nbParticipant});
+      required this.nbParticipant,
+      required this.plan});
 
   factory UserDateLocation.fromJson(Map<String?, dynamic> json) =>
       _$UserDateLocationFromJson(json);
@@ -50,4 +51,5 @@ class UserDateLocation {
   final String? emailVerified;
   final String date;
   final int nbParticipant;
+  final String plan;
 }

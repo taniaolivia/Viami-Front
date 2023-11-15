@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/travelComponent.dart';
+import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userDateLocation/usersDateLocation.dart';
+import 'package:viami/services/user/auth.service.dart';
+import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userDateLocation/usersDateLocation.service.dart';
 
 class TravelDetailsPage extends StatefulWidget {
@@ -22,6 +25,22 @@ class _TravelDetailsPageState extends State<TravelDetailsPage> {
   String? userId;
   List? users;
   int? nbParticipant;
+  bool? tokenExpired;
+  String? connectedUserPlan;
+
+  Future<User> getUser() {
+    Future<User> getConnectedUser() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
+
+      return UserService().getUserById(userId.toString(), token.toString());
+    }
+
+    return getConnectedUser();
+  }
 
   Future<UsersDateLocation> getTravelParticipants() {
     Future<UsersDateLocation> getAllParticipantsTravel() async {
@@ -37,10 +56,12 @@ class _TravelDetailsPageState extends State<TravelDetailsPage> {
 
   Future<void> fetchData() async {
     final participant = await getTravelParticipants();
+    final user = await getUser();
 
     setState(() {
       users = participant.users;
       nbParticipant = participant.nbParticipant;
+      connectedUserPlan = user.plan;
     });
   }
 
@@ -57,6 +78,7 @@ class _TravelDetailsPageState extends State<TravelDetailsPage> {
         nbParticipant: nbParticipant,
         users: users,
         location: widget.location,
-        date: widget.date);
+        date: widget.date,
+        connectedUserPlan: connectedUserPlan);
   }
 }

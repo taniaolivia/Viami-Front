@@ -23,7 +23,8 @@ class UserImage {
       this.profileImage,
       this.verifyEmailToken,
       this.emailVerified,
-      required this.image});
+      required this.image,
+      required this.plan});
 
   factory UserImage.fromJson(Map<String?, dynamic> json) =>
       _$UserImageFromJson(json);
@@ -48,6 +49,7 @@ class UserImage {
   final String? verifyEmailToken;
   final String? emailVerified;
   final String image;
+  final String plan;
 }
 
 class UsersImages {

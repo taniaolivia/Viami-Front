@@ -24,7 +24,8 @@ class UserInterest {
       this.profileImage,
       this.verifyEmailToken,
       this.emailVerified,
-      required this.imageName});
+      required this.imageName,
+      required this.plan});
 
   factory UserInterest.fromJson(Map<String?, dynamic> json) =>
       _$UserInterestFromJson(json);
@@ -50,6 +51,7 @@ class UserInterest {
   final String? emailVerified;
   final String interest;
   final String imageName;
+  final String plan;
 }
 
 class UsersInterests {
