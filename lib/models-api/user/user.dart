@@ -21,7 +21,8 @@ class User {
       this.connected,
       this.profileImage,
       this.verifyEmailToken,
-      this.emailVerified});
+      this.emailVerified,
+      required this.plan});
 
   factory User.fromJson(Map<String?, dynamic> json) => _$UserFromJson(json);
   Map<String?, dynamic> toJson() => _$UserToJson(this);
@@ -43,4 +44,5 @@ class User {
   final String? profileImage;
   final String? verifyEmailToken;
   final String? emailVerified;
+  final String plan;
 }

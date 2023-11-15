@@ -20,6 +20,7 @@ UserLanguage _$UserLanguageFromJson(Map<String?, dynamic> json) => UserLanguage(
       verifyEmailToken: json["verifyEmailToken"],
       emailVerified: json["emailVerified"],
       language: json['language'],
+      plan: json['plan'],
       imageName: json['imageName'],
     );
 
@@ -44,6 +45,7 @@ Map<String?, dynamic> _$UserLanguageToJson(UserLanguage instance) =>
       'verifyEmailToken': instance.verifyEmailToken,
       'emailVerified': instance.emailVerified,
       'language': instance.language,
+      'plan': instance.plan,
       'imageName': instance.imageName
     };
 

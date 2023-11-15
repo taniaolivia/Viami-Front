@@ -17,7 +17,8 @@ User _$UserFromJson(Map<String?, dynamic> json) => User(
     connected: json["connected"],
     profileImage: json["profileImage"],
     verifyEmailToken: json["verifyEmailToken"],
-    emailVerified: json["emailVerified"]);
+    emailVerified: json["emailVerified"],
+    plan: json['plan']);
 
 Map<String?, dynamic> _$UserToJson(User instance) => <String?, dynamic>{
       'id': instance.id,
@@ -35,5 +36,6 @@ Map<String?, dynamic> _$UserToJson(User instance) => <String?, dynamic>{
       'connected': instance.connected,
       'profileImage': instance.profileImage,
       'verifyEmailToken': instance.verifyEmailToken,
-      'emailVerified': instance.emailVerified
+      'emailVerified': instance.emailVerified,
+      'plan': instance.plan
     };

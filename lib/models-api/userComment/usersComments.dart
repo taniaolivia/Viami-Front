@@ -24,6 +24,7 @@ class UserComment {
       this.profileImage,
       this.verifyEmailToken,
       this.emailVerified,
+      required this.plan,
       required this.comment});
 
   factory UserComment.fromJson(Map<String?, dynamic> json) =>
@@ -49,6 +50,7 @@ class UserComment {
   final String? profileImage;
   final String? verifyEmailToken;
   final String? emailVerified;
+  final String? plan;
   final String comment;
 }
 

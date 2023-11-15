@@ -21,7 +21,8 @@ UserDateLocation _$UserDateLocationFromJson(Map<String?, dynamic> json) =>
         verifyEmailToken: json["verifyEmailToken"],
         emailVerified: json["emailVerified"],
         date: json['date'],
-        nbParticipant: json['nbParticipant']);
+        nbParticipant: json['nbParticipant'],
+        plan: json['plan']);
 
 Map<String?, dynamic> _$UserDateLocationToJson(UserDateLocation instance) =>
     <String?, dynamic>{
@@ -44,5 +45,6 @@ Map<String?, dynamic> _$UserDateLocationToJson(UserDateLocation instance) =>
       'verifyEmailToken': instance.verifyEmailToken,
       'emailVerified': instance.emailVerified,
       'date': instance.date,
-      'nbParticipant': instance.nbParticipant
+      'nbParticipant': instance.nbParticipant,
+      'plan': instance.plan
     };

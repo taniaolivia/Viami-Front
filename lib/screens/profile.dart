@@ -121,6 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                             context,
                                             FadePageRoute(
                                                 page: ShowProfilePage(
+                                                    showButton: true,
                                                     userId: userId!)));
                                       },
                                       child: const Padding(

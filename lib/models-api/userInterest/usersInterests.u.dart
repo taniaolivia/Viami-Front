@@ -20,7 +20,8 @@ UserInterest _$UserInterestFromJson(Map<String?, dynamic> json) => UserInterest(
     verifyEmailToken: json["verifyEmailToken"],
     emailVerified: json["emailVerified"],
     interest: json['interest'],
-    imageName: json['imageName']);
+    imageName: json['imageName'],
+    plan: json['plan']);
 
 Map<String?, dynamic> _$UserInterestToJson(UserInterest instance) =>
     <String?, dynamic>{
@@ -43,7 +44,8 @@ Map<String?, dynamic> _$UserInterestToJson(UserInterest instance) =>
       'verifyEmailToken': instance.verifyEmailToken,
       'emailVerified': instance.emailVerified,
       'interest': instance.interest,
-      'imageName': instance.imageName
+      'imageName': instance.imageName,
+      'plan': instance.plan
     };
 
 UsersInterests _$UsersInterestsFromJson(Map<String?, dynamic> json) =>

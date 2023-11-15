@@ -21,25 +21,19 @@ class _InterestComponentState extends State<InterestComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
-  String? userId = "";
 
   int? userInterestsLength = 0;
   List<UserInterest>? userInterests = [];
 
-  Future<UsersInterests> getUserInterests() {
-    Future<UsersInterests> getAllInterests() async {
-      token = await storage.read(key: "token");
-      userId = await storage.read(key: "userId");
+  Future<UsersInterests> getAllInterests(String userId) async {
+    token = await storage.read(key: "token");
 
-      return UsersInterestsService()
-          .getUserInterestsById(userId!, token.toString());
-    }
-
-    return getAllInterests();
+    return UsersInterestsService()
+        .getUserInterestsById(userId, token.toString());
   }
 
   void initState() {
-    getUserInterests();
+    getAllInterests(widget.userId);
     super.initState();
   }
 
@@ -96,7 +90,7 @@ class _InterestComponentState extends State<InterestComponent> {
                         color: Color(0xFFF4F4F4),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: FutureBuilder<UsersInterests>(
-                        future: getUserInterests(),
+                        future: getAllInterests(widget.userId),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
@@ -149,7 +143,7 @@ class _InterestComponentState extends State<InterestComponent> {
                 constraints: const BoxConstraints(
                     minHeight: 45, maxHeight: double.infinity),
                 child: FutureBuilder<UsersInterests>(
-                    future: getUserInterests(),
+                    future: getAllInterests(widget.userId),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Container(height: 80);
@@ -160,42 +154,52 @@ class _InterestComponentState extends State<InterestComponent> {
                       }
 
                       if (!snapshot.hasData) {
-                        return Text('');
+                        return Text("");
                       }
                       var data = snapshot.data!;
 
                       userInterestsLength = data.userInterests.length;
                       userInterests = data.userInterests;
 
-                      return Wrap(
-                          alignment: WrapAlignment.start,
-                          spacing: 7.0,
-                          runSpacing: 7.0,
-                          children:
-                              List.generate(data.userInterests.length, (index) {
-                            return Container(
-                                padding:
-                                    const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                                constraints: const BoxConstraints(
-                                    maxWidth: double.infinity),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  border: Border.all(
-                                      color: const Color(0xFF0081CF)),
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: AutoSizeText(
-                                  data.userInterests[index].interest,
-                                  style: const TextStyle(
-                                    color: Color(0xFF0081CF),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  minFontSize: 10,
-                                  maxFontSize: 12,
-                                ));
-                          }).toList());
+                      return data.userInterests.length != 0
+                          ? Wrap(
+                              alignment: WrapAlignment.start,
+                              spacing: 7.0,
+                              runSpacing: 7.0,
+                              children: List.generate(data.userInterests.length,
+                                  (index) {
+                                return Container(
+                                    padding: const EdgeInsets.fromLTRB(
+                                        20, 10, 20, 10),
+                                    constraints: const BoxConstraints(
+                                        maxWidth: double.infinity),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: const Color(0xFF0081CF)),
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                    child: AutoSizeText(
+                                      data.userInterests[index].interest,
+                                      style: const TextStyle(
+                                        color: Color(0xFF0081CF),
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      minFontSize: 10,
+                                      maxFontSize: 12,
+                                    ));
+                              }).toList())
+                          : Container(
+                              height: 10,
+                              child: const AutoSizeText(
+                                "Aucun intérêt",
+                                minFontSize: 11,
+                                maxFontSize: 13,
+                              ));
                     })),
-        const SizedBox(height: 30),
+        userInterestsLength != 0
+            ? const SizedBox(height: 30)
+            : const SizedBox(height: 10),
       ],
     );
   }

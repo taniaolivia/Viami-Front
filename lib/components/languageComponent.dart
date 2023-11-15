@@ -25,19 +25,15 @@ class _LanguageComponentState extends State<LanguageComponent> {
   int? userLanguagesLength = 0;
   List<UserLanguage>? userLanguages = [];
 
-  Future<UsersLanguages> getUserLanguages() {
-    Future<UsersLanguages> getAllLanguages() async {
-      token = await storage.read(key: "token");
-      userId = await storage.read(key: "userId");
+  Future<UsersLanguages> getAllLanguages() async {
+    token = await storage.read(key: "token");
 
-      return UsersLanguagesService()
-          .getUserLanguagesById(userId.toString(), token.toString());
-    }
-
-    return getAllLanguages();
+    return UsersLanguagesService()
+        .getUserLanguagesById(widget.userId, token.toString());
   }
 
   void initState() {
+    getAllLanguages();
     setState(() {
       userLanguagesLength = userLanguagesLength;
     });
@@ -95,10 +91,10 @@ class _LanguageComponentState extends State<LanguageComponent> {
                     color: Color(0xFFF4F4F4),
                     borderRadius: BorderRadius.all(Radius.circular(5))),
                 child: FutureBuilder<UsersLanguages>(
-                    future: getUserLanguages(),
+                    future: getAllLanguages(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(height: 45);
+                        return Container(height: 80);
                       }
 
                       if (snapshot.hasError) {
@@ -148,7 +144,7 @@ class _LanguageComponentState extends State<LanguageComponent> {
               constraints: const BoxConstraints(
                   minHeight: 45, maxHeight: double.infinity),
               child: FutureBuilder<UsersLanguages>(
-                  future: getUserLanguages(),
+                  future: getAllLanguages(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
                       return Text("");
@@ -167,36 +163,46 @@ class _LanguageComponentState extends State<LanguageComponent> {
                     userLanguagesLength = data.userLanguages.length;
                     userLanguages = data.userLanguages;
 
-                    return Wrap(
-                        alignment: WrapAlignment.start,
-                        spacing: 7.0,
-                        runSpacing: 7.0,
-                        children:
-                            List.generate(data.userLanguages.length, (index) {
-                          return Container(
-                              padding:
-                                  const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                              constraints: const BoxConstraints(
-                                  maxWidth: double.infinity),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border:
-                                    Border.all(color: const Color(0xFF0081CF)),
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: AutoSizeText(
-                                data.userLanguages[index].language,
-                                style: const TextStyle(
-                                  color: Color(0xFF0081CF),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                minFontSize: 10,
-                                maxFontSize: 12,
-                              ));
-                        }).toList());
+                    return data.userLanguages.length != 0
+                        ? Wrap(
+                            alignment: WrapAlignment.start,
+                            spacing: 7.0,
+                            runSpacing: 7.0,
+                            children: List.generate(data.userLanguages.length,
+                                (index) {
+                              return Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                                  constraints: const BoxConstraints(
+                                      maxWidth: double.infinity),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    border: Border.all(
+                                        color: const Color(0xFF0081CF)),
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                  child: AutoSizeText(
+                                    data.userLanguages[index].language,
+                                    style: const TextStyle(
+                                      color: Color(0xFF0081CF),
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                    minFontSize: 10,
+                                    maxFontSize: 12,
+                                  ));
+                            }).toList())
+                        : Container(
+                            height: 10,
+                            child: const AutoSizeText(
+                              "Aucune langue",
+                              minFontSize: 11,
+                              maxFontSize: 13,
+                            ));
                   }),
             ),
-      const SizedBox(height: 40)
+      userLanguagesLength != 0
+          ? const SizedBox(height: 40)
+          : const SizedBox(height: 10)
     ]);
   }
 }
