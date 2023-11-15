@@ -24,7 +24,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
-  double? note;
+  int? note;
 
   List<String> activityImages = [];
 
@@ -59,7 +59,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
       if (activity.note == null) {
         note = 0;
       } else {
-        note = activity.note as double?;
+        note = activity.note;
       }
     });
 
@@ -255,7 +255,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                 title: Text(
                                                     'Notez cette activité'),
                                                 content: RatingBar.builder(
-                                                  initialRating: note ?? 0,
+                                                  initialRating: note != null ? note!.toDouble() : 0.0,
                                                   minRating: 1,
                                                   direction: Axis.horizontal,
                                                   allowHalfRating: false,
@@ -268,7 +268,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                   ),
                                                   onRatingUpdate: (value) {
                                                     setState(() {
-                                                      note = value;
+                                                      note = value.toInt();
                                                     });
                                                   },
                                                 ),
@@ -285,10 +285,8 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                       await ActivityService()
                                                           .updateActivityNote(
                                                               widget.activityId,
-                                                              note as double,
+                                                              note!.toDouble(),
                                                               token.toString());
-                                                      print(
-                                                          'Nouvelle note : $note');
 
                                                       // Fermer la boîte de dialogue
                                                       Navigator.of(context)
