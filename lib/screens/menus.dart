@@ -103,7 +103,7 @@ class _MenusPageState extends State<MenusPage> {
     }
     ;
     return Scaffold(
-      appBar: _currentIndex != 4 && _currentIndex != 0
+      appBar: _currentIndex != 4 && _currentIndex != 0 && _currentIndex != 3
           ? AppBar(
               leading: MenuWidget(),
               elevation: 0,
@@ -168,8 +168,8 @@ class _MenusPageState extends State<MenusPage> {
             const SearchTravelPage(),
             VipPage(),
             const HomePage(),
-            MessagePage(),
-            ShowProfilePage(userId: userId!),
+            const MessagesPage(),
+            ShowProfilePage(showButton: true, userId: userId!),
           ]),
       drawer: const DrawerPage(),
       bottomNavigationBar: CustomCurvedNavigationBar(
