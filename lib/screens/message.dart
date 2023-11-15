@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
-import '../components/NavigationBarComponent.dart';
-import '../widgets/menu_widget.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/models-api/user/user.dart';
+import 'package:viami/services/user/auth.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class MessagesPage extends StatefulWidget {
   final String? userId;
@@ -13,6 +14,26 @@ class MessagesPage extends StatefulWidget {
 }
 
 class _MessagesPageState extends State<MessagesPage> {
+  final storage = const FlutterSecureStorage();
+
+  String? token = "";
+  String? userId = "";
+  bool? tokenExpired;
+
+  Future<User> getUser() {
+    Future<User> getConnectedUser() async {
+      token = await storage.read(key: "token");
+      userId = await storage.read(key: "userId");
+      bool isTokenExpired = AuthService().isTokenExpired(token!);
+
+      tokenExpired = isTokenExpired;
+
+      return UserService().getUserById(userId.toString(), token.toString());
+    }
+
+    return getConnectedUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
