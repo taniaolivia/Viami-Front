@@ -7,8 +7,8 @@ import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userComment/usersComments.service.dart';
 
 class ProfileComment extends StatefulWidget {
-  final User user;
-  const ProfileComment({Key? key, required this.user}) : super(key: key);
+  final String userId;
+  const ProfileComment({Key? key, required this.userId}) : super(key: key);
 
   @override
   State<ProfileComment> createState() => _ProfileCommentState();
@@ -22,15 +22,13 @@ class _ProfileCommentState extends State<ProfileComment> {
 
   @override
   Widget build(BuildContext context) {
-    Future<UsersComments> getUserComments() {
-      Future<UsersComments> getAllComments() async {
-        token = await storage.read(key: "token");
+    Future<UsersComments> getAllComments() async {
+      token = await storage.read(key: "token");
 
-        return UsersCommentsService()
-            .getUserCommentsById(widget.user.id!, token.toString());
-      }
+      final comments = UsersCommentsService()
+          .getUserCommentsById(widget.userId, token.toString());
 
-      return getAllComments();
+      return comments;
     }
 
     Future<User> getUser() {
@@ -43,105 +41,127 @@ class _ProfileCommentState extends State<ProfileComment> {
       return getConnectedUser();
     }
 
-    return FutureBuilder<UsersComments>(
-        future: getUserComments(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Text("");
-          }
+    getAllComments();
 
-          if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          }
+    @override
+    void initState() {
+      super.initState();
+    }
 
-          if (!snapshot.hasData) {
-            return Text('');
-          }
+    return Column(children: [
+      const Align(
+          alignment: Alignment.topLeft,
+          child: AutoSizeText(
+            "Avis",
+            minFontSize: 11,
+            maxFontSize: 13,
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+          )),
+      const SizedBox(height: 10),
+      SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: FutureBuilder<UsersComments>(
+              future: getAllComments(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container();
+                }
 
-          var comment = snapshot.data!;
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
 
-          commenterId = comment.userComments[0].commenterId;
+                if (!snapshot.hasData) {
+                  return const Text('');
+                }
 
-          return Column(children: [
-            const Align(
-                alignment: Alignment.topLeft,
-                child: AutoSizeText(
-                  "Avis",
-                  minFontSize: 11,
-                  maxFontSize: 13,
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.w600),
-                )),
-            const SizedBox(height: 10),
-            SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                    children:
-                        List.generate(comment.userComments.length, (index) {
-                  return Container(
-                      width: MediaQuery.of(context).size.width / 1.2,
-                      constraints: const BoxConstraints(
-                          minHeight: 150, maxHeight: double.infinity),
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius:
-                              const BorderRadius.all(Radius.circular(10))),
-                      child: Column(
-                        children: [
-                          FutureBuilder<User>(
-                              future: getUser(),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState ==
-                                    ConnectionState.waiting) {
-                                  return Text("");
-                                }
+                var comment = snapshot.data!;
 
-                                if (snapshot.hasError) {
-                                  return Text('Error: ${snapshot.error}');
-                                }
+                commenterId = comment.userComments.isNotEmpty
+                    ? comment.userComments[0].commenterId
+                    : '';
 
-                                if (!snapshot.hasData) {
-                                  return Text('');
-                                }
+                return comment.userComments.length != 0
+                    ? Row(
+                        children:
+                            List.generate(comment.userComments.length, (index) {
+                        return Container(
+                            width: MediaQuery.of(context).size.width / 1.2,
+                            constraints: const BoxConstraints(
+                                minHeight: 150, maxHeight: double.infinity),
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            decoration: BoxDecoration(
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
+                            child: Column(
+                              children: [
+                                FutureBuilder<User>(
+                                    future: getUser(),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Text("");
+                                      }
 
-                                var commenter = snapshot.data!;
-                                return Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      AutoSizeText(
-                                        "${commenter.firstName} ${commenter.lastName}",
-                                        minFontSize: 11,
-                                        maxFontSize: 13,
-                                        style: const TextStyle(
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 10),
-                                      CircleAvatar(
-                                          backgroundImage:
-                                              commenter.profileImage != null
-                                                  ? AssetImage(
-                                                      commenter.profileImage!)
-                                                  : null,
-                                          child: commenter.profileImage == null
-                                              ? const Icon(Icons.person)
-                                              : null)
-                                    ]);
-                              }),
-                          const SizedBox(height: 10),
-                          AutoSizeText(comment.userComments[index].comment,
-                              minFontSize: 11,
-                              maxFontSize: 13,
-                              textAlign: TextAlign.justify,
-                              style: const TextStyle(
-                                color: Colors.black,
-                              )),
-                        ],
-                      ));
-                }))),
-            const SizedBox(height: 30),
-          ]);
-        });
+                                      if (snapshot.hasError) {
+                                        return Text('Error: ${snapshot.error}');
+                                      }
+
+                                      if (!snapshot.hasData) {
+                                        return Text('');
+                                      }
+
+                                      var commenter = snapshot.data!;
+                                      return Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            AutoSizeText(
+                                              "${commenter.firstName} ${commenter.lastName}",
+                                              minFontSize: 11,
+                                              maxFontSize: 13,
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            CircleAvatar(
+                                                backgroundImage: commenter
+                                                            .profileImage !=
+                                                        null
+                                                    ? AssetImage(
+                                                        commenter.profileImage!)
+                                                    : null,
+                                                child: commenter.profileImage ==
+                                                        null
+                                                    ? const Icon(Icons.person)
+                                                    : null)
+                                          ]);
+                                    }),
+                                const SizedBox(height: 10),
+                                AutoSizeText(
+                                    comment.userComments[index].comment,
+                                    minFontSize: 11,
+                                    maxFontSize: 13,
+                                    textAlign: TextAlign.justify,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                    )),
+                              ],
+                            ));
+                      }))
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 20,
+                        child: const AutoSizeText(
+                          "Aucun avis",
+                          minFontSize: 11,
+                          maxFontSize: 13,
+                          textAlign: TextAlign.left,
+                        ));
+              })),
+      const SizedBox(height: 30),
+    ]);
   }
 }
