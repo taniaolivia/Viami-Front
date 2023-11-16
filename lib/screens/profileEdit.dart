@@ -108,6 +108,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         const SizedBox(height: 30),
         InterestComponent(page: "edit", userId: widget.user.id!),
         LanguageComponent(page: "edit", userId: widget.user.id!),
+        const SizedBox(height: 30),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
@@ -132,6 +133,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       "Votre profil a été modifié avec succès !",
                       "D'accord",
                       "");
+
+                  Navigator.pop(context);
                 }
               }
             },

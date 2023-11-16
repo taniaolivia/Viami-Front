@@ -119,7 +119,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                             Radius.circular(10))),
                                     child: IconButton(
                                         onPressed: () {
-                                          Navigator.pop(context);
+                                          Navigator.pushNamed(context, "/home");
                                         },
                                         icon: const Icon(
                                           Icons.arrow_back_ios,
@@ -227,7 +227,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                         alignment:
                                                             Alignment.center)));
                                       })),
-                              const SizedBox(height: 80),
+                              const SizedBox(height: 120),
                             ]),
                           )),
                     ])));

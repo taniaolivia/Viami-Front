@@ -93,52 +93,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                           child: Column(
                             children: <Widget>[
-                              Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    DecoratedBox(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            right:
-                                                BorderSide(color: Colors.grey),
-                                          ),
-                                        ),
-                                        child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                25, 10, 25, 10),
-                                            child: AutoSizeText(
-                                              "Modifier",
-                                              minFontSize: 11,
-                                              maxFontSize: 13,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                  color: currentColor,
-                                                  fontWeight: FontWeight.bold),
-                                            ))),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            FadePageRoute(
-                                                page: ShowProfilePage(
-                                                    showButton: true,
-                                                    userId: userId!)));
-                                      },
-                                      child: const Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              25, 10, 25, 10),
-                                          child: AutoSizeText(
-                                            "Aperçu",
-                                            minFontSize: 11,
-                                            maxFontSize: 13,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.bold),
-                                          )),
-                                    )
-                                  ]),
-                              const SizedBox(height: 10),
                               EditProfilePage(user: user)
                             ],
                           )));
