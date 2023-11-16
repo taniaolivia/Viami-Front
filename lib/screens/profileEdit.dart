@@ -106,8 +106,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       maxLines: null));
             }),
         const SizedBox(height: 30),
-        InterestComponent(page: "edit", userId: userId!),
-        LanguageComponent(page: "edit", userId: userId!),
+        InterestComponent(page: "edit", userId: widget.user.id!),
+        LanguageComponent(page: "edit", userId: widget.user.id!),
         ElevatedButton(
             style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),

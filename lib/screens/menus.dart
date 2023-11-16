@@ -3,20 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/NavigationBarComponent.dart';
 import 'package:viami/components/dialogMessage.dart';
-import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
-import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
 import 'package:viami/screens/home.dart';
 import 'package:viami/screens/showProfile.dart';
-import 'package:viami/screens/vip.dart';
+import 'package:viami/screens/explore.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
-import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
-import 'message.dart';
+import 'messenger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'searchTravel.dart';
 
@@ -69,7 +66,7 @@ class _MenusPageState extends State<MenusPage> {
         size: 30,
       ),
       const Icon(
-        Icons.star,
+        Icons.explore,
         size: 30,
       ),
       const Icon(
@@ -166,9 +163,9 @@ class _MenusPageState extends State<MenusPage> {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             const SearchTravelPage(),
-            VipPage(),
+            ExplorePage(),
             const HomePage(),
-            const MessagesPage(),
+            const MessengerPage(),
             ShowProfilePage(showButton: true, userId: userId!),
           ]),
       drawer: const DrawerPage(),
