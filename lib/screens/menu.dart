@@ -84,7 +84,6 @@ class MenuPage extends StatelessWidget {
                 var idUser = user.id;
 
                 return Stack(children: [
-                  // Menu Content
                   SafeArea(
                     child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

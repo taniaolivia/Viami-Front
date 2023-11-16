@@ -100,7 +100,7 @@ class _MenusPageState extends State<MenusPage> {
     }
     ;
     return Scaffold(
-      appBar: _currentIndex != 4 && _currentIndex != 0 && _currentIndex != 3
+      appBar: _currentIndex == 2
           ? AppBar(
               leading: MenuWidget(),
               elevation: 0,

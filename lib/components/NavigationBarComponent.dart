@@ -20,7 +20,7 @@ class CustomCurvedNavigationBar extends StatelessWidget {
         color: Colors.white,
       ),
       Icon(
-        Icons.star,
+        Icons.explore,
         size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),

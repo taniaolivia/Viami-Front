@@ -5,7 +5,7 @@ class ExplorePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
       body: Text(
         "Explore Page",
         style: TextStyle(color: Colors.black12),
