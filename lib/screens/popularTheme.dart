@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:card_swiper/card_swiper.dart';
 import 'package:flutter/material.dart';
@@ -100,9 +102,12 @@ class _PopularThemePageState extends State<PopularThemePage> {
         future: Future.wait([getTopFivePopularTravels(), getAllThemes()]),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Container(
                 width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height / 1.78);
+                height: MediaQuery.of(context).size.height ) 
+            );
           }
 
           if (snapshot.hasError) {

@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -25,15 +27,15 @@ class _InterestComponentState extends State<InterestComponent> {
   int? userInterestsLength = 0;
   List<UserInterest>? userInterests = [];
 
-  Future<UsersInterests> getAllInterests(String userId) async {
+  Future<UsersInterests> getAllInterests() async {
     token = await storage.read(key: "token");
 
     return UsersInterestsService()
-        .getUserInterestsById(userId, token.toString());
+        .getUserInterestsById(widget.userId, token.toString());
   }
 
   void initState() {
-    getAllInterests(widget.userId);
+    getAllInterests();
     super.initState();
   }
 
@@ -90,11 +92,16 @@ class _InterestComponentState extends State<InterestComponent> {
                         color: Color(0xFFF4F4F4),
                         borderRadius: BorderRadius.all(Radius.circular(5))),
                     child: FutureBuilder<UsersInterests>(
-                        future: getAllInterests(widget.userId),
+                        future: getAllInterests(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return Container(height: 80);
+                                return BackdropFilter(
+                                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height ) 
+                                );
                           }
 
                           if (snapshot.hasError) {
@@ -110,7 +117,8 @@ class _InterestComponentState extends State<InterestComponent> {
                           userInterestsLength = data.userInterests.length;
                           userInterests = data.userInterests;
 
-                          return Wrap(
+                          return data.userInterests.length != 0
+                          ? Wrap(
                               alignment: WrapAlignment.start,
                               spacing: 7.0,
                               runSpacing: 7.0,
@@ -136,17 +144,22 @@ class _InterestComponentState extends State<InterestComponent> {
                                       minFontSize: 10,
                                       maxFontSize: 12,
                                     ));
-                              }).toList());
+                              }).toList()) : Container(height: 80);
                         })))
             : Container(
                 width: MediaQuery.of(context).size.width,
                 constraints: const BoxConstraints(
                     minHeight: 45, maxHeight: double.infinity),
                 child: FutureBuilder<UsersInterests>(
-                    future: getAllInterests(widget.userId),
+                    future: getAllInterests(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Container(height: 80);
+                        return BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height ) 
+                        );
                       }
 
                       if (snapshot.hasError) {
