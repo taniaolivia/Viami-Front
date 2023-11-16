@@ -30,7 +30,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
   String userImages = "";
   String? userId = "";
   bool? tokenExpired;
-  String connectedUserPlan = '';
+  String connectedUserPlan = 'free';
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -126,7 +126,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                     ))
                   ]),
                   const SizedBox(height: 20),
-                  Wrap(
+                  widget.users!.length != 0 && (widget.users![0].userId != userId && widget.users!.length == 1) ? Wrap(
                       direction: Axis.horizontal,
                       spacing: 10.0,
                       runSpacing: 20.0,
@@ -158,7 +158,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
 
                               connectedUserPlan = user.plan;
 
-                              return widget.users![index].userId != userId
+                              return widget.users![index].userId != userId 
                                   ? GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -262,7 +262,18 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                           )))
                                   : const SizedBox.shrink();
                             });
-                      }).toList())
+                      }).toList()) :
+                      Container(
+                        alignment: Alignment.center,
+                        child: AutoSizeText(
+                          "Désolé, il n'y a que vous qui est intéressé pour l'instant",
+                          minFontSize: 10,
+                          maxFontSize: 12,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w400,
+                              color: Color.fromRGBO(0, 0, 0, 0.7)),
+                    ),)
                 ]))),
         widget.connectedUserPlan == 'free'
             ? BackdropFilter(
