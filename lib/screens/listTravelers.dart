@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/message.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
@@ -236,7 +237,18 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                   width: double.infinity,
                                                   height: 40,
                                                   child: ElevatedButton(
-                                                      onPressed: () {},
+                                                      onPressed: () {
+                                                        String reciverId =
+                                                            widget.users![index]
+                                                                .userId;
+                                                        Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    MessagesPage(
+                                                                        reciverId:
+                                                                            reciverId)));
+                                                      },
                                                       style: ElevatedButton.styleFrom(
                                                           backgroundColor:
                                                               const Color

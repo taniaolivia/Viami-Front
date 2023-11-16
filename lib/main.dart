@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
           "/activities/popular": (context) => const AllPopularActivitiesPage(),
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
-          "/messages": (context) => const MessagesPage()
+          
         });
   }
 }

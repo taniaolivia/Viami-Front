@@ -168,7 +168,7 @@ class _MenusPageState extends State<MenusPage> {
             const SearchTravelPage(),
             VipPage(),
             const HomePage(),
-            const MessagesPage(),
+            const HomePage(),
             ShowProfilePage(showButton: true, userId: userId!),
           ]),
       drawer: const DrawerPage(),
