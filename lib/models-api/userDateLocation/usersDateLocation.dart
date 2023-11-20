@@ -5,12 +5,12 @@ part 'usersDateLocation.u.dart';
 
 @JsonSerializable()
 class UsersDateLocation {
-  UsersDateLocation({required this.nbParticipant, required this.users});
+  UsersDateLocation({required this.nbParticipant, this.users});
 
   factory UsersDateLocation.fromJson(Map<String?, dynamic> json) =>
       _$UsersDateLocationFromJson(json);
   Map<String?, dynamic> toJson() => _$UsersDateLocationToJson(this);
 
   final int nbParticipant;
-  final List<UserDateLocation> users;
+  final List<UserDateLocation>? users;
 }
