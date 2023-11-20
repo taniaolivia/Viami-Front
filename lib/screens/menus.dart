@@ -18,7 +18,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'searchTravel.dart';
 
 class MenusPage extends StatefulWidget {
-  const MenusPage({super.key});
+  final int? currentIndex;
+
+  const MenusPage({super.key, this.currentIndex});
 
   @override
   _MenusPageState createState() => _MenusPageState();
@@ -52,9 +54,9 @@ class _MenusPageState extends State<MenusPage> {
 
   @override
   void initState() {
-    getUser();
     super.initState();
-
+    getUser();
+    _currentIndex = widget.currentIndex ?? _currentIndex;
     _pageController = PageController(initialPage: _currentIndex);
   }
 
