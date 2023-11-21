@@ -67,8 +67,8 @@ class _TravelDetailsPageState extends State<TravelDetailsPage> {
 
   @override
   void initState() {
-    fetchData();
     super.initState();
+    fetchData();
   }
 
   @override

@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -9,17 +8,24 @@ import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/screens/showProfile.dart';
+import 'package:viami/screens/travelDetails.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
-import 'package:viami/widgets/menu_widget.dart';
-
-import 'drawer.dart';
 
 class ListTravelersPage extends StatefulWidget {
+  final int travelId;
+  final String? location;
+  final String? date;
   final List? users;
   final String? connectedUserPlan;
-  const ListTravelersPage({Key? key, this.users, this.connectedUserPlan})
+  const ListTravelersPage(
+      {Key? key,
+      required this.travelId,
+      this.location,
+      this.date,
+      this.users,
+      this.connectedUserPlan})
       : super(key: key);
 
   @override
@@ -32,7 +38,8 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
   String userImages = "";
   String? userId = "";
   bool? tokenExpired;
-  String connectedUserPlan = '';
+  String connectedUserPlan = 'free';
+  List? users;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -41,6 +48,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
       bool isTokenExpired = AuthService().isTokenExpired(token!);
 
       tokenExpired = isTokenExpired;
+      users = widget.users;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -68,7 +76,13 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
       appBar: AppBar(
         leading: IconButton(
             onPressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                  context,
+                  FadePageRoute(
+                      page: TravelDetailsPage(
+                          travelId: widget.travelId,
+                          date: widget.date,
+                          location: widget.location)));
             },
             icon: const Icon(
               Icons.arrow_back_ios,
@@ -78,7 +92,6 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
         backgroundColor: const Color(0xFF0081CF),
       ),
       backgroundColor: Colors.white,
-      drawer: const DrawerPage(),
       body: Stack(fit: StackFit.expand, children: [
         SingleChildScrollView(
             child: Container(
@@ -128,138 +141,175 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                     ))
                   ]),
                   const SizedBox(height: 20),
-                  Wrap(
-                      direction: Axis.horizontal,
-                      spacing: 10.0,
-                      runSpacing: 20.0,
-                      children: List.generate(widget.users!.length, (index) {
-                        return FutureBuilder(
-                            future:
-                                Future.wait([getUser(), getUsersImages(index)]),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return Container();
-                              }
+                  (users == null ||
+                          users!.isEmpty ||
+                          (users!.length == 1 && users![0].userId == userId))
+                      ? Container(
+                          alignment: Alignment.center,
+                          child: AutoSizeText(
+                            "Désolé, il n'y a que vous qui est intéressé pour l'instant",
+                            minFontSize: 10,
+                            maxFontSize: 12,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: Color.fromRGBO(0, 0, 0, 0.7)),
+                          ),
+                        )
+                      : Wrap(
+                          direction: Axis.horizontal,
+                          spacing: 10.0,
+                          runSpacing: 20.0,
+                          children:
+                              List.generate(widget.users!.length, (index) {
+                            return FutureBuilder(
+                                future: Future.wait(
+                                    [getUser(), getUsersImages(index)]),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return BackdropFilter(
+                                        filter: ImageFilter.blur(
+                                            sigmaX: 5, sigmaY: 5),
+                                        child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height));
+                                  }
 
-                              if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
-                              }
+                                  if (snapshot.hasError) {
+                                    return Text('Error: ${snapshot.error}');
+                                  }
 
-                              if (!snapshot.hasData) {
-                                return const Text('');
-                              }
+                                  if (!snapshot.hasData) {
+                                    return const Text('');
+                                  }
 
-                              var image = snapshot.data![1] as UsersImages;
-                              var user = snapshot.data![0] as User;
+                                  var image = snapshot.data![1] as UsersImages;
+                                  var user = snapshot.data![0] as User;
 
-                              connectedUserPlan = user.plan;
+                                  connectedUserPlan = user.plan;
 
-                              return widget.users![index].userId != userId
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            FadePageRoute(
-                                                page: ShowProfilePage(
-                                                    showButton: false,
-                                                    userId: widget.users![index]
-                                                        .userId)));
-                                      },
-                                      child: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.6,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height /
-                                              3,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                                    Radius.circular(20)),
-                                            color: const Color.fromRGBO(
-                                                0, 0, 0, 0.1),
-                                            image: image.userImages.length != 0
-                                                ? DecorationImage(
-                                                    image: NetworkImage(image
-                                                        .userImages[0].image),
-                                                    fit: BoxFit.cover)
-                                                : DecorationImage(
-                                                    colorFilter:
-                                                        const ColorFilter
-                                                            .linearToSrgbGamma(),
-                                                    image: NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                    fit: BoxFit.contain,
-                                                    alignment:
-                                                        Alignment.center),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 10, bottom: 10),
-                                                  child: Align(
-                                                      alignment:
-                                                          Alignment.bottomLeft,
-                                                      child: AutoSizeText(
-                                                        "${toBeginningOfSentenceCase(widget.users![index].firstName)!}, ${widget.users![index].age}",
-                                                        minFontSize: 16,
-                                                        maxFontSize: 17,
-                                                        textAlign:
-                                                            TextAlign.left,
-                                                        style: const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            color: Colors.white,
-                                                            shadows: [
-                                                              BoxShadow(
+                                  return widget.users![index].userId != userId
+                                      ? GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                                context,
+                                                FadePageRoute(
+                                                    page: ShowProfilePage(
+                                                        showButton: false,
+                                                        userId: widget
+                                                            .users![index]
+                                                            .userId)));
+                                          },
+                                          child: Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  2.6,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  3,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    const BorderRadius.all(
+                                                        Radius.circular(20)),
+                                                color: const Color.fromRGBO(
+                                                    0, 0, 0, 0.1),
+                                                image: image.userImages
+                                                            .length !=
+                                                        0
+                                                    ? DecorationImage(
+                                                        image: NetworkImage(
+                                                            image.userImages[0]
+                                                                .image),
+                                                        fit: BoxFit.cover)
+                                                    : DecorationImage(
+                                                        colorFilter:
+                                                            const ColorFilter
+                                                                .linearToSrgbGamma(),
+                                                        image: NetworkImage(
+                                                            "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                        fit: BoxFit.contain,
+                                                        alignment:
+                                                            Alignment.center),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 10,
+                                                              bottom: 10),
+                                                      child: Align(
+                                                          alignment: Alignment
+                                                              .bottomLeft,
+                                                          child: AutoSizeText(
+                                                            "${toBeginningOfSentenceCase(widget.users![index].firstName)!}, ${widget.users![index].age}",
+                                                            minFontSize: 16,
+                                                            maxFontSize: 17,
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                            style: const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
                                                                 color: Colors
-                                                                    .black,
-                                                                blurRadius:
-                                                                    10.0,
-                                                                spreadRadius:
-                                                                    5.0,
-                                                                offset: Offset(
-                                                                  0.0,
-                                                                  0.0,
-                                                                ),
-                                                              )
-                                                            ]),
-                                                      ))),
-                                              Container(
-                                                  width: double.infinity,
-                                                  height: 40,
-                                                  child: ElevatedButton(
-                                                      onPressed: () {},
-                                                      style: ElevatedButton.styleFrom(
-                                                          backgroundColor:
-                                                              const Color
-                                                                      .fromRGBO(
-                                                                  0, 0, 0, 0.5),
-                                                          shape: const RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.only(
-                                                                  bottomLeft: Radius
-                                                                      .circular(
-                                                                          20),
-                                                                  bottomRight:
-                                                                      Radius.circular(
-                                                                          20)))),
-                                                      child: const Icon(
-                                                        Icons.message_rounded,
-                                                        color:
-                                                            Color(0xFF0081CF),
-                                                      )))
-                                            ],
-                                          )))
-                                  : const SizedBox.shrink();
-                            });
-                      }).toList())
+                                                                    .white,
+                                                                shadows: [
+                                                                  BoxShadow(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    blurRadius:
+                                                                        10.0,
+                                                                    spreadRadius:
+                                                                        5.0,
+                                                                    offset:
+                                                                        Offset(
+                                                                      0.0,
+                                                                      0.0,
+                                                                    ),
+                                                                  )
+                                                                ]),
+                                                          ))),
+                                                  Container(
+                                                      width: double.infinity,
+                                                      height: 40,
+                                                      child: ElevatedButton(
+                                                          onPressed: () {},
+                                                          style: ElevatedButton.styleFrom(
+                                                              backgroundColor:
+                                                                  const Color
+                                                                          .fromRGBO(
+                                                                      0,
+                                                                      0,
+                                                                      0,
+                                                                      0.5),
+                                                              shape: const RoundedRectangleBorder(
+                                                                  borderRadius: BorderRadius.only(
+                                                                      bottomLeft:
+                                                                          Radius.circular(
+                                                                              20),
+                                                                      bottomRight:
+                                                                          Radius.circular(
+                                                                              20)))),
+                                                          child: const Icon(
+                                                            Icons
+                                                                .message_rounded,
+                                                            color: Color(
+                                                                0xFF0081CF),
+                                                          )))
+                                                ],
+                                              )))
+                                      : const SizedBox.shrink();
+                                });
+                          }).toList())
                 ]))),
         widget.connectedUserPlan == 'free'
             ? BackdropFilter(

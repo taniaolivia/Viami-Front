@@ -3,8 +3,8 @@ part of 'usersDateLocation.dart';
 UsersDateLocation _$UsersDateLocationFromJson(Map<String?, dynamic> json) =>
     UsersDateLocation(
       nbParticipant: json['nbParticipant'],
-      users: (json['users'] as List<dynamic>)
-          .map((e) => UserDateLocation.fromJson(e as Map<String?, dynamic>))
+      users: (json['users'] as List<dynamic>?)
+          ?.map((e) => UserDateLocation.fromJson(e as Map<String?, dynamic>))
           .toList(),
     );
 

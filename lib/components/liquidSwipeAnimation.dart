@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:liquid_swipe/liquid_swipe.dart';
 import 'package:viami/models/introduction_item.dart';
 

@@ -98,7 +98,6 @@ class _PhotoListState extends State<PhotoList> {
         getUserImages();
       });
     } catch (e) {
-      print("Error copying image: $e");
     }
   }
 

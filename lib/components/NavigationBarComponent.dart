@@ -20,7 +20,7 @@ class CustomCurvedNavigationBar extends StatelessWidget {
         color: Colors.white,
       ),
       Icon(
-        Icons.star,
+        Icons.explore,
         size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
@@ -42,7 +42,7 @@ class CustomCurvedNavigationBar extends StatelessWidget {
     ];
 
     return CurvedNavigationBar(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.transparent,
       buttonBackgroundColor: const Color(0xFF0081CF),
       color: const Color(0xFF0081CF),
       animationCurve: Curves.bounceInOut,

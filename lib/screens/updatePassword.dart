@@ -2,10 +2,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/models-api/user/user.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
-
-import '../models-api/user/user.dart';
 
 class UpdatePassword extends StatefulWidget {
   final bool? tokenExpired;

@@ -17,7 +17,11 @@ class UsersDateLocationService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return UsersDateLocation.fromJson(res["userDateLocation"]);
+      if (res["message"] == "There's no participants yet for this travel") {
+        return UsersDateLocation.fromJson({"nbParticipant": 0, "users": []});
+      } else {
+        return UsersDateLocation.fromJson(res["userDateLocation"]);
+      }
     } else {
       throw Exception("Failed to load date location's users");
     }

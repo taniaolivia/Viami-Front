@@ -1,9 +1,13 @@
+import 'dart:ui';
+
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/screens/listTravelers.dart';
+import 'package:viami/screens/menus.dart';
 import 'package:viami/services/travel/travel.service.dart';
 import 'package:viami/services/travelActivity/travelsActivities.service.dart';
 import 'package:viami/services/userDateLocation/usersDateLocation.service.dart';
@@ -177,7 +181,12 @@ class _TravelComponentState extends State<TravelComponent> {
                                 child: Column(children: [
                                   IconButton(
                                       onPressed: () {
-                                        Navigator.pop(context);
+                                        Navigator.push(
+                                            context,
+                                            FadePageRoute(
+                                                page: MenusPage(
+                                              currentIndex: 0,
+                                            )));
                                       },
                                       icon: const Icon(
                                         Icons.arrow_back_ios,
@@ -198,7 +207,12 @@ class _TravelComponentState extends State<TravelComponent> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Text('');
+                            return BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height:
+                                        MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (!snapshot.hasData) {
@@ -308,7 +322,16 @@ class _TravelComponentState extends State<TravelComponent> {
                                       builder: (context, snapshot) {
                                         if (snapshot.connectionState ==
                                             ConnectionState.waiting) {
-                                          return const Text('');
+                                          return BackdropFilter(
+                                              filter: ImageFilter.blur(
+                                                  sigmaX: 5, sigmaY: 5),
+                                              child: Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .height));
                                         } else if (snapshot.hasError) {
                                           return Text(
                                               'Error: ${snapshot.error}');
@@ -361,11 +384,14 @@ class _TravelComponentState extends State<TravelComponent> {
 
                       Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => ListTravelersPage(
-                                    users: widget.users!,
-                                    connectedUserPlan: widget.connectedUserPlan,
-                                  )));
+                          FadePageRoute(
+                              page: ListTravelersPage(
+                            travelId: widget.travelId,
+                            location: widget.location,
+                            date: widget.date,
+                            users: widget.users!,
+                            connectedUserPlan: widget.connectedUserPlan,
+                          )));
                     },
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,

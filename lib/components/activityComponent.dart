@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +26,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
-  double? note;
+  int? note;
 
   List<String> activityImages = [];
 
@@ -59,7 +61,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
       if (activity.note == null) {
         note = 0;
       } else {
-        note = activity.note as double?;
+        note = activity.note;
       }
     });
 
@@ -170,7 +172,12 @@ class _ActivityComponentState extends State<ActivityComponent> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const Text('');
+                            return BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height ) 
+                            );
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (!snapshot.hasData) {
@@ -255,7 +262,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                 title: Text(
                                                     'Notez cette activité'),
                                                 content: RatingBar.builder(
-                                                  initialRating: note ?? 0,
+                                                  initialRating: note != null ? note!.toDouble() : 0.0,
                                                   minRating: 1,
                                                   direction: Axis.horizontal,
                                                   allowHalfRating: false,
@@ -268,7 +275,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                   ),
                                                   onRatingUpdate: (value) {
                                                     setState(() {
-                                                      note = value;
+                                                      note = value.toInt();
                                                     });
                                                   },
                                                 ),
@@ -285,10 +292,8 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                       await ActivityService()
                                                           .updateActivityNote(
                                                               widget.activityId,
-                                                              note as double,
+                                                              note!.toDouble(),
                                                               token.toString());
-                                                      print(
-                                                          'Nouvelle note : $note');
 
                                                       // Fermer la boîte de dialogue
                                                       Navigator.of(context)
