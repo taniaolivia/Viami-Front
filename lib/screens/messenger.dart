@@ -15,7 +15,9 @@ import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 
 import '../models-api/messenger/groups_data.dart';
+import '../models-api/userStatus/userStatus.dart';
 import '../services/message/groups.service.dart';
+import '../services/userStatus/userStatus.service.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -67,6 +69,12 @@ class _MessengerPageState extends State<MessengerPage> {
     token = await storage.read(key: "token");
 
     return await MessagesService().getDiscussionsForMessage(token!, messageId);
+  }
+
+  Future<UserStatus> getUserStatusById(String travelerId) async {
+    token = await storage.read(key: "token");
+
+    return await UserStatusService().getUserStatusById(travelerId, token!);
   }
 
   @override
@@ -152,6 +160,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                 messages.groups[index].lastMessage.id
                                     .toString(),
                               );
+
+                              var status = await getUserStatusById(
+                                  messages.groups[index].lastMessage.senderId);
 
                               BuildContext currentContext = context;
                               showModalBottomSheet(
@@ -277,27 +288,52 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                     .width /
                                                                 1.7,
                                                             child: Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child:
-                                                                  AutoSizeText(
-                                                                toBeginningOfSentenceCase(
-                                                                  "status",
-                                                                )!,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                minFontSize: 10,
-                                                                maxFontSize: 12,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                ),
-                                                              ),
-                                                            ),
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child: Row(
+                                                                  children: [
+                                                                    status.status ==
+                                                                            "online"
+                                                                        ? const Icon(
+                                                                            Icons.circle,
+                                                                            color: Color.fromARGB(
+                                                                                255,
+                                                                                0,
+                                                                                207,
+                                                                                62),
+                                                                            size:
+                                                                                10,
+                                                                          )
+                                                                        : Text(
+                                                                            ""),
+                                                                    const SizedBox(
+                                                                      width: 5,
+                                                                    ),
+                                                                    AutoSizeText(
+                                                                      status.status ==
+                                                                              "online"
+                                                                          ? toBeginningOfSentenceCase(
+                                                                              "en ligne",
+                                                                            )!
+                                                                          : toBeginningOfSentenceCase(
+                                                                              "hor ligne",
+                                                                            )!,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      minFontSize:
+                                                                          10,
+                                                                      maxFontSize:
+                                                                          12,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                )),
                                                           ),
                                                           message.read == "0"
                                                               ? const Icon(

@@ -10,5 +10,5 @@ class UserStatus {
   Map<String?, dynamic> toJson() => _$UserStatusToJson(this);
 
   final String? status;
-  final String lastConnection;
+  final String? lastConnection;
 }
