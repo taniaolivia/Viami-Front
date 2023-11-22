@@ -17,7 +17,26 @@ class MessagesService {
 
       return Messages.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load messages');
+    }
+  }
+
+  Future<Messages> getSearchedUsers(
+      String token, String userId, String search) async {
+    final response = await http.get(
+      Uri.parse(
+          '${dotenv.env['API_URL']}/messages/$userId/search/users?search=$search'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return Messages.fromJson(res);
+    } else {
+      throw Exception('Failed to load messages');
     }
   }
 }
