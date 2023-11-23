@@ -7,26 +7,28 @@ class Message {
   Message(
       {required this.id,
       required this.senderId,
-      required this.responderId,
+      this.responderId,
+      required this.groupId,
       required this.message,
       required this.date,
       required this.senderFirstName,
       required this.senderLastName,
-      required this.responderFirstName,
-      required this.responderLastName,
-      required this.read
-     });
+      this.responderFirstName,
+      this.responderLastName,
+      required this.read});
 
-  factory Message.fromJson(Map<String?, dynamic> json) => _$MessageFromJson(json);
+  factory Message.fromJson(Map<String?, dynamic> json) =>
+      _$MessageFromJson(json);
   Map<String?, dynamic> toJson() => _$MessageToJson(this);
 
   final int id;
   final String senderId;
-  final String responderId;
+  final String? responderId;
+  final int groupId;
   final String senderFirstName;
   final String senderLastName;
-  final String responderFirstName;
-  final String responderLastName;
+  final String? responderFirstName;
+  final String? responderLastName;
   final String message;
   final String date;
   final String read;
