@@ -7,9 +7,13 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/models-api/messenger/message.dart';
 import 'package:viami/models-api/messenger/messages.dart';
+import 'package:viami/models-api/user/user.dart';
+import 'package:viami/models-api/userGroup/groupUsers.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/services/groupUser/groupUsers.service..dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 import 'package:viami/services/userImage/usersImages.service.dart';
 
@@ -31,6 +35,7 @@ class _MessengerPageState extends State<MessengerPage> {
   int usersLength = 0;
   List userList = [];
   List<String> previousUserList = [];
+  List groupList = [];
 
   Future<Messages> getAllMessages() {
     Future<Messages> getAllMessagesUser() async {
@@ -44,12 +49,12 @@ class _MessengerPageState extends State<MessengerPage> {
     return getAllMessagesUser();
   }
 
-  Future<Message> getLastMessageUsers(String responderId) async {
+  Future<Messages> getLastMessageUsers(String responderId) async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
 
-    return MessageService().getLastMessageTwoUsers(
-        token.toString(), userId.toString(), responderId);
+    return MessagesService()
+        .getLastMessageTwoUsers(token.toString(), userId.toString());
   }
 
   Future<UsersImages> getUserImages(String userId) async {
@@ -59,6 +64,20 @@ class _MessengerPageState extends State<MessengerPage> {
         await UsersImagesService().getUserImagesById(userId, token.toString());
 
     return images;
+  }
+
+  Future<GroupUsers> getGroupUsers(int groupId) async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    return GroupUsersService()
+        .getAllUsersGroup(token.toString(), groupId, userId.toString());
+  }
+
+  Future<User> getUserById(String userId) async {
+    token = await storage.read(key: "token");
+
+    return UserService().getUserById(userId, token.toString());
   }
 
   @override
@@ -93,13 +112,20 @@ class _MessengerPageState extends State<MessengerPage> {
                       if (!updatedUserList
                           .contains(messages.messages[index].responderId)) {
                         updatedUserList
-                            .add(messages.messages[index].responderId);
+                            .add(messages.messages[index].responderId!);
                       }
                     });
 
                     if (userList.isEmpty) {
                       userList = updatedUserList;
                     }
+
+                    List.generate(messages.messages.length, (index) {
+                      if (!groupList
+                          .contains(messages.messages[index].groupId)) {
+                        groupList.add(messages.messages[index].groupId);
+                      }
+                    });
 
                     return Column(children: [
                       Align(
@@ -171,7 +197,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                             token!, userId!, search);
 
                                     if (userMessage != null) {
-                                      previousUserList = List.from(userList);
+                                      //previousUserList = List.from(userList);
                                       updatedUserList = [];
 
                                       List.generate(userMessage.messages.length,
@@ -180,7 +206,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                             userMessage
                                                 .messages[index].responderId)) {
                                           updatedUserList.add(userMessage
-                                              .messages[index].responderId);
+                                              .messages[index].responderId!);
                                         }
                                       });
 
@@ -209,8 +235,9 @@ class _MessengerPageState extends State<MessengerPage> {
                           children: List.generate(userList.length, (index) {
                         return FutureBuilder(
                             future: Future.wait([
-                              getLastMessageUsers(userList[index]),
-                              getUserImages(userList[index])
+                              getLastMessageUsers(userId!),
+                              getUserImages(userList[index]),
+                              getGroupUsers(groupList[index])
                             ]),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
@@ -230,16 +257,16 @@ class _MessengerPageState extends State<MessengerPage> {
                                 return const Text('');
                               }
 
-                              var message = snapshot.data![0] as Message;
+                              var messages = snapshot.data![0] as Messages;
                               var image = snapshot.data![1] as UsersImages;
+                              var group = snapshot.data![2] as GroupUsers;
 
-                              print(userList);
-                              print(message.responderFirstName);
+                              print(group.groupUsers[0].firstName);
 
                               return GestureDetector(
                                   onTap: () async {
-                                    await MessageService()
-                                        .setMessageRead(token!, message.id);
+                                    await MessageService().setMessageRead(
+                                        token!, messages.messages[index].id);
                                   },
                                   child: Row(children: [
                                     image.userImages.length != 0
@@ -263,7 +290,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 1.5,
                                         padding: const EdgeInsets.only(
                                             top: 10, bottom: 10),
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           border: Border(
                                               bottom: BorderSide(
                                                   color: Color(0XFFE8E6EA))),
@@ -275,15 +302,59 @@ class _MessengerPageState extends State<MessengerPage> {
                                               const SizedBox(height: 10),
                                               Align(
                                                   alignment: Alignment.topLeft,
-                                                  child: AutoSizeText(
-                                                      toBeginningOfSentenceCase(
-                                                          message
-                                                              .responderFirstName)!,
-                                                      minFontSize: 10,
-                                                      maxFontSize: 12,
-                                                      style: const TextStyle(
-                                                          fontWeight: FontWeight
-                                                              .bold))),
+                                                  child: group.groupUsers
+                                                              .length ==
+                                                          1
+                                                      ? AutoSizeText(
+                                                          toBeginningOfSentenceCase(
+                                                              group
+                                                                  .groupUsers[0]
+                                                                  .firstName)!,
+                                                          minFontSize: 10,
+                                                          maxFontSize: 12,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))
+                                                      : Row(children: [
+                                                          ClipRect(
+                                                              child: Container(
+                                                                  width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      5,
+                                                                  child: Row(
+                                                                      children: List.generate(
+                                                                          group
+                                                                              .groupUsers
+                                                                              .length,
+                                                                          (index) {
+                                                                    return group.groupUsers.length - 1 !=
+                                                                            index
+                                                                        ? AutoSizeText(
+                                                                            toBeginningOfSentenceCase(group.groupUsers[index].firstName +
+                                                                                ", ")!,
+                                                                            minFontSize:
+                                                                                10,
+                                                                            maxFontSize:
+                                                                                12,
+                                                                            overflow: TextOverflow
+                                                                                .ellipsis,
+                                                                            style: const TextStyle(
+                                                                                fontWeight: FontWeight
+                                                                                    .bold))
+                                                                        : AutoSizeText(
+                                                                            toBeginningOfSentenceCase(group.groupUsers[index].firstName)!,
+                                                                            minFontSize: 10,
+                                                                            maxFontSize: 12,
+                                                                            overflow: TextOverflow.ellipsis,
+                                                                            style: const TextStyle(fontWeight: FontWeight.bold));
+                                                                  })))),
+                                                          Icon(Icons.abc)
+                                                        ])),
                                               const SizedBox(height: 5),
                                               Row(
                                                   mainAxisAlignment:
@@ -301,7 +372,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                 .topLeft,
                                                             child: AutoSizeText(
                                                                 toBeginningOfSentenceCase(
-                                                                    message
+                                                                    messages
+                                                                        .messages[
+                                                                            index]
                                                                         .message)!,
                                                                 overflow:
                                                                     TextOverflow
@@ -312,7 +385,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500)))),
-                                                    message.read == "0"
+                                                    messages.messages[index]
+                                                                .read ==
+                                                            "0"
                                                         ? const Icon(
                                                             Icons.circle,
                                                             color: Color(
