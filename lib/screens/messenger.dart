@@ -349,6 +349,25 @@ class _MessengerPageState extends State<MessengerPage> {
                                                     ],
                                                   ),
                                                 ),
+                                                PopupMenuButton<String>(
+                                                  onSelected: (value) {
+                                                    if (value ==
+                                                        'ajouterVoyageur') {}
+                                                  },
+                                                  itemBuilder: (BuildContext
+                                                          context) =>
+                                                      <PopupMenuEntry<String>>[
+                                                    const PopupMenuItem<String>(
+                                                      value: 'ajouterVoyageur',
+                                                      child: ListTile(
+                                                        leading: Icon(
+                                                            Icons.person_add),
+                                                        title: Text(
+                                                            'Ajouter un Voyageur '),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
                                               ],
                                             ),
                                             Expanded(
