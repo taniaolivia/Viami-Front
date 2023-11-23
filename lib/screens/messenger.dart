@@ -113,14 +113,37 @@ class _MessengerPageState extends State<MessengerPage> {
 
               return Column(
                 children: [
-                  const Align(
-                    alignment: Alignment.topLeft,
-                    child: AutoSizeText(
-                      "Messagerie",
-                      minFontSize: 23,
-                      maxFontSize: 25,
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Align(
+                        alignment: Alignment.topLeft,
+                        child: AutoSizeText(
+                          "Messagerie",
+                          minFontSize: 23,
+                          maxFontSize: 25,
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: Container(
+                          padding: const EdgeInsets.all(6.0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(color: Color(0XFFE8E6EA)),
+                          ),
+                          child: IconButton(
+                            onPressed: () {},
+                            icon: Icon(
+                              Icons.filter_list,
+                              color: Colors.blue,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   Column(
