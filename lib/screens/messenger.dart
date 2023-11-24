@@ -109,16 +109,7 @@ class _MessengerPageState extends State<MessengerPage> {
     return await UserStatusService().getUserStatusById(travelerId, token!);
   }
 
-  void clearFilters() {
-    setState(() {
-      seulButtonColor = Colors.white;
-      seulTextColor = Colors.black;
-      groupButtonColor = Colors.white;
-      groupTextColor = Colors.black;
-      filterSeulGroup = "all";
-    });
-    getDiscussionsByFilter();
-  }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -348,8 +339,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       ),
                       GestureDetector(
                         onTap: () {
-                          clearFilters();
-
+                         
                           Navigator.pop(context);
                         },
                         child: const AutoSizeText(
