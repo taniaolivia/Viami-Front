@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -11,9 +10,7 @@ import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
-
 import 'package:viami/services/userImage/usersImages.service.dart';
-
 import '../models-api/messenger/groups_data.dart';
 import '../models-api/userStatus/userStatus.dart';
 import '../services/message/groups.service.dart';
@@ -34,18 +31,53 @@ class _MessengerPageState extends State<MessengerPage> {
   String? userId = "";
   int usersLength = 0;
   List userList = [];
-  Messages? discussionMessages;
+  Groups? discussionMessages;
+  Color groupButtonColor = Colors.white;
+  Color groupTextColor = Colors.black;
+  Color seulButtonColor = Colors.white;
+  Color seulTextColor = Colors.black;
+  String filterSeulGroup = "all";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
+
+  Future<void> fetchData() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+    await getDiscussionsByFilter();
+  }
 
   Future<Groups> getAllDiscussionsForUser() {
-    Future<Groups> getAllDiscussionsForUserById() async {
-      token = await storage.read(key: "token");
-      userId = await storage.read(key: "userId");
+    return GroupsService().getAllDiscussionsForUser(token!, userId!);
+  }
 
-      return GroupsService()
-          .getAllDiscussionsForUser(token.toString(), userId.toString());
+  Future<Groups> getAllDiscussionsForTwoUser() {
+    return GroupsService().getTwoUserDiscussions(token!, userId!);
+  }
+
+  Future<Groups> getAllDiscussionsForGroupUser() {
+    return GroupsService().getGroupUsersDiscussions(token!, userId!);
+  }
+
+  Future<void> getDiscussionsByFilter() async {
+    switch (filterSeulGroup) {
+      case "seul":
+        discussionMessages = await getAllDiscussionsForTwoUser();
+        break;
+      case "group":
+        discussionMessages = await getAllDiscussionsForGroupUser();
+        break;
+      default:
+        discussionMessages = await getAllDiscussionsForUser();
+        break;
     }
-
-    return getAllDiscussionsForUserById();
+    // Refresh the widget
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<Message> getLastMessageUsers(String responderId) async {
@@ -77,10 +109,15 @@ class _MessengerPageState extends State<MessengerPage> {
     return await UserStatusService().getUserStatusById(travelerId, token!);
   }
 
-  @override
-  void initState() {
-    super.initState();
-    getAllDiscussionsForUser();
+  void clearFilters() {
+    setState(() {
+      seulButtonColor = Colors.white;
+      seulTextColor = Colors.black;
+      groupButtonColor = Colors.white;
+      groupTextColor = Colors.black;
+      filterSeulGroup = "all";
+    });
+    getDiscussionsByFilter();
   }
 
   @override
@@ -90,539 +127,353 @@ class _MessengerPageState extends State<MessengerPage> {
       body: SingleChildScrollView(
         child: Container(
           padding: const EdgeInsets.fromLTRB(25, 40, 25, 60),
-          child: FutureBuilder(
-            future: getAllDiscussionsForUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Text('');
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData) {
-                return const Text('');
-              }
-
-              var messages = snapshot.data!;
-              userList = [];
-
-              List.generate(messages.groups.length, (index) {
-                if (!userList
-                    .contains(messages.groups[index].lastMessage.responderId)) {
-                  userList.add(messages.groups[index].lastMessage.responderId);
-                }
-              });
-
-              return Column(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Align(
-                        alignment: Alignment.topLeft,
-                        child: AutoSizeText(
-                          "Messagerie",
-                          minFontSize: 23,
-                          maxFontSize: 25,
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                      Align(
-                        alignment: Alignment.topRight,
-                        child: Container(
-                          padding: const EdgeInsets.all(6.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8.0),
-                            border: Border.all(color: Color(0XFFE8E6EA)),
-                          ),
-                          child: IconButton(
-                            onPressed: () {},
-                            icon: Icon(
-                              Icons.filter_list,
-                              color: Colors.blue,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: AutoSizeText(
+                      "Messagerie",
+                      minFontSize: 23,
+                      maxFontSize: 25,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                   ),
-                  const SizedBox(height: 20),
-                  Column(
-                    children: List.generate(messages.groups.length, (index) {
-                      return FutureBuilder(
-                        future: Future.wait([
-                          getUserImages(
-                              messages.groups[index].lastMessage.senderId)
-                        ]),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height,
-                              ),
-                            );
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (!snapshot.hasData) {
-                            return const Text('');
-                          }
-
-                          var message =
-                              messages.groups[index].lastMessage as LastMessage;
-                          var image = snapshot.data![0] as UsersImages;
-                          bool isUserMessage = message.senderId == userId;
-                          Color containerColor =
-                              isUserMessage ? Colors.green : Colors.blue;
-
-                          return GestureDetector(
-                            onTap: () async {
-                              var discussionMessages =
-                                  await getDiscussionsForMessageWith(
-                                messages.groups[index].lastMessage.id
-                                    .toString(),
-                              );
-
-                              var status = await getUserStatusById(
-                                  messages.groups[index].lastMessage.senderId);
-
-                              BuildContext currentContext = context;
-                              showModalBottomSheet(
-                                isScrollControlled: true,
-                                shape: const RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(30),
-                                  ),
-                                ),
-                                builder: (BuildContext context) {
-                                  currentContext = context;
-
-                                  return StatefulBuilder(
-                                    builder: (BuildContext context,
-                                        StateSetter setState) {
-                                      return Container(
-                                        margin: const EdgeInsets.only(left: 10),
-                                        padding: const EdgeInsets.only(
-                                          top: 10,
-                                          bottom: 10,
-                                        ),
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                30,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.transparent,
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                              height: 8,
-                                              width: 40,
-                                              margin:
-                                                  const EdgeInsets.symmetric(
-                                                vertical: 10,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.grey,
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Row(
-                                              children: [
-                                                image.userImages.length != 0
-                                                    ? CircleAvatar(
-                                                        backgroundImage:
-                                                            NetworkImage(
-                                                          image.userImages[0]
-                                                              .image,
-                                                        ),
-                                                        maxRadius: 25,
-                                                      )
-                                                    : CircleAvatar(
-                                                        backgroundColor:
-                                                            const Color
-                                                                    .fromARGB(
-                                                                255,
-                                                                220,
-                                                                234,
-                                                                250),
-                                                        foregroundImage:
-                                                            NetworkImage(
-                                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png",
-                                                        ),
-                                                        maxRadius: 25,
-                                                      ),
-                                                const SizedBox(width: 20),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width /
-                                                      1.5,
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                    top: 10,
-                                                    bottom: 10,
-                                                  ),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    border: Border(
-                                                      bottom: BorderSide(
-                                                        color:
-                                                            Color(0XFFE8E6EA),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.topLeft,
-                                                        child: AutoSizeText(
-                                                          toBeginningOfSentenceCase(
-                                                            message
-                                                                .senderLastName,
-                                                          )!,
-                                                          minFontSize: 10,
-                                                          maxFontSize: 12,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                1.7,
-                                                            child: Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Row(
-                                                                  children: [
-                                                                    status.status ==
-                                                                            "online"
-                                                                        ? const Icon(
-                                                                            Icons.circle,
-                                                                            color: Color.fromARGB(
-                                                                                255,
-                                                                                0,
-                                                                                207,
-                                                                                62),
-                                                                            size:
-                                                                                10,
-                                                                          )
-                                                                        : Text(
-                                                                            ""),
-                                                                    const SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    AutoSizeText(
-                                                                      status.status ==
-                                                                              "online"
-                                                                          ? toBeginningOfSentenceCase(
-                                                                              "en ligne",
-                                                                            )!
-                                                                          : toBeginningOfSentenceCase(
-                                                                              "hor ligne",
-                                                                            )!,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      minFontSize:
-                                                                          10,
-                                                                      maxFontSize:
-                                                                          12,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )),
-                                                          ),
-                                                          message.read == "0"
-                                                              ? const Icon(
-                                                                  Icons.circle,
-                                                                  color: Color(
-                                                                      0xFF0081CF),
-                                                                  size: 12,
-                                                                )
-                                                              : Container(),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                    ],
-                                                  ),
-                                                ),
-                                                PopupMenuButton<String>(
-                                                  onSelected: (value) {
-                                                    if (value ==
-                                                        'ajouterVoyageur') {}
-                                                  },
-                                                  itemBuilder: (BuildContext
-                                                          context) =>
-                                                      <PopupMenuEntry<String>>[
-                                                    const PopupMenuItem<String>(
-                                                      value: 'ajouterVoyageur',
-                                                      child: ListTile(
-                                                        leading: Icon(
-                                                            Icons.person_add),
-                                                        title: Text(
-                                                            'Ajouter un Voyageur '),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
-                                            Expanded(
-                                              child: ListView.builder(
-                                                itemCount: discussionMessages
-                                                    .messages.length,
-                                                itemBuilder: (context, index) {
-                                                  var message =
-                                                      discussionMessages
-                                                          .messages[index];
-                                                  bool isUserMessage =
-                                                      message.senderId ==
-                                                          userId;
-                                                  Color containerColor =
-                                                      isUserMessage
-                                                          ? const Color(
-                                                              0xFFF3F3F3)
-                                                          : const Color(
-                                                              0xFF0081CF);
-
-                                                  DateTime messageDateTime =
-                                                      DateTime.parse(
-                                                          message.date);
-                                                  DateTime now = DateTime.now();
-                                                  bool isToday = messageDateTime
-                                                              .year ==
-                                                          now.year &&
-                                                      messageDateTime.month ==
-                                                          now.month &&
-                                                      messageDateTime.day ==
-                                                          now.day;
-
-                                                  String formattedDate;
-
-                                                  if (isToday) {
-                                                    formattedDate =
-                                                        DateFormat.jm().format(
-                                                            messageDateTime);
-                                                  } else {
-                                                    formattedDate = DateFormat(
-                                                            'EEE, MMM d, y, h:mm a')
-                                                        .format(
-                                                            messageDateTime);
-                                                  }
-
-                                                  return Align(
-                                                    alignment: isUserMessage
-                                                        ? Alignment.centerRight
-                                                        : Alignment.centerLeft,
-                                                    child: ListTile(
-                                                      title: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(18),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(18),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: containerColor,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        child: AutoSizeText(
-                                                          toBeginningOfSentenceCase(
-                                                            message.message,
-                                                          )!,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          minFontSize: 10,
-                                                          maxFontSize: 12,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      subtitle: Align(
-                                                        alignment: isUserMessage
-                                                            ? Alignment
-                                                                .centerRight
-                                                            : Alignment
-                                                                .centerLeft,
-                                                        child: Container(
-                                                          margin:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 10),
-                                                          child: Text(
-                                                              formattedDate),
-                                                        ),
-                                                      ),
-                                                      dense: true,
-                                                      contentPadding:
-                                                          const EdgeInsets
-                                                                  .symmetric(
-                                                              horizontal: 8),
-                                                      leading: isUserMessage
-                                                          ? Container(
-                                                              width: 48,
-                                                              height: 48,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: Colors
-                                                                    .transparent,
-                                                              ),
-                                                            )
-                                                          : null,
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                context: currentContext!,
-                              );
-
-                              await MessageService()
-                                  .setMessageRead(token!, message.id);
-                            },
-                            child: Row(
-                              children: [
-                                image.userImages.length != 0
-                                    ? CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                          "${image.userImages[0].image}",
-                                        ),
-                                        maxRadius: 25,
-                                      )
-                                    : CircleAvatar(
-                                        backgroundColor: const Color.fromARGB(
-                                          255,
-                                          220,
-                                          234,
-                                          250,
-                                        ),
-                                        foregroundImage: NetworkImage(
-                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png",
-                                        ),
-                                        maxRadius: 25,
-                                      ),
-                                const SizedBox(width: 20),
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width / 1.5,
-                                  padding: const EdgeInsets.only(
-                                    top: 10,
-                                    bottom: 10,
-                                  ),
-                                  decoration: const BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                        color: Color(0XFFE8E6EA),
-                                      ),
-                                    ),
-                                  ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const SizedBox(height: 10),
-                                      Align(
-                                        alignment: Alignment.topLeft,
-                                        child: AutoSizeText(
-                                          toBeginningOfSentenceCase(
-                                            message.senderLastName,
-                                          )!,
-                                          minFontSize: 10,
-                                          maxFontSize: 12,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 5),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                1.7,
-                                            child: Align(
-                                              alignment: Alignment.topLeft,
-                                              child: AutoSizeText(
-                                                toBeginningOfSentenceCase(
-                                                  message.message,
-                                                )!,
-                                                overflow: TextOverflow.ellipsis,
-                                                minFontSize: 10,
-                                                maxFontSize: 12,
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          message.read == "0"
-                                              ? const Icon(
-                                                  Icons.circle,
-                                                  color: Color(0xFF0081CF),
-                                                  size: 12,
-                                                )
-                                              : Container(),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 5),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      );
-                    }),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        _showFiltersBottomSheet(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Icon(
+                          Icons.filter_list,
+                          size: 20.0,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
                   ),
                 ],
-              );
-            },
+              ),
+              const SizedBox(height: 20),
+              Column(
+                children: List.generate(
+                  discussionMessages?.groups.length ?? 0,
+                  (index) {
+                    return FutureBuilder(
+                      future: Future.wait([
+                        getUserImages(discussionMessages
+                                ?.groups[index].lastMessage.senderId ??
+                            "")
+                      ]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if (!snapshot.hasData) {
+                          return const Text('');
+                        }
+
+                        var message = discussionMessages
+                            ?.groups[index].lastMessage as LastMessage;
+                        var image = snapshot.data![0] as UsersImages;
+                        bool isUserMessage = message.senderId == userId;
+                        Color containerColor =
+                            isUserMessage ? Colors.green : Colors.blue;
+
+                        return GestureDetector(
+                          onTap: () async {},
+                          child: Row(
+                            children: [
+                              image.userImages.length != 0
+                                  ? CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        "${image.userImages[0].image}",
+                                      ),
+                                      maxRadius: 25,
+                                    )
+                                  : CircleAvatar(
+                                      backgroundColor: const Color.fromARGB(
+                                        255,
+                                        220,
+                                        234,
+                                        250,
+                                      ),
+                                      foregroundImage: NetworkImage(
+                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png",
+                                      ),
+                                      maxRadius: 25,
+                                    ),
+                              const SizedBox(width: 20),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 1.5,
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  bottom: 10,
+                                ),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Color(0XFFE8E6EA),
+                                    ),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 10),
+                                    Align(
+                                      alignment: Alignment.topLeft,
+                                      child: AutoSizeText(
+                                        toBeginningOfSentenceCase(
+                                          message.senderLastName,
+                                        )!,
+                                        minFontSize: 10,
+                                        maxFontSize: 12,
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              1.7,
+                                          child: Align(
+                                            alignment: Alignment.topLeft,
+                                            child: AutoSizeText(
+                                              toBeginningOfSentenceCase(
+                                                message.message,
+                                              )!,
+                                              overflow: TextOverflow.ellipsis,
+                                              minFontSize: 10,
+                                              maxFontSize: 12,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        message.read == "0"
+                                            ? const Icon(
+                                                Icons.circle,
+                                                color: Color(0xFF0081CF),
+                                                size: 12,
+                                              )
+                                            : Container(),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+
+  void _showFiltersBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 8,
+                    width: 40,
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const AutoSizeText(
+                        "Filters",
+                        minFontSize: 22,
+                        maxFontSize: 24,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          clearFilters();
+
+                          Navigator.pop(context);
+                        },
+                        child: const AutoSizeText(
+                          "Clear",
+                          minFontSize: 14,
+                          maxFontSize: 16,
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    children: const [
+                      AutoSizeText(
+                        "Voir que les conversation ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontStyle: FontStyle.normal,
+                          fontFamily: "Poppins",
+                        ),
+                        minFontSize: 20,
+                        maxFontSize: 22,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                seulButtonColor = Colors.blue;
+                                seulTextColor = Colors.white;
+                                groupButtonColor = Colors.white;
+                                groupTextColor = Colors.black;
+                                filterSeulGroup = "seul";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: seulButtonColor,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Seul',
+                                  style: TextStyle(
+                                    color: seulTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                groupButtonColor = Colors.blue;
+                                groupTextColor = Colors.white;
+                                seulButtonColor = Colors.white;
+                                seulTextColor = Colors.black;
+                                filterSeulGroup = "group";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: groupButtonColor,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Group',
+                                  style: TextStyle(
+                                    color: groupTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
