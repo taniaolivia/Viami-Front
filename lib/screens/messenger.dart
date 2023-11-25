@@ -1,17 +1,20 @@
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/message.dart';
 import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
-
 import 'package:viami/services/userImage/usersImages.service.dart';
+import '../models-api/messenger/groups_data.dart';
+import '../models-api/userStatus/userStatus.dart';
+import '../services/message/groups.service.dart';
+import '../services/userStatus/userStatus.service.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -28,172 +31,439 @@ class _MessengerPageState extends State<MessengerPage> {
   String? userId = "";
   int usersLength = 0;
   List userList = [];
+  Groups? discussionMessages;
+  Color groupButtonColor = Colors.white;
+  Color groupTextColor = Colors.black;
+  Color seulButtonColor = Colors.white;
+  Color seulTextColor = Colors.black;
+  String filterSeulGroup = "all";
 
-  Future<Messages> getAllMessages() {
-    Future<Messages> getAllMessagesUser() async {
-      token = await storage.read(key: "token");
-      userId = await storage.read(key: "userId");
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+  }
 
-      return MessagesService().getAllMessagesBySender(token.toString(), userId.toString());
+  Future<void> fetchData() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+    await getDiscussionsByFilter();
+  }
+
+  Future<Groups> getAllDiscussionsForUser() {
+    return GroupsService().getAllDiscussionsForUser(token!, userId!);
+  }
+
+  Future<Groups> getAllDiscussionsForTwoUser() {
+    return GroupsService().getTwoUserDiscussions(token!, userId!);
+  }
+
+  Future<Groups> getAllDiscussionsForGroupUser() {
+    return GroupsService().getGroupUsersDiscussions(token!, userId!);
+  }
+
+  Future<void> getDiscussionsByFilter() async {
+    switch (filterSeulGroup) {
+      case "seul":
+        discussionMessages = await getAllDiscussionsForTwoUser();
+        break;
+      case "group":
+        discussionMessages = await getAllDiscussionsForGroupUser();
+        break;
+      default:
+        discussionMessages = await getAllDiscussionsForUser();
+        break;
     }
-
-    return getAllMessagesUser();
+    // Refresh the widget
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   Future<Message> getLastMessageUsers(String responderId) async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
 
-    return MessageService().getLastMessageTwoUsers(token.toString(), userId.toString(), responderId);
+    return MessageService().getLastMessageTwoUsers(
+        token.toString(), userId.toString(), responderId);
   }
 
   Future<UsersImages> getUserImages(String userId) async {
     token = await storage.read(key: "token");
 
-    final images = await UsersImagesService()
-        .getUserImagesById(userId, token.toString());
+    final images =
+        await UsersImagesService().getUserImagesById(userId, token.toString());
 
     return images;
   }
 
+  Future<Messages> getDiscussionsForMessageWith(String messageId) async {
+    token = await storage.read(key: "token");
 
-  @override
-  void initState() {
-    super.initState();
-    getAllMessages();
+    return await MessagesService().getDiscussionsForMessage(token!, messageId);
   }
+
+  Future<UserStatus> getUserStatusById(String travelerId) async {
+    token = await storage.read(key: "token");
+
+    return await UserStatusService().getUserStatusById(travelerId, token!);
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body:   SingleChildScrollView(
-                          child: Container(
-        padding: const EdgeInsets.fromLTRB(25, 40, 25, 60),
-        child: 
-          FutureBuilder(
-            future: getAllMessages(), 
-            builder: (context, snapshot) {
-              if (snapshot.connectionState ==
-                  ConnectionState.waiting) {
-                return const Text('');
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else if (!snapshot.hasData) {
-                return const Text('');
-              }
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(25, 40, 25, 60),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Align(
+                    alignment: Alignment.topLeft,
+                    child: AutoSizeText(
+                      "Messagerie",
+                      minFontSize: 23,
+                      maxFontSize: 25,
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: GestureDetector(
+                      onTap: () {
+                        _showFiltersBottomSheet(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(6.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          border: Border.all(color: Colors.grey),
+                        ),
+                        child: Icon(
+                          Icons.filter_list,
+                          size: 20.0,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              Column(
+                children: List.generate(
+                  discussionMessages?.groups.length ?? 0,
+                  (index) {
+                    return FutureBuilder(
+                      future: Future.wait([
+                        getUserImages(discussionMessages
+                                ?.groups[index].lastMessage.senderId ??
+                            "")
+                      ]),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        } else if (!snapshot.hasData) {
+                          return const Text('');
+                        }
 
-              var messages = snapshot.data!;
+                        var message = discussionMessages
+                            ?.groups[index].lastMessage as LastMessage;
+                        var image = snapshot.data![0] as UsersImages;
+                        bool isUserMessage = message.senderId == userId;
+                        Color containerColor =
+                            isUserMessage ? Colors.green : Colors.blue;
 
-              userList = [];
-
-              List.generate(messages.messages.length, (index) {
-                  if(!userList.contains(messages.messages[index].responderId)) {
-                      userList.add(messages.messages[index].responderId);
-                  }
-              });
-
-              return 
-              Column(children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: const AutoSizeText(
-                  "Messagerie",
-                  minFontSize: 23,
-                  maxFontSize: 25,
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                )),
-                const SizedBox(height: 20,), 
-               Column(
-                  children: List.generate(userList.length, (index) {
-                    return 
-                      FutureBuilder(
-                        future: Future.wait([getLastMessageUsers(userList[index]), getUserImages(userList[index])]), 
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-
-                            return BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height) 
-                              );
-                            
-                          } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          } else if (!snapshot.hasData) {
-                            return const Text('');
-                          }
-
-                          var message = snapshot.data![0] as Message;
-                          var image = snapshot.data![1] as UsersImages;
-
-                          return  GestureDetector(
-                            onTap: () async {
-                              await MessageService().setMessageRead(token!, message.id);
-                            },
-                            child: Row(
-                              children: [
-                                image.userImages.length != 0 ? 
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage("${image.userImages[0].image}"),
-                                  maxRadius: 25,
-                                ) : CircleAvatar(
-                                  backgroundColor: const Color.fromARGB(255, 220, 234, 250),
-                                  foregroundImage: NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                  maxRadius: 25,
+                        return GestureDetector(
+                          onTap: () async {},
+                          child: Row(
+                            children: [
+                              image.userImages.length != 0
+                                  ? CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                        "${image.userImages[0].image}",
+                                      ),
+                                      maxRadius: 25,
+                                    )
+                                  : CircleAvatar(
+                                      backgroundColor: const Color.fromARGB(
+                                        255,
+                                        220,
+                                        234,
+                                        250,
+                                      ),
+                                      foregroundImage: NetworkImage(
+                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png",
+                                      ),
+                                      maxRadius: 25,
+                                    ),
+                              const SizedBox(width: 20),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 1.5,
+                                padding: const EdgeInsets.only(
+                                  top: 10,
+                                  bottom: 10,
                                 ),
-                                const SizedBox(width: 20),
-                                Container(
-                                  width: MediaQuery.of(context).size.width / 1.5,
-                                  padding: const EdgeInsets.only(top: 10, bottom: 10),
-                                  decoration: BoxDecoration(
-                                      border: Border(bottom: BorderSide(color: Color(0XFFE8E6EA))),
+                                decoration: const BoxDecoration(
+                                  border: Border(
+                                    bottom: BorderSide(
+                                      color: Color(0XFFE8E6EA),
+                                    ),
                                   ),
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
+                                ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
                                     const SizedBox(height: 10),
                                     Align(
                                       alignment: Alignment.topLeft,
                                       child: AutoSizeText(
-                                        toBeginningOfSentenceCase(message.responderFirstName)!, 
+                                        toBeginningOfSentenceCase(
+                                          message.senderLastName,
+                                        )!,
                                         minFontSize: 10,
                                         maxFontSize: 12,
-                                        style: const TextStyle(fontWeight: FontWeight.bold))),
+                                        style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
                                     const SizedBox(height: 5),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Container(
-                                          width: MediaQuery.of(context).size.width / 1.7, 
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              1.7,
                                           child: Align(
-                                                  alignment: Alignment.topLeft,
-                                                  child: AutoSizeText(
-                                                    toBeginningOfSentenceCase(message.message)!, 
-                                                    overflow: TextOverflow.ellipsis,
-                                                    minFontSize: 10,
-                                                    maxFontSize: 12,
-                                                    style: const TextStyle(fontWeight: FontWeight.w500))
-                                                  )
+                                            alignment: Alignment.topLeft,
+                                            child: AutoSizeText(
+                                              toBeginningOfSentenceCase(
+                                                message.message,
+                                              )!,
+                                              overflow: TextOverflow.ellipsis,
+                                              minFontSize: 10,
+                                              maxFontSize: 12,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                        message.read == "0" ? const Icon(
-                                          Icons.circle, 
-                                          color: Color(0xFF0081CF),
-                                          size: 12
-                                        ) : Container()  
-                                    ]),
+                                        message.read == "0"
+                                            ? const Icon(
+                                                Icons.circle,
+                                                color: Color(0xFF0081CF),
+                                                size: 12,
+                                              )
+                                            : Container(),
+                                      ],
+                                    ),
                                     const SizedBox(height: 5),
-                                  ])
+                                  ],
                                 ),
-                          ]));
-                        });
-              }))
-          ]);
-          })
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-    
-    ));
+    );
+  }
+
+  void _showFiltersBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(30),
+        ),
+      ),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    height: 8,
+                    width: 40,
+                    margin: const EdgeInsets.symmetric(
+                      vertical: 10,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.grey,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const AutoSizeText(
+                        "Filters",
+                        minFontSize: 22,
+                        maxFontSize: 24,
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                         
+                          Navigator.pop(context);
+                        },
+                        child: const AutoSizeText(
+                          "Clear",
+                          minFontSize: 14,
+                          maxFontSize: 16,
+                          style: TextStyle(color: Colors.blue),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Row(
+                    children: const [
+                      AutoSizeText(
+                        "Voir que les conversation ",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontStyle: FontStyle.normal,
+                          fontFamily: "Poppins",
+                        ),
+                        minFontSize: 20,
+                        maxFontSize: 22,
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 25,
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                seulButtonColor = Colors.blue;
+                                seulTextColor = Colors.white;
+                                groupButtonColor = Colors.white;
+                                groupTextColor = Colors.black;
+                                filterSeulGroup = "seul";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: seulButtonColor,
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Seul',
+                                  style: TextStyle(
+                                    color: seulTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                groupButtonColor = Colors.blue;
+                                groupTextColor = Colors.white;
+                                seulButtonColor = Colors.white;
+                                seulTextColor = Colors.black;
+                                filterSeulGroup = "group";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: groupButtonColor,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Group',
+                                  style: TextStyle(
+                                    color: groupTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 }
