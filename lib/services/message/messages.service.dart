@@ -43,7 +43,7 @@ class MessagesService {
       String token, String userId, String search) async {
     final response = await http.get(
       Uri.parse(
-          '${dotenv.env['API_URL']}/messages/$userId/search/users?search=$search'),
+          '${dotenv.env['API_URL']}/messages/search/users?search=$search&userId=$userId'),
       headers: <String, String>{
         'Authorization': token,
       },

@@ -33,8 +33,12 @@ class _MessengerPageState extends State<MessengerPage> {
   String? userId = "";
   int usersLength = 0;
   List userList = [];
-  List<String> previousUserList = [];
   List groupList = [];
+  List<String> previousUserList = [];
+  List<int> previousGroupList = [];
+  List<String> updatedUserList = [];
+  List<int> updatedGroupList = [];
+  List<String> messageList = [];
 
   Future<Messages> getAllMessages() {
     Future<Messages> getAllMessagesUser() async {
@@ -79,10 +83,46 @@ class _MessengerPageState extends State<MessengerPage> {
     return UserService().getUserById(userId, token.toString());
   }
 
+  Future<void> fetchData() async {
+    var messages = await getAllMessages();
+
+    setState(() {
+      List.generate(messages.messages.length, (index) {
+        if (!updatedUserList.contains(messages.messages[index].responderId)) {
+          updatedUserList.add(messages.messages[index].responderId!);
+        }
+      });
+
+      List.generate(messages.messages.length, (index) {
+        if (!groupList.contains(messages.messages[index].groupId)) {
+          groupList.add(messages.messages[index].groupId);
+        }
+      });
+
+      groupList.sort();
+
+      if (userList.isEmpty) {
+        userList = updatedUserList;
+      }
+
+      if (groupList.isEmpty) {
+        groupList = updatedGroupList;
+      }
+
+      previousUserList = List.from(userList);
+      previousGroupList = List.from(groupList);
+
+      // Update the UI state with the new message lists
+      //userList = updatedUserList;
+      //groupList = updatedGroupList;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getAllMessages();
+    fetchData();
   }
 
   @override
@@ -104,29 +144,6 @@ class _MessengerPageState extends State<MessengerPage> {
                     }
 
                     var messages = snapshot.data!;
-
-                    List<String> updatedUserList = [];
-
-                    List.generate(messages.messages.length, (index) {
-                      if (!updatedUserList
-                          .contains(messages.messages[index].responderId)) {
-                        updatedUserList
-                            .add(messages.messages[index].responderId!);
-                      }
-                    });
-
-                    if (userList.isEmpty) {
-                      userList = updatedUserList;
-                    }
-
-                    List.generate(messages.messages.length, (index) {
-                      if (!groupList
-                          .contains(messages.messages[index].groupId)) {
-                        groupList.add(messages.messages[index].groupId);
-                      }
-                    });
-
-                   groupList.sort();
 
                     return Column(children: [
                       Align(
@@ -198,8 +215,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                             token!, userId!, search);
 
                                     if (userMessage != null) {
-                                      previousUserList = List.from(userList);
+                                      //previousUserList = List.from(userList);
                                       updatedUserList = [];
+                                      updatedGroupList = [];
+                                      messageList = [];
 
                                       List.generate(userMessage.messages.length,
                                           (index) {
@@ -209,10 +228,28 @@ class _MessengerPageState extends State<MessengerPage> {
                                           updatedUserList.add(userMessage
                                               .messages[index].responderId!);
                                         }
+
+                                        if (!updatedGroupList.contains(
+                                            userMessage
+                                                .messages[index].groupId)) {
+                                          updatedGroupList.add(userMessage
+                                              .messages[index].groupId);
+                                        }
+
+                                        if (!messageList.contains(userMessage
+                                            .messages[index].message)) {
+                                          messageList.add(userMessage
+                                              .messages[index].message);
+                                        }
                                       });
 
                                       setState(() {
+                                        previousUserList = List.from(userList);
+                                        previousGroupList =
+                                            List.from(groupList);
+
                                         userList = updatedUserList;
+                                        groupList = updatedGroupList;
                                       });
                                     }
                                   }
@@ -224,6 +261,9 @@ class _MessengerPageState extends State<MessengerPage> {
                               onPressed: () {
                                 setState(() {
                                   userList = previousUserList;
+                                  groupList = previousGroupList;
+                                  messageList = [];
+
                                   searchController.text = "";
                                 });
                               },
@@ -259,71 +299,103 @@ class _MessengerPageState extends State<MessengerPage> {
 
                               var messages = snapshot.data![0] as Messages;
                               var group = snapshot.data![1] as GroupUsers;
-                              
-                              List<String?> userNames = group.groupUsers.map((user) {
-                                  return toBeginningOfSentenceCase(user.firstName);
-                                }).toList();
 
-                              String allUsers = userNames.join(", "); 
+                              print(userList);
+                              print(messageList);
+                              List<String?> userNames =
+                                  group.groupUsers.map((user) {
+                                return toBeginningOfSentenceCase(
+                                    user.firstName);
+                              }).toList();
 
-                              print(group.groupUsers.length);
+                              String allUsers = userNames.join(", ");
 
                               return GestureDetector(
-                                    onTap: () async {
-                                      await MessageService().setMessageRead(
-                                          token!, messages.messages[index].id);
-                                    },
-                                    child: Row(children: [
-                                       Container(
+                                  onTap: () async {
+                                    await MessageService().setMessageRead(
+                                        token!, messages.messages[index].id);
+                                  },
+                                  child: Row(children: [
+                                    Container(
                                         width: 70,
                                         height: 50,
                                         alignment: Alignment.center,
-                                        child:
-                                          Stack(children: 
-                                            List.generate(group.groupUsers.length, (groupIndex) {
-                                              return FutureBuilder(
-                                              future: getUserImages(group.groupUsers[groupIndex].userId),
-                                                builder: (context, snapshot) {
-                                                  if (snapshot.connectionState ==
-                                                      ConnectionState.waiting) {
-                                                    return BackdropFilter(
-                                                        filter:
-                                                            ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                                        child: Container(
-                                                            width:
-                                                                MediaQuery.of(context).size.width,
-                                                            height: MediaQuery.of(context)
-                                                                .size
-                                                                .height));
-                                                  } else if (snapshot.hasError) {
-                                                    return Text('Error: ${snapshot.error}');
-                                                  } else if (!snapshot.hasData) {
-                                                    return const Text('');
-                                                  }
+                                        child: Stack(
+                                            children: List.generate(
+                                                group.groupUsers.length,
+                                                (groupIndex) {
+                                          return FutureBuilder(
+                                              future: getUserImages(group
+                                                  .groupUsers[groupIndex]
+                                                  .userId),
+                                              builder: (context, snapshot) {
+                                                if (snapshot.connectionState ==
+                                                    ConnectionState.waiting) {
+                                                  return BackdropFilter(
+                                                      filter: ImageFilter.blur(
+                                                          sigmaX: 5, sigmaY: 5),
+                                                      child: Container(
+                                                          width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width,
+                                                          height: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .height));
+                                                } else if (snapshot.hasError) {
+                                                  return Text(
+                                                      'Error: ${snapshot.error}');
+                                                } else if (!snapshot.hasData) {
+                                                  return const Text('');
+                                                }
 
                                                 var image = snapshot.data!;
 
-                                                var avatar = image.userImages.length != 0
-                                                    ? CircleAvatar(
-                                                        backgroundImage: NetworkImage("${image.userImages[0].image}"),
-                                                        maxRadius: 25,
-                                                      )
-                                                    : CircleAvatar(
-                                                        backgroundColor: const Color.fromARGB(255, 220, 234, 250),
-                                                        foregroundImage: NetworkImage(
-                                                            "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                        maxRadius: 25,
-                                                      );
+                                                var avatar =
+                                                    image.userImages.length != 0
+                                                        ? CircleAvatar(
+                                                            backgroundImage:
+                                                                NetworkImage(
+                                                                    "${image.userImages[0].image}"),
+                                                            maxRadius: 25,
+                                                          )
+                                                        : CircleAvatar(
+                                                            backgroundColor:
+                                                                const Color
+                                                                        .fromARGB(
+                                                                    255,
+                                                                    220,
+                                                                    234,
+                                                                    250),
+                                                            foregroundImage:
+                                                                NetworkImage(
+                                                                    "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                            maxRadius: 25,
+                                                          );
 
                                                 if (groupIndex < 2) {
+                                                  if (group.groupUsers.length ==
+                                                      1) {
+                                                    return Positioned(
+                                                      left: 10,
+                                                      child: avatar,
+                                                    );
+                                                  } else {
+                                                    return Positioned(
+                                                      right: groupIndex
+                                                              .toDouble() *
+                                                          15,
+                                                      child: avatar,
+                                                    );
+                                                  }
+                                                } else if (groupIndex >= 2) {
                                                   return Positioned(
-                                                    right: groupIndex.toDouble() * 15,
-                                                    child: avatar,
-                                                  );
-                                                } 
-                                                else if (groupIndex >= 2) {
-                                                  return Positioned(
-                                                    right: groupIndex < 2 ? groupIndex.toDouble() * 15 : 0,
+                                                    right: groupIndex < 2
+                                                        ? groupIndex
+                                                                .toDouble() *
+                                                            15
+                                                        : 0,
                                                     child: Stack(
                                                       children: [
                                                         avatar,
@@ -331,10 +403,16 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           bottom: 0,
                                                           left: 0,
                                                           child: CircleAvatar(
-                                                            backgroundColor: Colors.blue,
+                                                            backgroundColor:
+                                                                Colors.blue,
                                                             child: Text(
                                                               '+${group.groupUsers.length - 2}',
-                                                              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold),
                                                             ),
                                                             maxRadius: 15,
                                                           ),
@@ -342,119 +420,129 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       ],
                                                     ),
                                                   );
-                                                }  
-                                                return const SizedBox(); 
-                                          });
-                                      }))),
-                                      const SizedBox(width: 20),
-                                      Container(
-                                          width:
-                                              MediaQuery.of(context).size.width /
-                                                  1.7,
-                                          padding: const EdgeInsets.only(
-                                              top: 10, bottom: 10),
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                                bottom: BorderSide(
-                                                    color: Color(0XFFE8E6EA))),
-                                          ),
-                                          child: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                const SizedBox(height: 10),
-                                                Align(
-                                                    alignment: Alignment.topLeft,
-                                                    child: group.groupUsers
-                                                                .length ==
-                                                            1
-                                                        ? AutoSizeText(
-                                                            toBeginningOfSentenceCase(
-                                                                group
-                                                                    .groupUsers[0]
-                                                                    .firstName)!,
-                                                            minFontSize: 10,
-                                                            maxFontSize: 12,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
-                                                            style: const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold))
-                                                        :
-                                                          Row(
-                                                            children : [
-                                                              Container(
-                                                                constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width / 2),
-                                                                child: AutoSizeText(
-                                                                    allUsers,
-                                                                    minFontSize:
-                                                                        10,
-                                                                    maxFontSize:
-                                                                        12,
-                                                                    overflow: TextOverflow
-                                                                        .ellipsis,
-                                                                    style: const TextStyle(
-                                                                        fontWeight: FontWeight
-                                                                                .bold))), 
-                                                              AutoSizeText(
-                                                                ' (${group.groupUsers.length.toString()})',
+                                                }
+                                                return const SizedBox();
+                                              });
+                                        }))),
+                                    const SizedBox(width: 20),
+                                    Container(
+                                        width:
+                                            MediaQuery.of(context).size.width /
+                                                1.7,
+                                        padding: const EdgeInsets.only(
+                                            top: 10, bottom: 10),
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                              bottom: BorderSide(
+                                                  color: Color(0XFFE8E6EA))),
+                                        ),
+                                        child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              const SizedBox(height: 10),
+                                              Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: group.groupUsers
+                                                              .length ==
+                                                          1
+                                                      ? AutoSizeText(
+                                                          toBeginningOfSentenceCase(
+                                                              group
+                                                                  .groupUsers[0]
+                                                                  .firstName)!,
+                                                          minFontSize: 10,
+                                                          maxFontSize: 12,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold))
+                                                      : Row(children: [
+                                                          Container(
+                                                              constraints: BoxConstraints(
+                                                                  maxWidth: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width /
+                                                                      2),
+                                                              child: AutoSizeText(
+                                                                  allUsers,
                                                                   minFontSize:
                                                                       10,
                                                                   maxFontSize:
                                                                       12,
-                                                                  overflow: TextOverflow
-                                                                      .ellipsis,
-                                                                  style: const TextStyle(
-                                                                      fontWeight: FontWeight
-                                                                          .bold)),
-                                                            ])
-                                                          ),
-                                                const SizedBox(height: 5),
-                                                Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Container(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              1.9,
-                                                          child: Align(
-                                                              alignment: Alignment
-                                                                  .topLeft,
-                                                              child: AutoSizeText(
-                                                                  groupList[index] == messages.messages[index].groupId ? 
-                                                                        messages
-                                                                            .messages[
-                                                                                index]
-                                                                            .message : "",
                                                                   overflow:
                                                                       TextOverflow
                                                                           .ellipsis,
-                                                                  minFontSize: 10,
-                                                                  maxFontSize: 12,
                                                                   style: const TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
-                                                                              .w500)))),
-                                                      messages.messages[index]
-                                                                  .read ==
-                                                              "0"
-                                                          ? const Icon(
-                                                              Icons.circle,
-                                                              color: Color(
-                                                                  0xFF0081CF),
-                                                              size: 12)
-                                                          : Container()
-                                                    ]),
-                                                const SizedBox(height: 5),
-                                              ])),
-                                       ]));
-                                
-                      });}))
+                                                                              .bold))),
+                                                          AutoSizeText(
+                                                              ' (${group.groupUsers.length.toString()})',
+                                                              minFontSize: 10,
+                                                              maxFontSize: 12,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              style: const TextStyle(
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold)),
+                                                        ])),
+                                              const SizedBox(height: 5),
+                                              Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                        width: MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            1.9,
+                                                        child: messageList.isNotEmpty
+                                                            ? Align(
+                                                                alignment: Alignment
+                                                                    .topLeft,
+                                                                child: AutoSizeText(messageList[index],
+                                                                    overflow: TextOverflow
+                                                                        .ellipsis,
+                                                                    minFontSize:
+                                                                        10,
+                                                                    maxFontSize:
+                                                                        12,
+                                                                    style: const TextStyle(
+                                                                        fontWeight: FontWeight
+                                                                            .w500)))
+                                                            : Align(
+                                                                alignment: Alignment
+                                                                    .topLeft,
+                                                                child: AutoSizeText(
+                                                                    groupList[index] == messages.messages[index].groupId
+                                                                        ? messages.messages[index].message
+                                                                        : "",
+                                                                    overflow: TextOverflow.ellipsis,
+                                                                    minFontSize: 10,
+                                                                    maxFontSize: 12,
+                                                                    style: const TextStyle(fontWeight: FontWeight.w500)))),
+                                                    messages.messages[index]
+                                                                .read ==
+                                                            "0"
+                                                        ? const Icon(
+                                                            Icons.circle,
+                                                            color: Color(
+                                                                0xFF0081CF),
+                                                            size: 12)
+                                                        : Container()
+                                                  ]),
+                                              const SizedBox(height: 5),
+                                            ])),
+                                  ]));
+                            });
+                      }))
                     ]);
                   })),
         ));

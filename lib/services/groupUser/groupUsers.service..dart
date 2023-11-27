@@ -16,7 +16,6 @@ class GroupUsersService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print(res);
       return GroupUsers.fromJson(res);
     } else {
       throw Exception('Failed to load messages');
