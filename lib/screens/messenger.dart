@@ -12,8 +12,10 @@ import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 import '../models-api/messenger/groups_data.dart';
+import '../models-api/travel/travels.dart';
 import '../models-api/userStatus/userStatus.dart';
 import '../services/message/groups.service.dart';
+import '../services/travel/travels.service.dart';
 import '../services/userStatus/userStatus.service.dart';
 
 class MessengerPage extends StatefulWidget {
@@ -26,6 +28,7 @@ class MessengerPage extends StatefulWidget {
 
 class _MessengerPageState extends State<MessengerPage> {
   final storage = const FlutterSecureStorage();
+  final _formKey = GlobalKey<FormState>();
 
   String? token = "";
   String? userId = "";
@@ -37,6 +40,18 @@ class _MessengerPageState extends State<MessengerPage> {
   Color seulButtonColor = Colors.white;
   Color seulTextColor = Colors.black;
   String filterSeulGroup = "all";
+  String? selectedLocation;
+  List locationList = [""];
+
+  Future<Travels> getListTravels() {
+    Future<Travels> getAllTravels() async {
+      token = await storage.read(key: "token");
+
+      return TravelsService().getAllTravels(token.toString());
+    }
+
+    return getAllTravels();
+  }
 
   @override
   void initState() {
@@ -47,6 +62,7 @@ class _MessengerPageState extends State<MessengerPage> {
   Future<void> fetchData() async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
+    await updateLocationList();
     await getDiscussionsByFilter();
   }
 
@@ -62,6 +78,11 @@ class _MessengerPageState extends State<MessengerPage> {
     return GroupsService().getGroupUsersDiscussions(token!, userId!);
   }
 
+  Future<Groups> getAllDiscussionsForUserByLocation(String location) {
+    return GroupsService()
+        .getGroupUsersDiscussionsByLocation(token!, userId!, location);
+  }
+
   Future<void> getDiscussionsByFilter() async {
     switch (filterSeulGroup) {
       case "seul":
@@ -69,6 +90,12 @@ class _MessengerPageState extends State<MessengerPage> {
         break;
       case "group":
         discussionMessages = await getAllDiscussionsForGroupUser();
+        break;
+      case "location":
+        if (selectedLocation != null && selectedLocation!.isNotEmpty) {
+          discussionMessages =
+              await getAllDiscussionsForUserByLocation(selectedLocation!);
+        }
         break;
       default:
         discussionMessages = await getAllDiscussionsForUser();
@@ -118,6 +145,19 @@ class _MessengerPageState extends State<MessengerPage> {
       filterSeulGroup = "all";
     });
     getDiscussionsByFilter();
+  }
+
+  Future<void> updateLocationList() async {
+    var travels = await getListTravels();
+
+    setState(() {
+      locationList.clear();
+      for (int i = 0; i < travels.travels.length; i++) {
+        if (!locationList.contains(travels.travels[i].location)) {
+          locationList.add(travels.travels[i].location);
+        }
+      }
+    });
   }
 
   @override
@@ -243,7 +283,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                       alignment: Alignment.topLeft,
                                       child: AutoSizeText(
                                         toBeginningOfSentenceCase(
-                                          message.senderLastName,
+                                          message.senderFirstName,
                                         )!,
                                         minFontSize: 10,
                                         maxFontSize: 12,
@@ -352,7 +392,7 @@ class _MessengerPageState extends State<MessengerPage> {
                           Navigator.pop(context);
                         },
                         child: const AutoSizeText(
-                          "Clear",
+                          "Réinitialiser",
                           minFontSize: 14,
                           maxFontSize: 16,
                           style: TextStyle(color: Colors.blue),
@@ -466,7 +506,58 @@ class _MessengerPageState extends State<MessengerPage> {
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 20),
+                  Form(
+                      key: _formKey,
+                      child: Column(children: [
+                        Row(children: [
+                          const Icon(
+                            Icons.location_on,
+                            color: Colors.blue,
+                            size: 30.0,
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                              child: DropdownButtonFormField<String>(
+                                  menuMaxHeight: 130,
+                                  value: selectedLocation,
+                                  hint: const Text("Destination*"),
+                                  onChanged: (value) => setState(() {
+                                        selectedLocation = value;
+                                        filterSeulGroup = "location";
+                                      }),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez choisir votre destination';
+                                    }
+                                    return null;
+                                  },
+                                  items: locationList
+                                      .map<DropdownMenuItem<String>>(
+                                          (dynamic value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.toString(),
+                                      child: Text(value.toString()),
+                                    );
+                                  }).toList())),
+                        ]),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (selectedLocation != null &&
+                                selectedLocation!.isNotEmpty) {
+                              setState(() => filterSeulGroup = "location");
+                            }
+
+                            await getDiscussionsByFilter();
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Appliquer le filtre localisation"),
+                        ),
+                      ]))
                 ],
               ),
             );
