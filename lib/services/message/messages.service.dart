@@ -22,7 +22,7 @@ class MessagesService {
   }
 
   Future<Messages> getDiscussionsForMessage(
-      String token, String messageId) async {
+      String token, String? messageId) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/messages/discussions/$messageId'),
       headers: <String, String>{
