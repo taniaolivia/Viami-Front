@@ -392,7 +392,7 @@ class _MessengerPageState extends State<MessengerPage> {
                           Navigator.pop(context);
                         },
                         child: const AutoSizeText(
-                          "Clear",
+                          "Réinitialiser",
                           minFontSize: 14,
                           maxFontSize: 16,
                           style: TextStyle(color: Colors.blue),
@@ -507,6 +507,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 20),
                   Form(
                       key: _formKey,
                       child: Column(children: [
@@ -543,6 +544,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                     );
                                   }).toList())),
                         ]),
+                        const SizedBox(height: 20),
                         ElevatedButton(
                           onPressed: () async {
                             if (selectedLocation != null &&
@@ -553,7 +555,7 @@ class _MessengerPageState extends State<MessengerPage> {
                             await getDiscussionsByFilter();
                             Navigator.pop(context);
                           },
-                          child: const Text("Appliquer le filtre"),
+                          child: const Text("Appliquer le filtre localisation"),
                         ),
                       ]))
                 ],
