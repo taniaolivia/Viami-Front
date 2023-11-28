@@ -59,12 +59,13 @@ class GroupData {
   final int groupId;
   final LastMessage lastMessage;
   final List<UserData> users;
+  final List<String?> usersRead;
 
-  GroupData({
-    required this.groupId,
-    required this.lastMessage,
-    required this.users,
-  });
+  GroupData(
+      {required this.groupId,
+      required this.lastMessage,
+      required this.users,
+      required this.usersRead});
 
   factory GroupData.fromJson(Map<String, dynamic> json) =>
       _$GroupDataFromJson(json);
