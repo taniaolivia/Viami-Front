@@ -8,6 +8,7 @@ import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
@@ -15,6 +16,8 @@ import 'package:viami/models-api/messenger/groups_data.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
 import 'package:viami/services/message/groups.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
+import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/services/travel/travels.service.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -38,10 +41,23 @@ class _MessengerPageState extends State<MessengerPage> {
   Color seulButtonColor = Colors.white;
   Color seulTextColor = Colors.black;
   String filterSeulGroup = "all";
+  String? selectedLocation;
+  List locationList = [""];
+
+  Future<Travels> getListTravels() {
+    Future<Travels> getAllTravels() async {
+      token = await storage.read(key: "token");
+
+      return TravelsService().getAllTravels(token.toString());
+    }
+
+    return getAllTravels();
+  }
 
   Future<void> fetchData() async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
+    await updateLocationList();
     await getDiscussionsByFilter();
   }
 
@@ -57,6 +73,11 @@ class _MessengerPageState extends State<MessengerPage> {
     return GroupsService().getGroupUsersDiscussions(token!, userId!);
   }
 
+  Future<Groups> getAllDiscussionsForUserByLocation(String location) {
+    return GroupsService()
+        .getGroupUsersDiscussionsByLocation(token!, userId!, location);
+  }
+
   Future<void> getDiscussionsByFilter() async {
     switch (filterSeulGroup) {
       case "seul":
@@ -64,6 +85,12 @@ class _MessengerPageState extends State<MessengerPage> {
         break;
       case "group":
         discussionMessages = await getAllDiscussionsForGroupUser();
+        break;
+      case "location":
+        if (selectedLocation != null && selectedLocation!.isNotEmpty) {
+          discussionMessages =
+              await getAllDiscussionsForUserByLocation(selectedLocation!);
+        }
         break;
       default:
         discussionMessages = await getAllDiscussionsForUser();
@@ -118,6 +145,19 @@ class _MessengerPageState extends State<MessengerPage> {
       filterSeulGroup = "all";
     });
     getDiscussionsByFilter();
+  }
+
+  Future<void> updateLocationList() async {
+    var travels = await getListTravels();
+
+    setState(() {
+      locationList.clear();
+      for (int i = 0; i < travels.travels.length; i++) {
+        if (!locationList.contains(travels.travels[i].location)) {
+          locationList.add(travels.travels[i].location);
+        }
+      }
+    });
   }
 
   @override
@@ -295,8 +335,282 @@ class _MessengerPageState extends State<MessengerPage> {
 
                         return GestureDetector(
                           onTap: () async {
-                            /*await MessageService().setMessageRead(
-                                token!, messages.messages[index].id);*/
+                            var discussion = await getDiscussionsForMessageWith(
+                              discussionMessages!.groups[index].lastMessage.id
+                                  .toString(),
+                            );
+
+                            BuildContext currentContext = context;
+                            showModalBottomSheet(
+                              isScrollControlled: true,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(30),
+                                ),
+                              ),
+                              builder: (BuildContext context) {
+                                currentContext = context;
+
+                                return StatefulBuilder(
+                                  builder: (BuildContext context,
+                                      StateSetter setState) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(left: 10),
+                                      padding: const EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                      ),
+                                      height:
+                                          MediaQuery.of(context).size.height -
+                                              30,
+                                      decoration: const BoxDecoration(
+                                        color: Colors.transparent,
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Container(
+                                            height: 8,
+                                            width: 40,
+                                            margin: const EdgeInsets.symmetric(
+                                              vertical: 10,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey,
+                                              borderRadius:
+                                                  BorderRadius.circular(5),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 5),
+                                          Row(
+                                            children: [
+                                              image.userImages.length != 0
+                                                  ? CircleAvatar(
+                                                      backgroundImage:
+                                                          NetworkImage(
+                                                        image.userImages[0]
+                                                            .image,
+                                                      ),
+                                                      maxRadius: 25,
+                                                    )
+                                                  : CircleAvatar(
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              220,
+                                                              234,
+                                                              250),
+                                                      foregroundImage:
+                                                          NetworkImage(
+                                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png",
+                                                      ),
+                                                      maxRadius: 25,
+                                                    ),
+                                              const SizedBox(width: 20),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width /
+                                                    1.5,
+                                                padding: const EdgeInsets.only(
+                                                  top: 10,
+                                                  bottom: 10,
+                                                ),
+                                                decoration: const BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                      color: Color(0XFFE8E6EA),
+                                                    ),
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    const SizedBox(height: 10),
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.topLeft,
+                                                      child: AutoSizeText(
+                                                        toBeginningOfSentenceCase(
+                                                          message
+                                                              .senderLastName,
+                                                        )!,
+                                                        minFontSize: 10,
+                                                        maxFontSize: 12,
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width /
+                                                              1.7,
+                                                          child: Align(
+                                                            alignment: Alignment
+                                                                .topLeft,
+                                                            child: AutoSizeText(
+                                                              toBeginningOfSentenceCase(
+                                                                "status",
+                                                              )!,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              minFontSize: 10,
+                                                              maxFontSize: 12,
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        message.read == "0"
+                                                            ? const Icon(
+                                                                Icons.circle,
+                                                                color: Color(
+                                                                    0xFF0081CF),
+                                                                size: 12,
+                                                              )
+                                                            : Container(),
+                                                      ],
+                                                    ),
+                                                    const SizedBox(height: 5),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Expanded(
+                                            child: ListView.builder(
+                                              itemCount:
+                                                  discussion.messages.length,
+                                              itemBuilder: (context, index) {
+                                                var message =
+                                                    discussion.messages[index];
+                                                bool isUserMessage =
+                                                    message.senderId == userId;
+                                                Color containerColor =
+                                                    isUserMessage
+                                                        ? const Color(
+                                                            0xFFF3F3F3)
+                                                        : const Color(
+                                                            0xFF0081CF);
+
+                                                DateTime messageDateTime =
+                                                    DateTime.parse(
+                                                        message.date);
+                                                DateTime now = DateTime.now();
+                                                bool isToday =
+                                                    messageDateTime.year ==
+                                                            now.year &&
+                                                        messageDateTime.month ==
+                                                            now.month &&
+                                                        messageDateTime.day ==
+                                                            now.day;
+
+                                                String formattedDate;
+
+                                                if (isToday) {
+                                                  formattedDate =
+                                                      DateFormat.jm().format(
+                                                          messageDateTime);
+                                                } else {
+                                                  formattedDate = DateFormat(
+                                                          'EEE, MMM d, y, h:mm a')
+                                                      .format(messageDateTime);
+                                                }
+
+                                                return Align(
+                                                  alignment: isUserMessage
+                                                      ? Alignment.centerRight
+                                                      : Alignment.centerLeft,
+                                                  child: ListTile(
+                                                    title: Container(
+                                                      margin:
+                                                          const EdgeInsets.all(
+                                                              18),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              18),
+                                                      decoration: BoxDecoration(
+                                                        color: containerColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                      ),
+                                                      child: AutoSizeText(
+                                                        toBeginningOfSentenceCase(
+                                                          message.message,
+                                                        )!,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        minFontSize: 10,
+                                                        maxFontSize: 12,
+                                                        style: const TextStyle(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    subtitle: Align(
+                                                      alignment: isUserMessage
+                                                          ? Alignment
+                                                              .centerRight
+                                                          : Alignment
+                                                              .centerLeft,
+                                                      child: Container(
+                                                        margin: const EdgeInsets
+                                                            .only(right: 10),
+                                                        child:
+                                                            Text(formattedDate),
+                                                      ),
+                                                    ),
+                                                    dense: true,
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                                .symmetric(
+                                                            horizontal: 8),
+                                                    leading: isUserMessage
+                                                        ? Container(
+                                                            width: 48,
+                                                            height: 48,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              color: Colors
+                                                                  .transparent,
+                                                            ),
+                                                          )
+                                                        : null,
+                                                  ),
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              context: currentContext!,
+                            );
+
+                            await MessageService()
+                                .setMessageRead(token!, message.id);
                           },
                           child: Row(
                             children: [
@@ -535,7 +849,7 @@ class _MessengerPageState extends State<MessengerPage> {
                           Navigator.pop(context);
                         },
                         child: const AutoSizeText(
-                          "Clear",
+                          "Réinitialiser",
                           minFontSize: 14,
                           maxFontSize: 16,
                           style: TextStyle(color: Colors.blue),
@@ -649,7 +963,58 @@ class _MessengerPageState extends State<MessengerPage> {
                         ),
                       ],
                     ),
-                  )
+                  ),
+                  const SizedBox(height: 20),
+                  Form(
+                      key: _formKey,
+                      child: Column(children: [
+                        Row(children: [
+                          const Icon(
+                            Icons.location_on,
+                            color: Colors.blue,
+                            size: 30.0,
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          ),
+                          Expanded(
+                              child: DropdownButtonFormField<String>(
+                                  menuMaxHeight: 130,
+                                  value: selectedLocation,
+                                  hint: const Text("Destination*"),
+                                  onChanged: (value) => setState(() {
+                                        selectedLocation = value;
+                                        filterSeulGroup = "location";
+                                      }),
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez choisir votre destination';
+                                    }
+                                    return null;
+                                  },
+                                  items: locationList
+                                      .map<DropdownMenuItem<String>>(
+                                          (dynamic value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.toString(),
+                                      child: Text(value.toString()),
+                                    );
+                                  }).toList())),
+                        ]),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            if (selectedLocation != null &&
+                                selectedLocation!.isNotEmpty) {
+                              setState(() => filterSeulGroup = "location");
+                            }
+
+                            await getDiscussionsByFilter();
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Appliquer le filtre localisation"),
+                        ),
+                      ]))
                 ],
               ),
             );
