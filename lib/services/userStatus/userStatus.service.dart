@@ -6,7 +6,7 @@ import '../../models-api/userStatus/userStatus.dart';
 import 'package:http/http.dart' as http;
 
 class UserStatusService {
-  Future<UserStatus> getUserStatusById(String id, String token) async {
+  Future<UserStatus> getUserStatusById(String? id, String token) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/users/userStatus/$id'),
       headers: <String, String>{'Authorization': token},

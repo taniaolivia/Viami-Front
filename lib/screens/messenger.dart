@@ -122,10 +122,10 @@ class _MessengerPageState extends State<MessengerPage> {
     return await MessagesService().getDiscussionsForMessage(token!, messageId!);
   }
 
-  Future<UserStatus> getUserStatusById(String travelerId) async {
+  Future<UserStatus> getUserStatusById(String? travelerId) async {
     token = await storage.read(key: "token");
 
-    return await UserStatusService().getUserStatusById(travelerId, token!);
+    return await UserStatusService().getUserStatusById(travelerId!, token!);
   }
 
   void clearFilters() {
@@ -236,6 +236,9 @@ class _MessengerPageState extends State<MessengerPage> {
                               discussionMessages?.groups[index].lastMessage.id
                                   .toString(),
                             );
+                            var status = await getUserStatusById(
+                                discussionMessages
+                                    ?.groups[index].lastMessage.senderId);
 
                             BuildContext currentContext = context;
                             showModalBottomSheet(
@@ -353,25 +356,54 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                   .width /
                                                               1.7,
                                                           child: Align(
-                                                            alignment: Alignment
-                                                                .topLeft,
-                                                            child: AutoSizeText(
-                                                              toBeginningOfSentenceCase(
-                                                                "status",
-                                                              )!,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              minFontSize: 10,
-                                                              maxFontSize: 12,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                              ),
-                                                            ),
-                                                          ),
+                                                              alignment:
+                                                                  Alignment
+                                                                      .topLeft,
+                                                              child: Row(
+                                                                children: [
+                                                                  status.status ==
+                                                                          "online"
+                                                                      ? const Icon(
+                                                                          Icons
+                                                                              .circle,
+                                                                          color: Color.fromARGB(
+                                                                              255,
+                                                                              0,
+                                                                              207,
+                                                                              62),
+                                                                          size:
+                                                                              10,
+                                                                        )
+                                                                      : Text(
+                                                                          ""),
+                                                                  const SizedBox(
+                                                                    width: 5,
+                                                                  ),
+                                                                  AutoSizeText(
+                                                                    status.status ==
+                                                                            "online"
+                                                                        ? toBeginningOfSentenceCase(
+                                                                            "en ligne",
+                                                                          )!
+                                                                        : toBeginningOfSentenceCase(
+                                                                            "hor ligne",
+                                                                          )!,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    minFontSize:
+                                                                        10,
+                                                                    maxFontSize:
+                                                                        12,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              )),
                                                         ),
                                                         message.read == "0"
                                                             ? const Icon(
