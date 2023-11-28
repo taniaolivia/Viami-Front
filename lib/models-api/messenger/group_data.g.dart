@@ -2,13 +2,13 @@ part of 'group_data.dart';
 
 LastMessage _$LastMessageFromJson(Map<String, dynamic> json) {
   return LastMessage(
-    id: json['id'] as int,
-    message: json['message'] as String,
-    senderId: json['senderId'] as String,
-    groupId: json['groupId'] as int,
-    responderId: json['responderId'] as String,
-    date: json['date'] as String,
-    read: json['read'] as String,
+    id: json['id'],
+    message: json['message'],
+    senderId: json['senderId'],
+    groupId: json['groupId'],
+    responderId: json['responderId'],
+    date: json['date'],
+    read: json['read'],
     senderFirstName: json['senderFirstName'],
     senderLastName: json['senderLastName'],
     responderFirstName: json['responderFirstName'],
@@ -31,12 +31,25 @@ Map<String, dynamic> _$LastMessageToJson(LastMessage instance) =>
       'responderLastName': instance.responderLastName,
     };
 
+UserData _$UserDataFromJson(Map<String, dynamic> json) {
+  return UserData(
+      id: json['id'], firstName: json['firstName'], lastName: json['lastName']);
+}
+
+Map<String, dynamic> _$UserDataToJson(UserData instance) => <String, dynamic>{
+      'id': instance.id,
+      'firstName': instance.firstName,
+      'lastName': instance.lastName,
+    };
+
 GroupData _$GroupDataFromJson(Map<String, dynamic> json) {
   return GroupData(
     groupId: json['groupId'] as int,
     lastMessage:
         LastMessage.fromJson(json['lastMessage'] as Map<String, dynamic>),
-    users: (json['users'] as List<dynamic>).map((e) => e as String).toList(),
+    users: (json['users'] as List<dynamic>)
+        .map((e) => UserData.fromJson(e as Map<String, dynamic>))
+        .toList(),
   );
 }
 

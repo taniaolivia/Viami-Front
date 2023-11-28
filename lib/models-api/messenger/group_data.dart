@@ -37,10 +37,28 @@ class LastMessage {
 }
 
 @JsonSerializable()
+class UserData {
+  final String id;
+  final String firstName;
+  final String lastName;
+
+  UserData({
+    required this.id,
+    required this.firstName,
+    required this.lastName,
+  });
+
+  factory UserData.fromJson(Map<String, dynamic> json) =>
+      _$UserDataFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserDataToJson(this);
+}
+
+@JsonSerializable()
 class GroupData {
   final int groupId;
   final LastMessage lastMessage;
-  final List<String> users;
+  final List<UserData> users;
 
   GroupData({
     required this.groupId,

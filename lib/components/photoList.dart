@@ -89,16 +89,15 @@ class _PhotoListState extends State<PhotoList> {
       final List<int> imageBytes = await imageFile.readAsBytes();
 
       if (status == "add") {
-        addNewImage(newPath);
+        await addNewImage(newPath);
+        await getUserImages();
       } else {
-        updateImageById(clickedImageId!, imageBytes);
+        await updateImageById(clickedImageId!, imageBytes);
+        await getUserImages();
       }
 
-      setState(() {
-        getUserImages();
-      });
-    } catch (e) {
-    }
+      setState(() {});
+    } catch (e) {}
   }
 
   Future getImageFromCamera() async {
@@ -120,14 +119,14 @@ class _PhotoListState extends State<PhotoList> {
       final List<int> imageBytes = await imageFile.readAsBytes();
 
       if (status == "add") {
-        addNewImage(newPath);
+        await addNewImage(newPath);
+        await getUserImages();
       } else {
-        updateImageById(clickedImageId!, imageBytes);
+        await updateImageById(clickedImageId!, imageBytes);
+        await getUserImages();
       }
 
-      setState(() {
-        getUserImages();
-      });
+      setState(() {});
     } catch (e) {
       print("Error copying image: $e");
     }
@@ -202,8 +201,8 @@ class _PhotoListState extends State<PhotoList> {
 
   @override
   void initState() {
-    getUserImages();
     super.initState();
+    getUserImages();
   }
 
   @override

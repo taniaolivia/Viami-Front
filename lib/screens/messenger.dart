@@ -5,18 +5,19 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/models-api/messenger/group_data.dart';
-import 'package:viami/models-api/messenger/message.dart';
 import 'package:viami/models-api/messenger/messages.dart';
+import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
+import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
-import '../models-api/messenger/groups_data.dart';
-import '../models-api/travel/travels.dart';
-import '../models-api/userStatus/userStatus.dart';
-import '../services/message/groups.service.dart';
-import '../services/travel/travels.service.dart';
-import '../services/userStatus/userStatus.service.dart';
+import 'package:viami/models-api/messenger/groups_data.dart';
+import 'package:viami/models-api/userStatus/userStatus.dart';
+import 'package:viami/services/message/groups.service.dart';
+import 'package:viami/services/userStatus/userStatus.service.dart';
+import 'package:viami/models-api/travel/travels.dart';
+import 'package:viami/services/travel/travels.service.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -29,11 +30,11 @@ class MessengerPage extends StatefulWidget {
 class _MessengerPageState extends State<MessengerPage> {
   final storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
+  TextEditingController searchController = TextEditingController();
 
   String? token = "";
   String? userId = "";
-  int usersLength = 0;
-  List userList = [];
+
   Groups? discussionMessages;
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
@@ -51,12 +52,6 @@ class _MessengerPageState extends State<MessengerPage> {
     }
 
     return getAllTravels();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    fetchData();
   }
 
   Future<void> fetchData() async {
@@ -116,16 +111,29 @@ class _MessengerPageState extends State<MessengerPage> {
     return images;
   }
 
-  Future<Messages> getDiscussionsForMessageWith(String? messageId) async {
+  Future<User> getUserById(String userId) async {
     token = await storage.read(key: "token");
 
-    return await MessagesService().getDiscussionsForMessage(token!, messageId!);
+    return UserService().getUserById(userId, token.toString());
+  }
+
+  Future<Messages> getDiscussionsForMessageWith(String messageId) async {
+    token = await storage.read(key: "token");
+
+    return await MessagesService().getDiscussionsForMessage(token!, messageId);
   }
 
   Future<UserStatus> getUserStatusById(String? travelerId) async {
     token = await storage.read(key: "token");
 
     return await UserStatusService().getUserStatusById(travelerId!, token!);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fetchData();
+    clearFilters();
   }
 
   void clearFilters() {
@@ -197,6 +205,87 @@ class _MessengerPageState extends State<MessengerPage> {
                 ],
               ),
               const SizedBox(height: 20),
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(children: [
+                    Container(
+                        width: MediaQuery.of(context).size.width / 1.5,
+                        child: Form(
+                            key: _formKey,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                TextFormField(
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'Veuillez remplir un prénom';
+                                    }
+                                    return null;
+                                  },
+                                  controller: searchController,
+                                  decoration: const InputDecoration(
+                                    border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15))),
+                                    contentPadding:
+                                        EdgeInsets.fromLTRB(15, 5, 10, 5),
+                                    labelText: 'Recherche par prénom',
+                                    hintText: '',
+                                    labelStyle: TextStyle(fontSize: 12),
+                                  ),
+                                ),
+                              ],
+                            ))),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF0081CF),
+                            padding: const EdgeInsets.only(top: 12, bottom: 12),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)))),
+                        child: const Icon(
+                          Icons.search,
+                          color: Colors.white,
+                          size: 25.0,
+                        ),
+                        onPressed: () async {
+                          if (_formKey.currentState!.validate()) {
+                            var search = searchController.text;
+
+                            var userMessage = await GroupsService()
+                                .getSearchedUsers(token!, userId!, search);
+
+                            if (userMessage != null) {
+                              setState(() {
+                                discussionMessages = userMessage;
+                              });
+                            }
+
+                            FocusScope.of(context).unfocus();
+                          }
+                        })
+                  ])),
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                      onPressed: () async {
+                        var clear = await getAllDiscussionsForUser();
+
+                        setState(() {
+                          discussionMessages = clear;
+                          searchController.text = "";
+                        });
+
+                        FocusScope.of(context).unfocus();
+                      },
+                      child: const AutoSizeText(
+                        "Réinitialiser",
+                        minFontSize: 10,
+                        maxFontSize: 12,
+                      ))),
               Column(
                 children: List.generate(
                   discussionMessages?.groups.length ?? 0,
@@ -225,15 +314,28 @@ class _MessengerPageState extends State<MessengerPage> {
 
                         var message = discussionMessages
                             ?.groups[index].lastMessage as LastMessage;
-                        var image = snapshot.data![0] as UsersImages;
+
                         bool isUserMessage = message.senderId == userId;
                         Color containerColor =
                             isUserMessage ? Colors.green : Colors.blue;
 
+                        List<UserData> users =
+                            discussionMessages!.groups[index].users;
+
+                        List<String?> userNames = users.map((user) {
+                          return toBeginningOfSentenceCase(user.firstName);
+                        }).toList();
+
+                        List<String?> userIds = users.map((user) {
+                          return user.id;
+                        }).toList();
+
+                        String allUsers = userNames.join(", ");
+
                         return GestureDetector(
                           onTap: () async {
                             var discussion = await getDiscussionsForMessageWith(
-                              discussionMessages?.groups[index].lastMessage.id
+                              discussionMessages!.groups[index].lastMessage.id
                                   .toString(),
                             );
                             var status = await getUserStatusById(
@@ -283,28 +385,131 @@ class _MessengerPageState extends State<MessengerPage> {
                                           const SizedBox(height: 5),
                                           Row(
                                             children: [
-                                              image.userImages.length != 0
-                                                  ? CircleAvatar(
-                                                      backgroundImage:
-                                                          NetworkImage(
-                                                        image.userImages[0]
-                                                            .image,
-                                                      ),
-                                                      maxRadius: 25,
-                                                    )
-                                                  : CircleAvatar(
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              220,
-                                                              234,
-                                                              250),
-                                                      foregroundImage:
-                                                          NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png",
-                                                      ),
-                                                      maxRadius: 25,
-                                                    ),
+                                              Container(
+                                                  width: 70,
+                                                  height: 50,
+                                                  alignment: Alignment.center,
+                                                  child: Stack(
+                                                      children: List.generate(
+                                                          users.length,
+                                                          (userIndex) {
+                                                    return FutureBuilder(
+                                                        future: getUserImages(
+                                                            userIds[
+                                                                userIndex]!),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return BackdropFilter(
+                                                                filter: ImageFilter
+                                                                    .blur(
+                                                                        sigmaX:
+                                                                            5,
+                                                                        sigmaY:
+                                                                            5),
+                                                                child: Container(
+                                                                    width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width,
+                                                                    height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height));
+                                                          } else if (snapshot
+                                                              .hasError) {
+                                                            return Text(
+                                                                'Error: ${snapshot.error}');
+                                                          } else if (!snapshot
+                                                              .hasData) {
+                                                            return const Text(
+                                                                '');
+                                                          }
+
+                                                          var image =
+                                                              snapshot.data!;
+
+                                                          var avatar = image
+                                                                      .userImages
+                                                                      .length !=
+                                                                  0
+                                                              ? CircleAvatar(
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                          "${image.userImages[0].image}"),
+                                                                  maxRadius: 25,
+                                                                )
+                                                              : CircleAvatar(
+                                                                  backgroundColor:
+                                                                      const Color
+                                                                              .fromARGB(
+                                                                          255,
+                                                                          220,
+                                                                          234,
+                                                                          250),
+                                                                  foregroundImage:
+                                                                      NetworkImage(
+                                                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                  maxRadius: 25,
+                                                                );
+
+                                                          if (userIndex < 2) {
+                                                            if (users.length ==
+                                                                1) {
+                                                              return Positioned(
+                                                                left: 10,
+                                                                child: avatar,
+                                                              );
+                                                            } else {
+                                                              return Positioned(
+                                                                right: userIndex
+                                                                        .toDouble() *
+                                                                    15,
+                                                                child: avatar,
+                                                              );
+                                                            }
+                                                          } else if (userIndex >=
+                                                              2) {
+                                                            return Positioned(
+                                                              right: userIndex <
+                                                                      2
+                                                                  ? userIndex
+                                                                          .toDouble() *
+                                                                      15
+                                                                  : 0,
+                                                              child: Stack(
+                                                                children: [
+                                                                  avatar,
+                                                                  Positioned(
+                                                                    bottom: 0,
+                                                                    left: 0,
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .blue,
+                                                                      maxRadius:
+                                                                          15,
+                                                                      child:
+                                                                          Text(
+                                                                        '+${users.length - 2}',
+                                                                        style: const TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          }
+                                                          return const SizedBox();
+                                                        });
+                                                  }))),
                                               const SizedBox(width: 20),
                                               Container(
                                                 width: MediaQuery.of(context)
@@ -331,10 +536,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       alignment:
                                                           Alignment.topLeft,
                                                       child: AutoSizeText(
-                                                        toBeginningOfSentenceCase(
-                                                          message
-                                                              .senderLastName,
-                                                        )!,
+                                                        allUsers,
                                                         minFontSize: 10,
                                                         maxFontSize: 12,
                                                         style: const TextStyle(
@@ -386,7 +588,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             "en ligne",
                                                                           )!
                                                                         : toBeginningOfSentenceCase(
-                                                                            "hor ligne",
+                                                                            "hors ligne",
                                                                           )!,
                                                                     overflow:
                                                                         TextOverflow
@@ -405,14 +607,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                 ],
                                                               )),
                                                         ),
-                                                        message.read == "0"
-                                                            ? const Icon(
-                                                                Icons.circle,
-                                                                color: Color(
-                                                                    0xFF0081CF),
-                                                                size: 12,
-                                                              )
-                                                            : Container(),
                                                       ],
                                                     ),
                                                     const SizedBox(height: 5),
@@ -543,90 +737,175 @@ class _MessengerPageState extends State<MessengerPage> {
                           },
                           child: Row(
                             children: [
-                              image.userImages.length != 0
-                                  ? CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                        "${image.userImages[0].image}",
-                                      ),
-                                      maxRadius: 25,
-                                    )
-                                  : CircleAvatar(
-                                      backgroundColor: const Color.fromARGB(
-                                        255,
-                                        220,
-                                        234,
-                                        250,
-                                      ),
-                                      foregroundImage: NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png",
-                                      ),
-                                      maxRadius: 25,
-                                    ),
+                              Container(
+                                  width: 70,
+                                  height: 50,
+                                  alignment: Alignment.center,
+                                  child: Stack(
+                                      children: List.generate(users.length,
+                                          (userIndex) {
+                                    return FutureBuilder(
+                                        future:
+                                            getUserImages(userIds[userIndex]!),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState ==
+                                              ConnectionState.waiting) {
+                                            return BackdropFilter(
+                                                filter: ImageFilter.blur(
+                                                    sigmaX: 5, sigmaY: 5),
+                                                child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .height));
+                                          } else if (snapshot.hasError) {
+                                            return Text(
+                                                'Error: ${snapshot.error}');
+                                          } else if (!snapshot.hasData) {
+                                            return const Text('');
+                                          }
+
+                                          var image = snapshot.data!;
+
+                                          var avatar =
+                                              image.userImages.length != 0
+                                                  ? CircleAvatar(
+                                                      backgroundImage: NetworkImage(
+                                                          "${image.userImages[0].image}"),
+                                                      maxRadius: 25,
+                                                    )
+                                                  : CircleAvatar(
+                                                      backgroundColor:
+                                                          const Color.fromARGB(
+                                                              255,
+                                                              220,
+                                                              234,
+                                                              250),
+                                                      foregroundImage: NetworkImage(
+                                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                      maxRadius: 25,
+                                                    );
+
+                                          if (userIndex < 2) {
+                                            if (users.length == 1) {
+                                              return Positioned(
+                                                left: 10,
+                                                child: avatar,
+                                              );
+                                            } else {
+                                              return Positioned(
+                                                right:
+                                                    userIndex.toDouble() * 15,
+                                                child: avatar,
+                                              );
+                                            }
+                                          } else if (userIndex >= 2) {
+                                            return Positioned(
+                                              right: userIndex < 2
+                                                  ? userIndex.toDouble() * 15
+                                                  : 0,
+                                              child: Stack(
+                                                children: [
+                                                  avatar,
+                                                  Positioned(
+                                                    bottom: 0,
+                                                    left: 0,
+                                                    child: CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.blue,
+                                                      maxRadius: 15,
+                                                      child: Text(
+                                                        '+${users.length - 2}',
+                                                        style: const TextStyle(
+                                                            color: Colors.white,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .bold),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            );
+                                          }
+                                          return const SizedBox();
+                                        });
+                                  }))),
                               const SizedBox(width: 20),
                               Container(
-                                width: MediaQuery.of(context).size.width / 1.5,
-                                padding: const EdgeInsets.only(
-                                  top: 10,
-                                  bottom: 10,
-                                ),
+                                width: MediaQuery.of(context).size.width / 1.7,
+                                padding:
+                                    const EdgeInsets.only(top: 10, bottom: 10),
                                 decoration: const BoxDecoration(
                                   border: Border(
-                                    bottom: BorderSide(
-                                      color: Color(0XFFE8E6EA),
-                                    ),
-                                  ),
+                                      bottom:
+                                          BorderSide(color: Color(0XFFE8E6EA))),
                                 ),
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     const SizedBox(height: 10),
                                     Align(
-                                      alignment: Alignment.topLeft,
-                                      child: AutoSizeText(
-                                        toBeginningOfSentenceCase(
-                                          message.senderFirstName,
-                                        )!,
-                                        minFontSize: 10,
-                                        maxFontSize: 12,
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
+                                        alignment: Alignment.topLeft,
+                                        child: Row(children: [
+                                          Container(
+                                              constraints: BoxConstraints(
+                                                  maxWidth:
+                                                      MediaQuery.of(context)
+                                                              .size
+                                                              .width /
+                                                          2),
+                                              child: AutoSizeText(allUsers,
+                                                  minFontSize: 10,
+                                                  maxFontSize: 12,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold))),
+                                          users.length > 1
+                                              ? AutoSizeText(
+                                                  " (${users.length.toString()})",
+                                                  minFontSize: 10,
+                                                  maxFontSize: 12,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold))
+                                              : const SizedBox.shrink(),
+                                        ])),
                                     const SizedBox(height: 5),
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              1.7,
-                                          child: Align(
-                                            alignment: Alignment.topLeft,
-                                            child: AutoSizeText(
-                                              toBeginningOfSentenceCase(
-                                                message.message,
-                                              )!,
-                                              overflow: TextOverflow.ellipsis,
-                                              minFontSize: 10,
-                                              maxFontSize: 12,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        message.read == "0"
-                                            ? const Icon(
-                                                Icons.circle,
-                                                color: Color(0xFF0081CF),
-                                                size: 12,
-                                              )
-                                            : Container(),
-                                      ],
-                                    ),
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width /
+                                                  1.9,
+                                              child: Align(
+                                                  alignment: Alignment.topLeft,
+                                                  child: AutoSizeText(
+                                                      message.message,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      minFontSize: 10,
+                                                      maxFontSize: 12,
+                                                      style: const TextStyle(
+                                                          fontWeight: FontWeight
+                                                              .w500)))),
+                                          message.read == "0"
+                                              ? const Icon(Icons.circle,
+                                                  color: Color(0xFF0081CF),
+                                                  size: 12)
+                                              : Container()
+                                        ]),
                                     const SizedBox(height: 5),
                                   ],
                                 ),

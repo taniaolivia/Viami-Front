@@ -13,8 +13,8 @@ class Message {
       required this.date,
       required this.senderFirstName,
       required this.senderLastName,
-      required this.responderFirstName,
-      required this.responderLastName,
+      this.responderFirstName,
+      this.responderLastName,
       required this.read});
 
   factory Message.fromJson(Map<String?, dynamic> json) =>
@@ -22,14 +22,14 @@ class Message {
   Map<String?, dynamic> toJson() => _$MessageToJson(this);
 
   final int id;
-  final String message;
   final String senderId;
+  final String? responderId;
   final int groupId;
-  final String responderId;
   final String senderFirstName;
   final String senderLastName;
-  final String responderFirstName;
-  final String responderLastName;
+  final String? responderFirstName;
+  final String? responderLastName;
+  final String message;
   final String date;
   final String read;
 }
