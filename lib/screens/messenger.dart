@@ -11,10 +11,10 @@ import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
-import '../models-api/messenger/groups_data.dart';
-import '../models-api/userStatus/userStatus.dart';
-import '../services/message/groups.service.dart';
-import '../services/userStatus/userStatus.service.dart';
+import 'package:viami/models-api/messenger/groups_data.dart';
+import 'package:viami/models-api/userStatus/userStatus.dart';
+import 'package:viami/services/message/groups.service.dart';
+import 'package:viami/services/userStatus/userStatus.service.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -178,7 +178,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                 TextFormField(
                                   validator: (value) {
                                     if (value == null || value.isEmpty) {
-                                      return 'Veuillez remplir votre email';
+                                      return 'Veuillez remplir un prénom';
                                     }
                                     return null;
                                   },
@@ -189,7 +189,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                             Radius.circular(15))),
                                     contentPadding:
                                         EdgeInsets.fromLTRB(15, 5, 10, 5),
-                                    labelText: 'Recherche',
+                                    labelText: 'Recherche par prénom',
                                     hintText: '',
                                     labelStyle: TextStyle(fontSize: 12),
                                   ),
@@ -223,6 +223,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                 discussionMessages = userMessage;
                               });
                             }
+
+                            FocusScope.of(context).unfocus();
                           }
                         })
                   ])),
@@ -236,6 +238,8 @@ class _MessengerPageState extends State<MessengerPage> {
                           discussionMessages = clear;
                           searchController.text = "";
                         });
+
+                        FocusScope.of(context).unfocus();
                       },
                       child: const AutoSizeText(
                         "Réinitialiser",

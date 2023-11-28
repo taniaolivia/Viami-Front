@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-import '../../models-api/messenger/groups_data.dart';
 import 'package:http/http.dart' as http;
+import 'package:viami/models-api/messenger/groups_data.dart';
 
 class GroupsService {
   Future<Groups> getAllDiscussionsForUser(String token, String userId) async {
@@ -51,6 +49,7 @@ class GroupsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
+      print(res);
       return Groups.fromJson(res);
     } else {
       throw Exception('Failed to load travels');
