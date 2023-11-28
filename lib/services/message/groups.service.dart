@@ -68,4 +68,27 @@ class GroupsService {
       throw Exception('Failed to load travels');
     }
   }
+
+  Future<Groups> getGroupUsersDiscussionsByLocation(
+      String token, String userId, String location) async {
+    final response = await http.get(
+      Uri.parse(
+          '${dotenv.env['API_URL']}/discussions/$userId/location?location=$location'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+      print("ressssssssssssss  locccccccccccc");
+      print(res);
+      print("resss discusionssss locccccccc ");
+      print(res["discussions"]);
+
+      return Groups.fromJson(res);
+    } else {
+      throw Exception('Failed to load travels');
+    }
+  }
 }
