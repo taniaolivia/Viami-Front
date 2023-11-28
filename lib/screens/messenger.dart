@@ -314,7 +314,6 @@ class _MessengerPageState extends State<MessengerPage> {
 
                         var message = discussionMessages
                             ?.groups[index].lastMessage as LastMessage;
-                        var image = snapshot.data![0] as UsersImages;
 
                         bool isUserMessage = message.senderId == userId;
                         Color containerColor =
@@ -386,28 +385,131 @@ class _MessengerPageState extends State<MessengerPage> {
                                           const SizedBox(height: 5),
                                           Row(
                                             children: [
-                                              image.userImages.length != 0
-                                                  ? CircleAvatar(
-                                                      backgroundImage:
-                                                          NetworkImage(
-                                                        image.userImages[0]
-                                                            .image,
-                                                      ),
-                                                      maxRadius: 25,
-                                                    )
-                                                  : CircleAvatar(
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              220,
-                                                              234,
-                                                              250),
-                                                      foregroundImage:
-                                                          NetworkImage(
-                                                        "${dotenv.env['CDN_URL']}/assets/noprofile.png",
-                                                      ),
-                                                      maxRadius: 25,
-                                                    ),
+                                              Container(
+                                                  width: 70,
+                                                  height: 50,
+                                                  alignment: Alignment.center,
+                                                  child: Stack(
+                                                      children: List.generate(
+                                                          users.length,
+                                                          (userIndex) {
+                                                    return FutureBuilder(
+                                                        future: getUserImages(
+                                                            userIds[
+                                                                userIndex]!),
+                                                        builder: (context,
+                                                            snapshot) {
+                                                          if (snapshot
+                                                                  .connectionState ==
+                                                              ConnectionState
+                                                                  .waiting) {
+                                                            return BackdropFilter(
+                                                                filter: ImageFilter
+                                                                    .blur(
+                                                                        sigmaX:
+                                                                            5,
+                                                                        sigmaY:
+                                                                            5),
+                                                                child: Container(
+                                                                    width: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width,
+                                                                    height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height));
+                                                          } else if (snapshot
+                                                              .hasError) {
+                                                            return Text(
+                                                                'Error: ${snapshot.error}');
+                                                          } else if (!snapshot
+                                                              .hasData) {
+                                                            return const Text(
+                                                                '');
+                                                          }
+
+                                                          var image =
+                                                              snapshot.data!;
+
+                                                          var avatar = image
+                                                                      .userImages
+                                                                      .length !=
+                                                                  0
+                                                              ? CircleAvatar(
+                                                                  backgroundImage:
+                                                                      NetworkImage(
+                                                                          "${image.userImages[0].image}"),
+                                                                  maxRadius: 25,
+                                                                )
+                                                              : CircleAvatar(
+                                                                  backgroundColor:
+                                                                      const Color
+                                                                              .fromARGB(
+                                                                          255,
+                                                                          220,
+                                                                          234,
+                                                                          250),
+                                                                  foregroundImage:
+                                                                      NetworkImage(
+                                                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                  maxRadius: 25,
+                                                                );
+
+                                                          if (userIndex < 2) {
+                                                            if (users.length ==
+                                                                1) {
+                                                              return Positioned(
+                                                                left: 10,
+                                                                child: avatar,
+                                                              );
+                                                            } else {
+                                                              return Positioned(
+                                                                right: userIndex
+                                                                        .toDouble() *
+                                                                    15,
+                                                                child: avatar,
+                                                              );
+                                                            }
+                                                          } else if (userIndex >=
+                                                              2) {
+                                                            return Positioned(
+                                                              right: userIndex <
+                                                                      2
+                                                                  ? userIndex
+                                                                          .toDouble() *
+                                                                      15
+                                                                  : 0,
+                                                              child: Stack(
+                                                                children: [
+                                                                  avatar,
+                                                                  Positioned(
+                                                                    bottom: 0,
+                                                                    left: 0,
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundColor:
+                                                                          Colors
+                                                                              .blue,
+                                                                      maxRadius:
+                                                                          15,
+                                                                      child:
+                                                                          Text(
+                                                                        '+${users.length - 2}',
+                                                                        style: const TextStyle(
+                                                                            color:
+                                                                                Colors.white,
+                                                                            fontWeight: FontWeight.bold),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            );
+                                                          }
+                                                          return const SizedBox();
+                                                        });
+                                                  }))),
                                               const SizedBox(width: 20),
                                               Container(
                                                 width: MediaQuery.of(context)
@@ -434,10 +536,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       alignment:
                                                           Alignment.topLeft,
                                                       child: AutoSizeText(
-                                                        toBeginningOfSentenceCase(
-                                                          message
-                                                              .senderLastName,
-                                                        )!,
+                                                        allUsers,
                                                         minFontSize: 10,
                                                         maxFontSize: 12,
                                                         style: const TextStyle(
@@ -489,7 +588,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             "en ligne",
                                                                           )!
                                                                         : toBeginningOfSentenceCase(
-                                                                            "hor ligne",
+                                                                            "hors ligne",
                                                                           )!,
                                                                     overflow:
                                                                         TextOverflow
@@ -508,14 +607,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                 ],
                                                               )),
                                                         ),
-                                                        message.read == "0"
-                                                            ? const Icon(
-                                                                Icons.circle,
-                                                                color: Color(
-                                                                    0xFF0081CF),
-                                                                size: 12,
-                                                              )
-                                                            : Container(),
                                                       ],
                                                     ),
                                                     const SizedBox(height: 5),
