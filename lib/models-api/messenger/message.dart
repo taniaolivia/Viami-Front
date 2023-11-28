@@ -7,8 +7,8 @@ class Message {
   Message(
       {required this.id,
       required this.senderId,
-      this.responderId,
       required this.groupId,
+      required this.responderId,
       required this.message,
       required this.date,
       required this.senderFirstName,

@@ -16,8 +16,8 @@ Message _$MessageFromJson(Map<String?, dynamic> json) => Message(
 Map<String?, dynamic> _$MessageToJson(Message instance) => <String?, dynamic>{
       'id': instance.id,
       'senderId': instance.senderId,
-      'responderId': instance.responderId,
       'groupId': instance.groupId,
+      'responderId': instance.responderId,
       'senderFirstName': instance.senderFirstName,
       'senderLastName': instance.senderLastName,
       'responderFirstName': instance.responderFirstName,
