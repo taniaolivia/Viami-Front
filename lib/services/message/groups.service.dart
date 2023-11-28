@@ -17,7 +17,7 @@ class GroupsService {
 
       return Groups.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load messages');
     }
   }
 
@@ -34,7 +34,7 @@ class GroupsService {
 
       return Groups.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load messages');
     }
   }
 
@@ -52,7 +52,7 @@ class GroupsService {
       print(res);
       return Groups.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load messages');
     }
   }
 
@@ -90,7 +90,7 @@ class GroupsService {
 
       return Groups.fromJson(res);
     } else {
-      throw Exception('Failed to load travels');
+      throw Exception('Failed to load messages');
     }
   }
 }
