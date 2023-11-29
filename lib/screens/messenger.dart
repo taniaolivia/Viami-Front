@@ -30,6 +30,8 @@ class MessengerPage extends StatefulWidget {
 class _MessengerPageState extends State<MessengerPage> {
   final storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
+  final _formKeySearch = GlobalKey<FormState>();
+
   TextEditingController searchController = TextEditingController();
 
   String? token = "";
@@ -55,13 +57,14 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   Future<void> fetchData() async {
-    token = await storage.read(key: "token");
-    userId = await storage.read(key: "userId");
     await updateLocationList();
     await getDiscussionsByFilter();
   }
 
-  Future<Groups> getAllDiscussionsForUser() {
+  Future<Groups> getAllDiscussionsForUser() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
     return GroupsService().getAllDiscussionsForUser(token!, userId!);
   }
 
@@ -131,12 +134,14 @@ class _MessengerPageState extends State<MessengerPage> {
 
   @override
   void initState() {
-    super.initState();
     fetchData();
     clearFilters();
+    super.initState();
   }
 
   void clearFilters() {
+    getDiscussionsByFilter();
+
     setState(() {
       seulButtonColor = Colors.white;
       seulTextColor = Colors.black;
@@ -144,7 +149,6 @@ class _MessengerPageState extends State<MessengerPage> {
       groupTextColor = Colors.black;
       filterSeulGroup = "all";
     });
-    getDiscussionsByFilter();
   }
 
   Future<void> updateLocationList() async {
@@ -211,7 +215,7 @@ class _MessengerPageState extends State<MessengerPage> {
                     Container(
                         width: MediaQuery.of(context).size.width / 1.5,
                         child: Form(
-                            key: _formKey,
+                            key: _formKeySearch,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
@@ -341,6 +345,10 @@ class _MessengerPageState extends State<MessengerPage> {
                             var status = await getUserStatusById(
                                 discussionMessages
                                     ?.groups[index].lastMessage.senderId);
+
+                            setState(() {
+                              clearFilters();
+                            });
 
                             BuildContext currentContext = context;
                             showModalBottomSheet(
@@ -651,7 +659,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           messageDateTime);
                                                 } else {
                                                   formattedDate = DateFormat(
-                                                          'EEE, MMM d, y, h:mm a')
+                                                          'd MMM y, hh:mm')
                                                       .format(messageDateTime);
                                                 }
 
@@ -732,8 +740,11 @@ class _MessengerPageState extends State<MessengerPage> {
                               context: currentContext!,
                             );
 
-                            await MessageService()
-                                .setMessageRead(token!, message.id);
+                            if (!discussionMessages!.groups[index].usersRead
+                                .contains(userId)) {
+                              await MessageService()
+                                  .setMessageRead(token!, message.id, userId!);
+                            }
                           },
                           child: Row(
                             children: [
@@ -900,7 +911,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       style: const TextStyle(
                                                           fontWeight: FontWeight
                                                               .w500)))),
-                                          message.read == "0"
+                                          !discussionMessages!
+                                                      .groups[index].usersRead
+                                                      .contains(userId) &&
+                                                  discussionMessages!
+                                                          .groups[index]
+                                                          .lastMessage
+                                                          .senderId !=
+                                                      userId
                                               ? const Icon(Icons.circle,
                                                   color: Color(0xFF0081CF),
                                                   size: 12)
@@ -960,7 +978,7 @@ class _MessengerPageState extends State<MessengerPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       const AutoSizeText(
-                        "Filters",
+                        "Filtres",
                         minFontSize: 22,
                         maxFontSize: 24,
                         style: TextStyle(
@@ -986,7 +1004,7 @@ class _MessengerPageState extends State<MessengerPage> {
                   Row(
                     children: const [
                       AutoSizeText(
-                        "Voir que les conversation ",
+                        "Voir que les conversations",
                         style: TextStyle(
                           color: Colors.black,
                           fontStyle: FontStyle.normal,
@@ -1010,7 +1028,7 @@ class _MessengerPageState extends State<MessengerPage> {
                           color: Colors.grey.withOpacity(0.5),
                           spreadRadius: 2,
                           blurRadius: 5,
-                          offset: Offset(0, 3),
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
@@ -1033,7 +1051,7 @@ class _MessengerPageState extends State<MessengerPage> {
                               padding: const EdgeInsets.all(15.0),
                               decoration: BoxDecoration(
                                 color: seulButtonColor,
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   topLeft: Radius.circular(15),
                                   bottomLeft: Radius.circular(15),
                                 ),
