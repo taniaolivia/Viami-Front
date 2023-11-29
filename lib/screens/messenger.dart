@@ -710,12 +710,26 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           .connectionState ==
                                                                       ConnectionState
                                                                           .waiting) {
-                                                                    return CircularProgressIndicator();
+                                                                    return BackdropFilter(
+                                                                      filter: ImageFilter.blur(
+                                                                          sigmaX:
+                                                                              5,
+                                                                          sigmaY:
+                                                                              5),
+                                                                      child:
+                                                                          Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height,
+                                                                      ),
+                                                                    );
                                                                   } else if (snapshot
                                                                       .hasError) {
-                                                                    return const Icon(
-                                                                        Icons
-                                                                            .error);
+                                                                    return Text(
+                                                                        'Error: ${snapshot.error}');
                                                                   } else if (!snapshot
                                                                           .hasData ||
                                                                       snapshot
@@ -723,11 +737,45 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           .userImages
                                                                           .isEmpty) {
                                                                     return GestureDetector(
-                                                                      onTap:
-                                                                          () {
-                                                                        Navigator.push(
+                                                                      onTapDown:
+                                                                          (TapDownDetails
+                                                                              details) async {
+                                                                        final RenderBox
+                                                                            overlay =
+                                                                            Overlay.of(context)!.context.findRenderObject()
+                                                                                as RenderBox;
+                                                                        final RelativeRect
+                                                                            position =
+                                                                            RelativeRect.fromRect(
+                                                                          details.globalPosition &
+                                                                              const Size(40, 40),
+                                                                          overlay.localToGlobal(Offset.zero) &
+                                                                              overlay.size,
+                                                                        );
+
+                                                                        final String?
+                                                                            choice =
+                                                                            await showMenu<String>(
+                                                                          context:
+                                                                              context,
+                                                                          position:
+                                                                              position,
+                                                                          items: [
+                                                                            const PopupMenuItem<String>(
+                                                                              value: 'go_to_profile',
+                                                                              child: Text('Voir le profil'),
+                                                                            ),
+                                                                          ],
+                                                                        );
+
+                                                                        if (choice ==
+                                                                            'go_to_profile') {
+                                                                          Navigator
+                                                                              .push(
                                                                             context,
-                                                                            FadePageRoute(page: ShowProfilePage(showButton: false, userId: message.senderId)));
+                                                                            FadePageRoute(page: ShowProfilePage(showButton: false, userId: message.senderId)),
+                                                                          );
+                                                                        }
                                                                       },
                                                                       child:
                                                                           CircleAvatar(
@@ -749,11 +797,53 @@ class _MessengerPageState extends State<MessengerPage> {
 
                                                                   var avatar =
                                                                       GestureDetector(
-                                                                    onTap: () {
-                                                                      Navigator.push(
+                                                                    onTapDown:
+                                                                        (TapDownDetails
+                                                                            details) async {
+                                                                      final RenderBox
+                                                                          overlay =
+                                                                          Overlay.of(context)!
+                                                                              .context
+                                                                              .findRenderObject() as RenderBox;
+                                                                      final RelativeRect
+                                                                          position =
+                                                                          RelativeRect
+                                                                              .fromRect(
+                                                                        details.globalPosition &
+                                                                            const Size(40,
+                                                                                40),
+                                                                        overlay.localToGlobal(Offset.zero) &
+                                                                            overlay.size,
+                                                                      );
+
+                                                                      final String?
+                                                                          choice =
+                                                                          await showMenu<
+                                                                              String>(
+                                                                        context:
+                                                                            context,
+                                                                        position:
+                                                                            position,
+                                                                        items: [
+                                                                          const PopupMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                'go_to_profile',
+                                                                            child:
+                                                                                Text('Voir le profil'),
+                                                                          ),
+                                                                        ],
+                                                                      );
+
+                                                                      if (choice ==
+                                                                          'go_to_profile') {
+                                                                        Navigator
+                                                                            .push(
                                                                           context,
                                                                           FadePageRoute(
-                                                                              page: ShowProfilePage(showButton: false, userId: message.senderId)));
+                                                                              page: ShowProfilePage(showButton: false, userId: message.senderId)),
+                                                                        );
+                                                                      }
                                                                     },
                                                                     child:
                                                                         CircleAvatar(
@@ -779,7 +869,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                         .senderId !=
                                                                     userId)
                                                                   AutoSizeText(
-                                                                   
                                                                     message
                                                                         .senderFirstName,
                                                                     minFontSize:
