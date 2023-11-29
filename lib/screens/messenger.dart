@@ -57,13 +57,14 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   Future<void> fetchData() async {
-    token = await storage.read(key: "token");
-    userId = await storage.read(key: "userId");
     await updateLocationList();
     await getDiscussionsByFilter();
   }
 
-  Future<Groups> getAllDiscussionsForUser() {
+  Future<Groups> getAllDiscussionsForUser() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
     return GroupsService().getAllDiscussionsForUser(token!, userId!);
   }
 
@@ -133,12 +134,14 @@ class _MessengerPageState extends State<MessengerPage> {
 
   @override
   void initState() {
-    super.initState();
     fetchData();
     clearFilters();
+    super.initState();
   }
 
   void clearFilters() {
+    getDiscussionsByFilter();
+
     setState(() {
       seulButtonColor = Colors.white;
       seulTextColor = Colors.black;
@@ -146,7 +149,6 @@ class _MessengerPageState extends State<MessengerPage> {
       groupTextColor = Colors.black;
       filterSeulGroup = "all";
     });
-    getDiscussionsByFilter();
   }
 
   Future<void> updateLocationList() async {

@@ -14,8 +14,6 @@ class UserStatusService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print("statusssssssssssssssss");
-      print(res['userStatus']);
 
       return UserStatus.fromJson(res['userStatus']);
     } else {
