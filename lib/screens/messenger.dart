@@ -11,6 +11,7 @@ import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import 'package:viami/services/user/users.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/models-api/messenger/groups_data.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
@@ -18,6 +19,9 @@ import 'package:viami/services/message/groups.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/services/travel/travels.service.dart';
+
+import '../components/myCustomDialog.dart';
+import '../models-api/user/users.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -38,6 +42,7 @@ class _MessengerPageState extends State<MessengerPage> {
   String? userId = "";
 
   Groups? discussionMessages;
+
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
   Color seulButtonColor = Colors.white;
@@ -112,6 +117,13 @@ class _MessengerPageState extends State<MessengerPage> {
         await UsersImagesService().getUserImagesById(userId, token.toString());
 
     return images;
+  }
+
+  Future<Users> getAllUsers() async {
+    token = await storage.read(key: "token");
+    final allUsers = await UsersService().getAllUsers(token.toString());
+
+    return allUsers;
   }
 
   Future<User> getUserById(String userId) async {
@@ -621,6 +633,33 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   ],
                                                 ),
                                               ),
+                                              PopupMenuButton<String>(
+                                                onSelected: (value) {
+                                                  if (value ==
+                                                      'ajouterVoyageur') {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return MyCustomDialog();
+                                                      },
+                                                    );
+                                                  }
+                                                },
+                                                itemBuilder: (BuildContext
+                                                        context) =>
+                                                    <PopupMenuEntry<String>>[
+                                                  const PopupMenuItem<String>(
+                                                    value: 'ajouterVoyageur',
+                                                    child: ListTile(
+                                                      leading: Icon(
+                                                          Icons.person_add),
+                                                      title: Text(
+                                                          'Ajouter un Voyageur '),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                             ],
                                           ),
                                           Expanded(
