@@ -88,6 +88,10 @@ class _MessengerPageState extends State<MessengerPage> {
     return GroupsService().getUsersDiscussionsByUnReadFilter(token!, userId!);
   }
 
+  Future<Groups> getAllDiscussionsByReadFilter() {
+    return GroupsService().getUsersDiscussionsByReadFilter(token!, userId!);
+  }
+
   Future<Groups> getAllDiscussionsForUserByLocation(String location) {
     return GroupsService()
         .getGroupUsersDiscussionsByLocation(token!, userId!, location);
@@ -109,6 +113,10 @@ class _MessengerPageState extends State<MessengerPage> {
         break;
       case "nonLu":
         discussionMessages = await getAllDiscussionsByUnreadFilter();
+
+        break;
+      case "lu":
+        discussionMessages = await getAllDiscussionsByReadFilter();
 
         break;
       default:
