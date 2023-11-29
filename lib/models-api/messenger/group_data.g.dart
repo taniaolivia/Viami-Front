@@ -50,6 +50,8 @@ GroupData _$GroupDataFromJson(Map<String, dynamic> json) {
     users: (json['users'] as List<dynamic>)
         .map((e) => UserData.fromJson(e as Map<String, dynamic>))
         .toList(),
+    usersRead:
+        (json['usersRead'] as List<dynamic>).map((e) => e as String).toList(),
   );
 }
 
@@ -57,4 +59,5 @@ Map<String, dynamic> _$GroupDataToJson(GroupData instance) => <String, dynamic>{
       'groupId': instance.groupId,
       'lastMessage': instance.lastMessage.toJson(),
       'users': instance.users,
+      'usersRead': instance.usersRead
     };
