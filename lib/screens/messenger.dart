@@ -8,6 +8,7 @@ import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/user/user.service.dart';
@@ -18,6 +19,8 @@ import 'package:viami/services/message/groups.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/services/travel/travels.service.dart';
+
+import '../components/pageTransition.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -635,9 +638,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 Color containerColor =
                                                     isUserMessage
                                                         ? const Color(
-                                                            0xFFF3F3F3)
+                                                            0xFF0081CF)
                                                         : const Color(
-                                                            0xFF0081CF);
+                                                            0xFFF3F3F3);
 
                                                 DateTime messageDateTime =
                                                     DateTime.parse(
@@ -681,18 +684,236 @@ class _MessengerPageState extends State<MessengerPage> {
                                                             BorderRadius
                                                                 .circular(8),
                                                       ),
-                                                      child: AutoSizeText(
-                                                        toBeginningOfSentenceCase(
-                                                          message.message,
-                                                        )!,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        minFontSize: 10,
-                                                        maxFontSize: 12,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          if (message
+                                                                  .senderId !=
+                                                              userId)
+                                                            Container(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                          .only(
+                                                                      right:
+                                                                          10),
+                                                              width: 48,
+                                                              height: 48,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              child:
+                                                                  FutureBuilder(
+                                                                future: getUserImages(
+                                                                    message
+                                                                        .senderId),
+                                                                builder: (context,
+                                                                    snapshot) {
+                                                                  if (snapshot
+                                                                          .connectionState ==
+                                                                      ConnectionState
+                                                                          .waiting) {
+                                                                    return BackdropFilter(
+                                                                      filter: ImageFilter.blur(
+                                                                          sigmaX:
+                                                                              5,
+                                                                          sigmaY:
+                                                                              5),
+                                                                      child:
+                                                                          Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height,
+                                                                      ),
+                                                                    );
+                                                                  } else if (snapshot
+                                                                      .hasError) {
+                                                                    return Text(
+                                                                        'Error: ${snapshot.error}');
+                                                                  } else if (!snapshot
+                                                                          .hasData ||
+                                                                      snapshot
+                                                                          .data!
+                                                                          .userImages
+                                                                          .isEmpty) {
+                                                                    return GestureDetector(
+                                                                      onTapDown:
+                                                                          (TapDownDetails
+                                                                              details) async {
+                                                                        final RenderBox
+                                                                            overlay =
+                                                                            Overlay.of(context)!.context.findRenderObject()
+                                                                                as RenderBox;
+                                                                        final RelativeRect
+                                                                            position =
+                                                                            RelativeRect.fromRect(
+                                                                          details.globalPosition &
+                                                                              const Size(40, 40),
+                                                                          overlay.localToGlobal(Offset.zero) &
+                                                                              overlay.size,
+                                                                        );
+
+                                                                        final String?
+                                                                            choice =
+                                                                            await showMenu<String>(
+                                                                          context:
+                                                                              context,
+                                                                          position:
+                                                                              position,
+                                                                          items: [
+                                                                            const PopupMenuItem<String>(
+                                                                              value: 'go_to_profile',
+                                                                              child: Text('Voir le profil'),
+                                                                            ),
+                                                                          ],
+                                                                        );
+
+                                                                        if (choice ==
+                                                                            'go_to_profile') {
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            FadePageRoute(page: ShowProfilePage(showButton: false, userId: message.senderId)),
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        backgroundColor: const Color.fromARGB(
+                                                                            255,
+                                                                            220,
+                                                                            234,
+                                                                            250),
+                                                                        foregroundImage:
+                                                                            NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                        maxRadius:
+                                                                            15,
+                                                                      ),
+                                                                    );
+                                                                  }
+                                                                  var image =
+                                                                      snapshot
+                                                                          .data!;
+
+                                                                  var avatar =
+                                                                      GestureDetector(
+                                                                    onTapDown:
+                                                                        (TapDownDetails
+                                                                            details) async {
+                                                                      final RenderBox
+                                                                          overlay =
+                                                                          Overlay.of(context)!
+                                                                              .context
+                                                                              .findRenderObject() as RenderBox;
+                                                                      final RelativeRect
+                                                                          position =
+                                                                          RelativeRect
+                                                                              .fromRect(
+                                                                        details.globalPosition &
+                                                                            const Size(40,
+                                                                                40),
+                                                                        overlay.localToGlobal(Offset.zero) &
+                                                                            overlay.size,
+                                                                      );
+
+                                                                      final String?
+                                                                          choice =
+                                                                          await showMenu<
+                                                                              String>(
+                                                                        context:
+                                                                            context,
+                                                                        position:
+                                                                            position,
+                                                                        items: [
+                                                                          const PopupMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                'go_to_profile',
+                                                                            child:
+                                                                                Text('Voir le profil'),
+                                                                          ),
+                                                                        ],
+                                                                      );
+
+                                                                      if (choice ==
+                                                                          'go_to_profile') {
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          FadePageRoute(
+                                                                              page: ShowProfilePage(showButton: false, userId: message.senderId)),
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundImage:
+                                                                          NetworkImage(
+                                                                              "${image.userImages[0].image}"),
+                                                                      maxRadius:
+                                                                          15,
+                                                                    ),
+                                                                  );
+
+                                                                  return avatar;
+                                                                },
+                                                              ),
+                                                            ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                if (message
+                                                                        .senderId !=
+                                                                    userId)
+                                                                  AutoSizeText(
+                                                                    message
+                                                                        .senderFirstName,
+                                                                    minFontSize:
+                                                                        10,
+                                                                    maxFontSize:
+                                                                        12,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                AutoSizeText(
+                                                                  toBeginningOfSentenceCase(
+                                                                      message
+                                                                          .message)!,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  minFontSize:
+                                                                      10,
+                                                                  maxFontSize:
+                                                                      12,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                     subtitle: Align(
