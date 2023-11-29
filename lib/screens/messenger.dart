@@ -45,6 +45,11 @@ class _MessengerPageState extends State<MessengerPage> {
   Color groupTextColor = Colors.black;
   Color seulButtonColor = Colors.white;
   Color seulTextColor = Colors.black;
+  Color unreadButtonColor = Colors.white;
+  Color unreadTextColor = Colors.black;
+  Color readButtonColor = Colors.white;
+  Color readTextColor = Colors.black;
+
   String filterSeulGroup = "all";
   String? selectedLocation;
   List locationList = [""];
@@ -79,6 +84,10 @@ class _MessengerPageState extends State<MessengerPage> {
     return GroupsService().getGroupUsersDiscussions(token!, userId!);
   }
 
+  Future<Groups> getAllDiscussionsByUnreadFilter() {
+    return GroupsService().getUsersDiscussionsByUnReadFilter(token!, userId!);
+  }
+
   Future<Groups> getAllDiscussionsForUserByLocation(String location) {
     return GroupsService()
         .getGroupUsersDiscussionsByLocation(token!, userId!, location);
@@ -97,6 +106,10 @@ class _MessengerPageState extends State<MessengerPage> {
           discussionMessages =
               await getAllDiscussionsForUserByLocation(selectedLocation!);
         }
+        break;
+      case "nonLu":
+        discussionMessages = await getAllDiscussionsByUnreadFilter();
+
         break;
       default:
         discussionMessages = await getAllDiscussionsForUser();
@@ -1316,6 +1329,93 @@ class _MessengerPageState extends State<MessengerPage> {
                                   'Group',
                                   style: TextStyle(
                                     color: groupTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                readButtonColor = Colors.blue;
+                                readTextColor = Colors.white;
+                                unreadButtonColor = Colors.white;
+                                unreadTextColor = Colors.black;
+                                filterSeulGroup = "lu";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: readButtonColor,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Lu',
+                                  style: TextStyle(
+                                    color: readTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                unreadButtonColor = Colors.blue;
+                                unreadTextColor = Colors.white;
+                                readButtonColor = Colors.white;
+                                readTextColor = Colors.black;
+                                filterSeulGroup = "nonLu";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: unreadButtonColor,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Non Lu',
+                                  style: TextStyle(
+                                    color: unreadTextColor,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
