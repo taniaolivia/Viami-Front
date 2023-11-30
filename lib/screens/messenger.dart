@@ -802,7 +802,12 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           Navigator
                                                                               .push(
                                                                             context,
-                                                                            FadePageRoute(page: ShowProfilePage(showButton: false, userId: message.senderId)),
+                                                                            FadePageRoute(
+                                                                                page: ShowProfilePage(
+                                                                              showButton: false,
+                                                                              userId: message.senderId,
+                                                                              showComment: true,
+                                                                            )),
                                                                           );
                                                                         }
                                                                       },
@@ -870,7 +875,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             .push(
                                                                           context,
                                                                           FadePageRoute(
-                                                                              page: ShowProfilePage(showButton: false, userId: message.senderId)),
+                                                                              page: ShowProfilePage(
+                                                                            showButton:
+                                                                                false,
+                                                                            userId:
+                                                                                message.senderId,
+                                                                            showComment:
+                                                                                true,
+                                                                          )),
                                                                         );
                                                                       }
                                                                     },

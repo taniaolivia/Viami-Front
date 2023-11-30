@@ -168,7 +168,11 @@ class _MenusPageState extends State<MenusPage> {
             ExplorePage(),
             const HomePage(),
             const MessengerPage(),
-            ShowProfilePage(showButton: true, userId: userId!),
+            ShowProfilePage(
+              showButton: true,
+              userId: userId!,
+              showComment: false,
+            ),
           ]),
       drawer: const DrawerPage(),
       bottomNavigationBar: CustomCurvedNavigationBar(

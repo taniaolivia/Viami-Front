@@ -97,8 +97,10 @@ class MenuPage extends StatelessWidget {
                                         context,
                                         FadePageRoute(
                                             page: ShowProfilePage(
-                                                showButton: true,
-                                                userId: userId!)));
+                                          showButton: true,
+                                          userId: userId!,
+                                          showComment: false,
+                                        )));
                                   },
                                   child: Container(
                                       decoration: BoxDecoration(
