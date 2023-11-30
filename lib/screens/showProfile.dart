@@ -320,7 +320,8 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                     ),
                                                   ],
                                                 );
-                                              } else {
+                                              } else if (hasLeftComment &&
+                                                  widget.showComment) {
                                                 return AutoSizeText(
                                                   'Vous avez déjà laissé un commentaire pour ce voyageur...',
                                                   minFontSize: 20,
@@ -328,6 +329,10 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                   style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.normal),
+                                                );
+                                              } else {
+                                                return Container(
+                                                  child: Text(""),
                                                 );
                                               }
                                             }

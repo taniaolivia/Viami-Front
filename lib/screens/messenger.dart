@@ -806,7 +806,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                                 page: ShowProfilePage(
                                                                               showButton: false,
                                                                               userId: message.senderId,
-                                                                              showComment: false,
+                                                                              showComment: true,
                                                                             )),
                                                                           );
                                                                         }
@@ -881,7 +881,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             userId:
                                                                                 message.senderId,
                                                                             showComment:
-                                                                                false,
+                                                                                true,
                                                                           )),
                                                                         );
                                                                       }
