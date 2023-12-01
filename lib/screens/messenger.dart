@@ -634,6 +634,11 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 ),
                                               ),
                                               PopupMenuButton<String>(
+                                                child: Container(
+                                                  width:
+                                                      20, 
+                                                  child: Icon(Icons.more_vert),
+                                                ),
                                                 onSelected: (value) {
                                                   if (value ==
                                                       'ajouterVoyageur') {
@@ -641,7 +646,15 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       context: context,
                                                       builder: (BuildContext
                                                           context) {
-                                                        return MyCustomDialog();
+                                                        var groupeIdPass =
+                                                            discussionMessages!
+                                                                .groups[index]
+                                                                .lastMessage
+                                                                .groupId;
+
+                                                        return MyCustomDialog(
+                                                          groupId: groupeIdPass,
+                                                        );
                                                       },
                                                     );
                                                   }
@@ -655,7 +668,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       leading: Icon(
                                                           Icons.person_add),
                                                       title: Text(
-                                                          'Ajouter un Voyageur '),
+                                                          'Ajouter un Voyageur'),
                                                     ),
                                                   ),
                                                 ],
