@@ -200,10 +200,11 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                 context,
                                                 FadePageRoute(
                                                     page: ShowProfilePage(
-                                                        showButton: false,
-                                                        userId: widget
-                                                            .users![index]
-                                                            .userId)));
+                                                  showButton: false,
+                                                  userId: widget
+                                                      .users![index].userId,
+                                                  showComment: false,
+                                                )));
                                           },
                                           child: Container(
                                               width: MediaQuery.of(context)
