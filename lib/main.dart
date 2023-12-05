@@ -14,6 +14,8 @@ import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/updatePassword.dart';
 
+import 'components/myCustomDialog.dart';
+
 void main() async {
   await dotenv.load(fileName: "lib/.env");
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,7 +51,7 @@ class MyApp extends StatelessWidget {
           "/activities/popular": (context) => const AllPopularActivitiesPage(),
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
-          "/messages": (context) => const MessengerPage()
+          "/messages": (context) => const MessengerPage(),
         });
   }
 }
