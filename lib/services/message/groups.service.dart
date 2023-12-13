@@ -153,4 +153,23 @@ class GroupsService {
       throw Exception('Failed to load messages');
     }
   }
+
+  Future<int> getUserCountInGroup(String token, String groupId) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/getUserCountInGroup/$groupId'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+      print("countttttttt");
+      print(res['count']);
+
+      return res['count'];
+    } else {
+      throw Exception('Failed to load messages');
+    }
+  }
 }
