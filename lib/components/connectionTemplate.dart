@@ -108,7 +108,8 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                   minFontSize: 11,
                                   maxFontSize: 13,
                                   style: const TextStyle(
-                                      decoration: TextDecoration.underline)),
+                                      decoration: TextDecoration.underline,
+                                      color: Color(0xFF0081CF))),
                               onPressed: () {
                                 showDialogMessage(
                                     context,
@@ -161,12 +162,15 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                                   Navigator.pop(context);
                                                 }))),
                                     Padding(
-                                        padding:
-                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            10, 0, 10, 0),
                                         child: Align(
                                             alignment: Alignment.bottomRight,
                                             child: TextButton(
-                                                child: const Text("Valider"),
+                                                child: const Text("Valider",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFF0081CF))),
                                                 onPressed: () async {
                                                   if (_formKey.currentState!
                                                       .validate()) {
@@ -218,7 +222,8 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                           minFontSize: 11,
                           maxFontSize: 13,
                           style: const TextStyle(
-                              decoration: TextDecoration.underline))),
+                              decoration: TextDecoration.underline,
+                              color: Color(0xFF0081CF)))),
                 ],
               ),
               const SizedBox(height: 20),

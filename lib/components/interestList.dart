@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -113,15 +115,17 @@ class _InterestListState extends State<InterestList> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Text("");
-                        }
-
-                        if (snapshot.hasError) {
+                          return BackdropFilter(
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                            ),
+                          );
+                        } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
-                        }
-
-                        if (!snapshot.hasData) {
-                          return Text('');
+                        } else if (!snapshot.hasData) {
+                          return const Text('');
                         }
                         var interest = snapshot.data![0] as Interests;
                         var data = snapshot.data![1] as UsersInterests;
@@ -242,6 +246,7 @@ class _InterestListState extends State<InterestList> {
             height: 40.0,
             width: 140.0,
             child: FloatingActionButton(
+                backgroundColor: const Color(0xFF0081CF),
                 shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(20))),
                 onPressed: () {

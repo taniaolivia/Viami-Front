@@ -14,8 +14,6 @@ class UsersService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print("resssssssssssssusers");
-      print(res);
 
       return Users.fromJson(res);
     } else {
@@ -33,8 +31,6 @@ class UsersService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print("resssssssssssssusers conversation ");
-      print(res);
 
       return Users.fromJson(res);
     } else {

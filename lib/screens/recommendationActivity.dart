@@ -86,7 +86,8 @@ class _RecommendationActivityPageState
             var activity = snapshot.data!;
 
             return Container(
-                height: 280,
+                constraints:
+                    const BoxConstraints(minHeight: 280, maxHeight: 300),
                 margin: const EdgeInsets.only(
                     left: 10, right: 0, top: 0, bottom: 30),
                 child: ListView.builder(

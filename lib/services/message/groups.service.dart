@@ -49,7 +49,6 @@ class GroupsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      print(res);
       return Groups.fromJson(res);
     } else {
       throw Exception('Failed to load messages');
@@ -94,7 +93,6 @@ class GroupsService {
     }
   }
 
-
   Future<String> addUserToGroup(
       String token, String? userToAddId, String groupId) async {
     final response = await http.post(
@@ -105,15 +103,17 @@ class GroupsService {
         });
 
     if (response.statusCode == 200) {
-      var res = json.decode(response.body);
       var message = "Le voyageur a été ajouté avec succès ";
 
       return message;
     } else if (response.statusCode == 400) {
-      var res = json.decode(response.body);
       var message = "Le voyageur existe déja dans ce groupe";
 
       return message;
+    } else {
+      return "Erreur pendant l'ajout de nouveau utilisateur dans le groupe";
+    }
+  }
 
   Future<Groups> getUsersDiscussionsByUnReadFilter(
       String token, String userId) async {
@@ -146,7 +146,6 @@ class GroupsService {
       var res = json.decode(response.body);
 
       return Groups.fromJson(res);
-
     } else {
       throw Exception('Failed to load messages');
     }
