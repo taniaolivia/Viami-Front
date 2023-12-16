@@ -12,7 +12,8 @@ class UserService {
       String phoneNumber,
       String location,
       String birthday,
-      String sex) async {
+      String sex,
+      String? fcmToken) async {
     final response =
         await http.post(Uri.parse("${dotenv.env['API_URL']}/register"),
             headers: {"Content-Type": "application/json"},
@@ -29,9 +30,11 @@ class UserService {
               "sex": sex,
               "lastConnection": "",
               "connected": "0",
-              "profileImage": ""
+              "profileImage": "",
+              "fcmToken": fcmToken
             }));
 
+    print(response.body);
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
@@ -55,7 +58,8 @@ class UserService {
         "connected": "",
         "profileImage": "",
         "verifyEmailToken": null,
-        "emailVerified": "0"
+        "emailVerified": "0",
+        "fcmToken": null
       });
     } else {
       throw Exception("Failed to load user");
@@ -155,6 +159,24 @@ class UserService {
       return res;
     } else {
       throw Exception("Failed to load user");
+    }
+  }
+
+  Future<Map<String, dynamic>> setFcmToken(
+      String id, String fcmToken, String token) async {
+    final response = await http.patch(
+        Uri.parse(
+            '${dotenv.env['API_URL']}/users/$id/fcmToken?fcmToken=$fcmToken'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          'Authorization': token
+        });
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+      return res;
+    } else {
+      throw Exception('Failed to load user');
     }
   }
 }

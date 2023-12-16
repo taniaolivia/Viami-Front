@@ -51,6 +51,7 @@ class _ProfileCommentState extends State<ProfileComment> {
     }
 
     return Column(children: [
+      const SizedBox(height: 20),
       const Align(
           alignment: Alignment.topLeft,
           child: AutoSizeText(
@@ -67,11 +68,10 @@ class _ProfileCommentState extends State<ProfileComment> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height ) 
-                  );
+                      filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height));
                 }
 
                 if (snapshot.hasError) {
@@ -93,10 +93,11 @@ class _ProfileCommentState extends State<ProfileComment> {
                         children:
                             List.generate(comment.userComments.length, (index) {
                         return Container(
-                            width: MediaQuery.of(context).size.width / 1.2,
+                            width: MediaQuery.of(context).size.width / 1.3,
                             constraints: const BoxConstraints(
                                 minHeight: 150, maxHeight: double.infinity),
                             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            margin: const EdgeInsets.only(right: 10),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey),
                                 borderRadius: const BorderRadius.all(
@@ -140,9 +141,17 @@ class _ProfileCommentState extends State<ProfileComment> {
                                                     ? AssetImage(
                                                         commenter.profileImage!)
                                                     : null,
+                                                backgroundColor: commenter
+                                                            .profileImage ==
+                                                        null
+                                                    ? const Color(0xFF0081CF)
+                                                    : null,
                                                 child: commenter.profileImage ==
                                                         null
-                                                    ? const Icon(Icons.person)
+                                                    ? const Icon(
+                                                        Icons.person,
+                                                        color: Colors.white,
+                                                      )
                                                     : null)
                                           ]);
                                     }),

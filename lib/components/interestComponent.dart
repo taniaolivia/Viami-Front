@@ -51,7 +51,7 @@ class _InterestComponentState extends State<InterestComponent> {
               minFontSize: 11,
               maxFontSize: 13,
               style:
-                  TextStyle(color: Colors.black, fontWeight: FontWeight.w700),
+                  TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
             ),
           ),
           widget.page == "edit"
@@ -96,12 +96,12 @@ class _InterestComponentState extends State<InterestComponent> {
                         builder: (context, snapshot) {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                                return BackdropFilter(
-                                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                                  child: Container(
+                            return BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
                                     width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height ) 
-                                );
+                                    height:
+                                        MediaQuery.of(context).size.height));
                           }
 
                           if (snapshot.hasError) {
@@ -118,33 +118,35 @@ class _InterestComponentState extends State<InterestComponent> {
                           userInterests = data.userInterests;
 
                           return data.userInterests.length != 0
-                          ? Wrap(
-                              alignment: WrapAlignment.start,
-                              spacing: 7.0,
-                              runSpacing: 7.0,
-                              children: List.generate(data.userInterests.length,
-                                  (index) {
-                                return Container(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        20, 10, 20, 10),
-                                    constraints: const BoxConstraints(
-                                        maxWidth: double.infinity),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      border: Border.all(
-                                          color: const Color(0xFF0081CF)),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
-                                    child: AutoSizeText(
-                                      data.userInterests[index].interest,
-                                      style: const TextStyle(
-                                        color: Color(0xFF0081CF),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      minFontSize: 10,
-                                      maxFontSize: 12,
-                                    ));
-                              }).toList()) : Container(height: 80);
+                              ? Wrap(
+                                  alignment: WrapAlignment.start,
+                                  spacing: 7.0,
+                                  runSpacing: 7.0,
+                                  children: List.generate(
+                                      data.userInterests.length, (index) {
+                                    return Container(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            20, 10, 20, 10),
+                                        constraints: const BoxConstraints(
+                                            maxWidth: double.infinity),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          border: Border.all(
+                                              color: const Color(0xFF0081CF)),
+                                          borderRadius:
+                                              BorderRadius.circular(10.0),
+                                        ),
+                                        child: AutoSizeText(
+                                          data.userInterests[index].interest,
+                                          style: const TextStyle(
+                                            color: Color(0xFF0081CF),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          minFontSize: 10,
+                                          maxFontSize: 12,
+                                        ));
+                                  }).toList())
+                              : Container(height: 80);
                         })))
             : Container(
                 width: MediaQuery.of(context).size.width,
@@ -155,11 +157,10 @@ class _InterestComponentState extends State<InterestComponent> {
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return BackdropFilter(
-                          filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height ) 
-                        );
+                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height));
                       }
 
                       if (snapshot.hasError) {

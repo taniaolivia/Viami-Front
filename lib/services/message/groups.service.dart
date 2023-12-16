@@ -49,7 +49,6 @@ class GroupsService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      print(res);
       return Groups.fromJson(res);
     } else {
       throw Exception('Failed to load messages');
