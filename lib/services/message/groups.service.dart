@@ -92,4 +92,62 @@ class GroupsService {
       throw Exception('Failed to load messages');
     }
   }
+
+  Future<String> addUserToGroup(
+      String token, String? userToAddId, String groupId) async {
+    final response = await http.post(
+        Uri.parse(
+            '${dotenv.env['API_URL']}/messages/addUserToGroup/$userToAddId/$groupId'),
+        headers: <String, String>{
+          'Authorization': token,
+        });
+
+    if (response.statusCode == 200) {
+      var message = "Le voyageur a été ajouté avec succès ";
+
+      return message;
+    } else if (response.statusCode == 400) {
+      var message = "Le voyageur existe déja dans ce groupe";
+
+      return message;
+    } else {
+      return "Erreur pendant l'ajout de nouveau utilisateur dans le groupe";
+    }
+  }
+
+  Future<Groups> getUsersDiscussionsByUnReadFilter(
+      String token, String userId) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/discussions/$userId/unread'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return Groups.fromJson(res);
+    } else {
+      throw Exception('Failed to load messages');
+    }
+  }
+
+  Future<Groups> getUsersDiscussionsByReadFilter(
+      String token, String userId) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/discussions/$userId/read'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return Groups.fromJson(res);
+    } else {
+      throw Exception('Failed to load messages');
+    }
+  }
 }

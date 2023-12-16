@@ -34,7 +34,6 @@ class UserService {
               "fcmToken": fcmToken
             }));
 
-    print(response.body);
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
@@ -112,12 +111,9 @@ class UserService {
         final Map<String, dynamic> data = json.decode(response.body);
         return true;
       } else {
-        print('Failed to logout. Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
         return false;
       }
     } catch (error) {
-      print('Error during logout: $error');
       return false;
     }
   }

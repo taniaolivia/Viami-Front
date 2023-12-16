@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => const SettingsPage(),
-          "/notifications": (context) => NotificationsPage(),
+          "/notifications": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
           "/activities/popular": (context) => const AllPopularActivitiesPage(),
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
-          "/messages": (context) => const MessengerPage()
+          "/messages": (context) => const MessengerPage(),
         });
   }
 }

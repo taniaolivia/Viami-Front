@@ -120,7 +120,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                             color: Color.fromRGBO(0, 0, 0, 0.7)),
                       )),
                   const SizedBox(height: 20),
-                  Row(children: const [
+                  const Row(children: [
                     Expanded(
                         child: Divider(
                       color: Color.fromARGB(255, 188, 186, 190),
@@ -147,7 +147,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                           (users!.length == 1 && users![0].userId == userId))
                       ? Container(
                           alignment: Alignment.center,
-                          child: AutoSizeText(
+                          child: const AutoSizeText(
                             "Désolé, il n'y a que vous qui est intéressé pour l'instant",
                             minFontSize: 10,
                             maxFontSize: 12,
@@ -200,9 +200,11 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                 context,
                                                 FadePageRoute(
                                                     page: ShowProfilePage(
-                                                        showButton: false,
-                                                        userId: users![index]
-                                                            .userId)));
+                                                  showButton: false,
+                                                  userId: widget
+                                                      .users![index].userId,
+                                                  showComment: false,
+                                                )));
                                           },
                                           child: Container(
                                               width: MediaQuery.of(context)

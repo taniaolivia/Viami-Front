@@ -9,9 +9,11 @@ import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import 'package:viami/services/user/users.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/models-api/messenger/groups_data.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
@@ -19,6 +21,9 @@ import 'package:viami/services/message/groups.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/services/travel/travels.service.dart';
+import '../components/myCustomDialog.dart';
+import '../models-api/user/users.dart';
+import '../components/pageTransition.dart';
 
 class MessengerPage extends StatefulWidget {
   final String? userId;
@@ -39,10 +44,16 @@ class _MessengerPageState extends State<MessengerPage> {
   String? userId = "";
 
   Groups? discussionMessages;
+
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
   Color seulButtonColor = Colors.white;
   Color seulTextColor = Colors.black;
+  Color unreadButtonColor = Colors.white;
+  Color unreadTextColor = Colors.black;
+  Color readButtonColor = Colors.white;
+  Color readTextColor = Colors.black;
+
   String filterSeulGroup = "all";
   String? selectedLocation;
   List locationList = [""];
@@ -77,6 +88,14 @@ class _MessengerPageState extends State<MessengerPage> {
     return GroupsService().getGroupUsersDiscussions(token!, userId!);
   }
 
+  Future<Groups> getAllDiscussionsByUnreadFilter() {
+    return GroupsService().getUsersDiscussionsByUnReadFilter(token!, userId!);
+  }
+
+  Future<Groups> getAllDiscussionsByReadFilter() {
+    return GroupsService().getUsersDiscussionsByReadFilter(token!, userId!);
+  }
+
   Future<Groups> getAllDiscussionsForUserByLocation(String location) {
     return GroupsService()
         .getGroupUsersDiscussionsByLocation(token!, userId!, location);
@@ -96,6 +115,14 @@ class _MessengerPageState extends State<MessengerPage> {
               await getAllDiscussionsForUserByLocation(selectedLocation!);
         }
         break;
+      case "nonLu":
+        discussionMessages = await getAllDiscussionsByUnreadFilter();
+
+        break;
+      case "lu":
+        discussionMessages = await getAllDiscussionsByReadFilter();
+
+        break;
       default:
         discussionMessages = await getAllDiscussionsForUser();
         break;
@@ -113,6 +140,13 @@ class _MessengerPageState extends State<MessengerPage> {
         await UsersImagesService().getUserImagesById(userId, token.toString());
 
     return images;
+  }
+
+  Future<Users> getAllUsers() async {
+    token = await storage.read(key: "token");
+    final allUsers = await UsersService().getAllUsers(token.toString());
+
+    return allUsers;
   }
 
   Future<User> getUserById(String userId) async {
@@ -199,7 +233,7 @@ class _MessengerPageState extends State<MessengerPage> {
                           borderRadius: BorderRadius.circular(8.0),
                           border: Border.all(color: Colors.grey),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.filter_list,
                           size: 20.0,
                           color: Colors.blue,
@@ -630,6 +664,45 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   ],
                                                 ),
                                               ),
+                                              PopupMenuButton<String>(
+                                                child: Container(
+                                                  width: 20,
+                                                  child: Icon(Icons.more_vert),
+                                                ),
+                                                onSelected: (value) {
+                                                  if (value ==
+                                                      'ajouterVoyageur') {
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        var groupeIdPass =
+                                                            discussionMessages!
+                                                                .groups[index]
+                                                                .lastMessage
+                                                                .groupId;
+
+                                                        return MyCustomDialog(
+                                                          groupId: groupeIdPass,
+                                                        );
+                                                      },
+                                                    );
+                                                  }
+                                                },
+                                                itemBuilder: (BuildContext
+                                                        context) =>
+                                                    <PopupMenuEntry<String>>[
+                                                  const PopupMenuItem<String>(
+                                                    value: 'ajouterVoyageur',
+                                                    child: ListTile(
+                                                      leading: Icon(
+                                                          Icons.person_add),
+                                                      title: Text(
+                                                          'Ajouter un Voyageur'),
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
                                             ],
                                           ),
                                           Expanded(
@@ -644,9 +717,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 Color containerColor =
                                                     isUserMessage
                                                         ? const Color(
-                                                            0xFFF3F3F3)
+                                                            0xFF0081CF)
                                                         : const Color(
-                                                            0xFF0081CF);
+                                                            0xFFF3F3F3);
 
                                                 DateTime messageDateTime =
                                                     DateTime.parse(
@@ -690,18 +763,249 @@ class _MessengerPageState extends State<MessengerPage> {
                                                             BorderRadius
                                                                 .circular(8),
                                                       ),
-                                                      child: AutoSizeText(
-                                                        toBeginningOfSentenceCase(
-                                                          message.message,
-                                                        )!,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        minFontSize: 10,
-                                                        maxFontSize: 12,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
+                                                      child: Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          if (message
+                                                                  .senderId !=
+                                                              userId)
+                                                            Container(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      right:
+                                                                          10),
+                                                              width: 48,
+                                                              height: 48,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                              child:
+                                                                  FutureBuilder(
+                                                                future: getUserImages(
+                                                                    message
+                                                                        .senderId),
+                                                                builder: (context,
+                                                                    snapshot) {
+                                                                  if (snapshot
+                                                                          .connectionState ==
+                                                                      ConnectionState
+                                                                          .waiting) {
+                                                                    return BackdropFilter(
+                                                                      filter: ImageFilter.blur(
+                                                                          sigmaX:
+                                                                              5,
+                                                                          sigmaY:
+                                                                              5),
+                                                                      child:
+                                                                          Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height,
+                                                                      ),
+                                                                    );
+                                                                  } else if (snapshot
+                                                                      .hasError) {
+                                                                    return Text(
+                                                                        'Error: ${snapshot.error}');
+                                                                  } else if (!snapshot
+                                                                          .hasData ||
+                                                                      snapshot
+                                                                          .data!
+                                                                          .userImages
+                                                                          .isEmpty) {
+                                                                    return GestureDetector(
+                                                                      onTapDown:
+                                                                          (TapDownDetails
+                                                                              details) async {
+                                                                        final RenderBox
+                                                                            overlay =
+                                                                            Overlay.of(context)!.context.findRenderObject()
+                                                                                as RenderBox;
+                                                                        final RelativeRect
+                                                                            position =
+                                                                            RelativeRect.fromRect(
+                                                                          details.globalPosition &
+                                                                              const Size(40, 40),
+                                                                          overlay.localToGlobal(Offset.zero) &
+                                                                              overlay.size,
+                                                                        );
+
+                                                                        final String?
+                                                                            choice =
+                                                                            await showMenu<String>(
+                                                                          context:
+                                                                              context,
+                                                                          position:
+                                                                              position,
+                                                                          items: [
+                                                                            const PopupMenuItem<String>(
+                                                                              value: 'go_to_profile',
+                                                                              child: Text('Voir le profil'),
+                                                                            ),
+                                                                          ],
+                                                                        );
+
+                                                                        if (choice ==
+                                                                            'go_to_profile') {
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            FadePageRoute(
+                                                                                page: ShowProfilePage(
+                                                                              showButton: false,
+                                                                              userId: message.senderId,
+                                                                              showComment: true,
+                                                                            )),
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        backgroundColor: const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            220,
+                                                                            234,
+                                                                            250),
+                                                                        foregroundImage:
+                                                                            NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                        maxRadius:
+                                                                            15,
+                                                                      ),
+                                                                    );
+                                                                  }
+                                                                  var image =
+                                                                      snapshot
+                                                                          .data!;
+
+                                                                  var avatar =
+                                                                      GestureDetector(
+                                                                    onTapDown:
+                                                                        (TapDownDetails
+                                                                            details) async {
+                                                                      final RenderBox
+                                                                          overlay =
+                                                                          Overlay.of(context)!
+                                                                              .context
+                                                                              .findRenderObject() as RenderBox;
+                                                                      final RelativeRect
+                                                                          position =
+                                                                          RelativeRect
+                                                                              .fromRect(
+                                                                        details.globalPosition &
+                                                                            const Size(40,
+                                                                                40),
+                                                                        overlay.localToGlobal(Offset.zero) &
+                                                                            overlay.size,
+                                                                      );
+
+                                                                      final String?
+                                                                          choice =
+                                                                          await showMenu<
+                                                                              String>(
+                                                                        context:
+                                                                            context,
+                                                                        position:
+                                                                            position,
+                                                                        items: [
+                                                                          const PopupMenuItem<
+                                                                              String>(
+                                                                            value:
+                                                                                'go_to_profile',
+                                                                            child:
+                                                                                Text('Voir le profil'),
+                                                                          ),
+                                                                        ],
+                                                                      );
+
+                                                                      if (choice ==
+                                                                          'go_to_profile') {
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          FadePageRoute(
+                                                                              page: ShowProfilePage(
+                                                                            showButton:
+                                                                                false,
+                                                                            userId:
+                                                                                message.senderId,
+                                                                            showComment:
+                                                                                true,
+                                                                          )),
+                                                                        );
+                                                                      }
+                                                                    },
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundImage:
+                                                                          NetworkImage(
+                                                                              "${image.userImages[0].image}"),
+                                                                      maxRadius:
+                                                                          15,
+                                                                    ),
+                                                                  );
+
+                                                                  return avatar;
+                                                                },
+                                                              ),
+                                                            ),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                if (message
+                                                                        .senderId !=
+                                                                    userId)
+                                                                  AutoSizeText(
+                                                                    message
+                                                                        .senderFirstName,
+                                                                    minFontSize:
+                                                                        10,
+                                                                    maxFontSize:
+                                                                        12,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                    ),
+                                                                  ),
+                                                                AutoSizeText(
+                                                                  toBeginningOfSentenceCase(
+                                                                      message
+                                                                          .message)!,
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  minFontSize:
+                                                                      10,
+                                                                  maxFontSize:
+                                                                      12,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                     subtitle: Align(
@@ -1007,8 +1311,8 @@ class _MessengerPageState extends State<MessengerPage> {
                     ],
                   ),
                   const SizedBox(height: 40),
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       AutoSizeText(
                         "Voir que les conversations",
                         style: TextStyle(
@@ -1091,7 +1395,7 @@ class _MessengerPageState extends State<MessengerPage> {
                               padding: const EdgeInsets.all(15.0),
                               decoration: BoxDecoration(
                                 color: groupButtonColor,
-                                borderRadius: BorderRadius.only(
+                                borderRadius: const BorderRadius.only(
                                   topRight: Radius.circular(15),
                                   bottomRight: Radius.circular(15),
                                 ),
@@ -1111,7 +1415,94 @@ class _MessengerPageState extends State<MessengerPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 20),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.5),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                readButtonColor = Colors.blue;
+                                readTextColor = Colors.white;
+                                unreadButtonColor = Colors.white;
+                                unreadTextColor = Colors.black;
+                                filterSeulGroup = "lu";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: readButtonColor,
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  bottomLeft: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Lu',
+                                  style: TextStyle(
+                                    color: readTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () async {
+                              setState(() {
+                                unreadButtonColor = Colors.blue;
+                                unreadTextColor = Colors.white;
+                                readButtonColor = Colors.white;
+                                readTextColor = Colors.black;
+                                filterSeulGroup = "nonLu";
+                              });
+                              await getDiscussionsByFilter();
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.all(15.0),
+                              decoration: BoxDecoration(
+                                color: unreadButtonColor,
+                                borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Non Lu',
+                                  style: TextStyle(
+                                    color: unreadTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   Form(
                       key: _formKey,
                       child: Column(children: [
