@@ -68,6 +68,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
   void initState() {
     super.initState();
     getUser();
+    users = widget.users;
   }
 
   @override
@@ -160,8 +161,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                           direction: Axis.horizontal,
                           spacing: 10.0,
                           runSpacing: 20.0,
-                          children:
-                              List.generate(widget.users!.length, (index) {
+                          children: List.generate(users!.length, (index) {
                             return FutureBuilder(
                                 future: Future.wait(
                                     [getUser(), getUsersImages(index)]),
@@ -191,9 +191,9 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                   var image = snapshot.data![1] as UsersImages;
                                   var user = snapshot.data![0] as User;
 
-                                  connectedUserPlan = user.plan;
+                                  connectedUserPlan = user.plan!;
 
-                                  return widget.users![index].userId != userId
+                                  return users![index].userId != userId
                                       ? GestureDetector(
                                           onTap: () {
                                             Navigator.push(
@@ -201,8 +201,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                 FadePageRoute(
                                                     page: ShowProfilePage(
                                                         showButton: false,
-                                                        userId: widget
-                                                            .users![index]
+                                                        userId: users![index]
                                                             .userId)));
                                           },
                                           child: Container(
@@ -251,7 +250,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                           alignment: Alignment
                                                               .bottomLeft,
                                                           child: AutoSizeText(
-                                                            "${toBeginningOfSentenceCase(widget.users![index].firstName)!}, ${widget.users![index].age}",
+                                                            "${toBeginningOfSentenceCase(users![index].firstName)!}, ${users![index].age}",
                                                             minFontSize: 16,
                                                             maxFontSize: 17,
                                                             textAlign:
@@ -286,7 +285,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                           style: ElevatedButton.styleFrom(
                                                               backgroundColor:
                                                                   const Color
-                                                                          .fromRGBO(
+                                                                      .fromRGBO(
                                                                       0,
                                                                       0,
                                                                       0,
@@ -311,7 +310,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                 });
                           }).toList())
                 ]))),
-        widget.connectedUserPlan == 'free'
+        widget.connectedUserPlan == 'premium'
             ? BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                 child: Container(

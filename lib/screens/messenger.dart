@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:viami/components/users_no_discussion.dart';
 import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/user/user.dart';
@@ -289,7 +290,9 @@ class _MessengerPageState extends State<MessengerPage> {
                         "Réinitialiser",
                         minFontSize: 10,
                         maxFontSize: 12,
+                        style: TextStyle(color: Color(0xFF0081CF)),
                       ))),
+              const UsersNoDiscussionPage(),
               Column(
                 children: List.generate(
                   discussionMessages?.groups.length ?? 0,
@@ -352,29 +355,34 @@ class _MessengerPageState extends State<MessengerPage> {
 
                             BuildContext currentContext = context;
                             showModalBottomSheet(
+                              backgroundColor:
+                                  const Color.fromARGB(255, 255, 255, 255),
                               isScrollControlled: true,
                               shape: const RoundedRectangleBorder(
+                                side: BorderSide(
+                                  color: Colors.white,
+                                ),
                                 borderRadius: BorderRadius.vertical(
                                   top: Radius.circular(30),
                                 ),
                               ),
-                              builder: (BuildContext context) {
+                              builder: (context) {
                                 currentContext = context;
 
                                 return StatefulBuilder(
                                   builder: (BuildContext context,
                                       StateSetter setState) {
                                     return Container(
-                                      margin: const EdgeInsets.only(left: 10),
                                       padding: const EdgeInsets.only(
-                                        top: 10,
-                                        bottom: 10,
-                                      ),
+                                          top: 10, bottom: 10, left: 20),
                                       height:
                                           MediaQuery.of(context).size.height -
                                               30,
                                       decoration: const BoxDecoration(
-                                        color: Colors.transparent,
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(30),
+                                        ),
                                       ),
                                       child: Column(
                                         children: [
@@ -397,6 +405,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   width: 70,
                                                   height: 50,
                                                   alignment: Alignment.center,
+                                                  color: Colors.white,
                                                   child: Stack(
                                                       children: List.generate(
                                                           users.length,
@@ -453,7 +462,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                               : CircleAvatar(
                                                                   backgroundColor:
                                                                       const Color
-                                                                              .fromARGB(
+                                                                          .fromARGB(
                                                                           255,
                                                                           220,
                                                                           234,
@@ -711,7 +720,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                     dense: true,
                                                     contentPadding:
                                                         const EdgeInsets
-                                                                .symmetric(
+                                                            .symmetric(
                                                             horizontal: 8),
                                                     leading: isUserMessage
                                                         ? Container(
@@ -945,6 +954,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   void _showFiltersBottomSheet(BuildContext context) {
     showModalBottomSheet(
+      backgroundColor: Colors.white,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -971,9 +981,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       borderRadius: BorderRadius.circular(5),
                     ),
                   ),
-                  SizedBox(
-                    height: 15,
-                  ),
+                  const SizedBox(height: 30),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -993,14 +1001,12 @@ class _MessengerPageState extends State<MessengerPage> {
                           "Réinitialiser",
                           minFontSize: 14,
                           maxFontSize: 16,
-                          style: TextStyle(color: Colors.blue),
+                          style: TextStyle(color: Color(0xFF0081CF)),
                         ),
                       )
                     ],
                   ),
-                  const SizedBox(
-                    height: 25,
-                  ),
+                  const SizedBox(height: 40),
                   Row(
                     children: const [
                       AutoSizeText(
@@ -1010,8 +1016,8 @@ class _MessengerPageState extends State<MessengerPage> {
                           fontStyle: FontStyle.normal,
                           fontFamily: "Poppins",
                         ),
-                        minFontSize: 20,
-                        maxFontSize: 22,
+                        minFontSize: 16,
+                        maxFontSize: 18,
                         textAlign: TextAlign.center,
                       ),
                     ],
@@ -1105,7 +1111,7 @@ class _MessengerPageState extends State<MessengerPage> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 60),
                   Form(
                       key: _formKey,
                       child: Column(children: [
@@ -1142,7 +1148,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                     );
                                   }).toList())),
                         ]),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 50),
                         ElevatedButton(
                           onPressed: () async {
                             if (selectedLocation != null &&
@@ -1153,8 +1159,19 @@ class _MessengerPageState extends State<MessengerPage> {
                             await getDiscussionsByFilter();
                             Navigator.pop(context);
                           },
-                          child: const Text("Appliquer le filtre localisation"),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0081CF)),
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 25),
+                            child: AutoSizeText(
+                                "Appliquer le filtre localisation",
+                                minFontSize: 16,
+                                maxFontSize: 18,
+                                style: TextStyle(color: Colors.white)),
+                          ),
                         ),
+                        const SizedBox(height: 30),
                       ]))
                 ],
               ),
