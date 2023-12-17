@@ -50,7 +50,7 @@ class _PaymentPageState extends State<PaymentPage> {
     return Scaffold(
         appBar: AppBar(
           title: const AutoSizeText(
-            'Paiement',
+            'Abonnement',
             minFontSize: 16,
             maxFontSize: 18,
             textAlign: TextAlign.center,
