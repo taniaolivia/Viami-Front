@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:viami/firebase_api.dart';
 import 'package:viami/screens/allPopularActivities.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/messenger.dart';
+import 'package:viami/screens/payment.dart';
 import 'package:viami/screens/profile.dart';
 import 'package:viami/screens/allRecommendedActivities.dart';
 import 'package:viami/screens/register.dart';
@@ -19,6 +21,9 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      "pk_test_51OO2PlE54fkNQ346pLVEhmdv2AyatenhKiEm02XBgWaTNefcUvVuYAmikZPXyam7Gwri8aujMILcvQgjNwalxFDe00gxti2DFr";
+
   await dotenv.load(fileName: "lib/.env");
 
   await Firebase.initializeApp(
