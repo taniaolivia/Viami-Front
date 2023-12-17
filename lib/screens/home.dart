@@ -9,6 +9,7 @@ import 'package:viami/screens/popularTheme.dart';
 import 'package:viami/screens/recommendationActivity.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -110,7 +111,57 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             )),
         const PopularThemePage(),
         const RecommendationActivityPage(),
-        const FaqPage()
+        const FaqPage(),
+        
+        Padding(
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 50),
+        child: Column(children: [
+          const Align(
+              alignment: Alignment.centerLeft,
+              child: AutoSizeText(
+                "La carte",
+                minFontSize: 18,
+                maxFontSize: 20,
+                style: TextStyle(
+                    fontWeight: FontWeight.bold, color: Color(0xFF0A2753)),
+              )),
+          const SizedBox(height: 20),
+        
+          Container(
+  height: 290,
+  width: MediaQuery.of(context).size.width / 1.5,
+  decoration: BoxDecoration(
+    borderRadius: BorderRadius.circular(20),
+    image: DecorationImage(
+      fit: BoxFit.cover,
+      image: NetworkImage('assets/map.png'),
+    ),
+  ),
+  child: Stack(
+    children: [
+      Positioned(
+        top: 0,
+        left: 60,
+        right: 0,
+        bottom: 0,
+        child: Icon(
+          Icons.location_on,
+          size: 30,
+          color: Colors.blue, 
+        ),
+      ),
+    ],
+  ),
+),
+
+          const SizedBox(height: 20),
+         
+        ])),
+
+
+
+     
+        
       ])),
     );
   }
