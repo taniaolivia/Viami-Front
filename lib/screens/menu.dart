@@ -1,7 +1,12 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/user/auth.service.dart';
@@ -11,6 +16,7 @@ import '../components/pageTransition.dart';
 import '../models-api/user/user.dart';
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MenuPage extends StatelessWidget {
   final MenuItem currentItem;
@@ -22,6 +28,10 @@ class MenuPage extends StatelessWidget {
 
   String? token = "";
   String? userId = "";
+  final Uri _emailLaunchUri = Uri(
+    scheme: 'mailto',
+    path: '${dotenv.env['EMAIL_VIAMI']}',
+  );
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -42,6 +52,18 @@ class MenuPage extends StatelessWidget {
         .getUserImagesById(userId.toString(), token.toString());
   }
 
+  void socialMediasUrls(String socmed) async {
+    if (socmed == 'instagram') {
+      await launchUrl(Uri.parse('${dotenv.env['INSTA_URL']}'));
+    } else if (socmed == 'facebook') {
+      await launchUrl(Uri.parse('${dotenv.env['FACEBOOK_URL']}'));
+    } else if (socmed == 'twitter') {
+      await launchUrl(Uri.parse('${dotenv.env['TWITTER_URL']}'));
+    } else if (socmed == 'youtube') {
+      await launchUrl(Uri.parse('${dotenv.env['YOUTUBE_URL']}'));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget buildMenuItem(MenuItem item) => ListTile(
@@ -51,12 +73,41 @@ class MenuPage extends StatelessWidget {
           leading: Icon(
             item.icon,
             size: MediaQuery.of(context).size.width <= 320 ? 20 : 25,
+            color: currentItem == item ? const Color(0xFF0081CF) : Colors.white,
           ),
           title: AutoSizeText(item.title,
               minFontSize: 10,
               maxFontSize: 14,
-              style: const TextStyle(fontFamily: "Poppins")),
-          onTap: () => onSelectedItem(item),
+              style: TextStyle(
+                  fontFamily: "Poppins",
+                  color: currentItem == item
+                      ? const Color(0xFF0081CF)
+                      : Colors.white)),
+          onTap: () {
+            if (item.title == "Nous contacter") {
+              onSelectedItem(item);
+
+              showDialogMessage(
+                context,
+                "Information",
+                const Text(
+                    'Veuillez utiliser votre mail inscrit à Viami pour nous contacter !'),
+                ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Annuler")),
+                ElevatedButton(
+                    onPressed: () async {
+                      Navigator.pop(context);
+                      await launchUrlString(_emailLaunchUri.toString());
+                    },
+                    child: const Text("D'accord")),
+              );
+            } else {
+              onSelectedItem(item);
+            }
+          },
         );
 
     return Theme(
@@ -67,17 +118,18 @@ class MenuPage extends StatelessWidget {
               future: Future.wait([getUser(), getUserImages()]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("");
-                }
-
-                if (snapshot.hasError) {
+                  return BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: MediaQuery.of(context).size.height,
+                    ),
+                  );
+                } else if (snapshot.hasError) {
                   return Text('Error: ${snapshot.error}');
+                } else if (!snapshot.hasData) {
+                  return const Text('');
                 }
-
-                if (!snapshot.hasData) {
-                  return Text('');
-                }
-
                 var user = snapshot.data![0] as User;
                 var images = snapshot.data![1] as UsersImages;
                 var firstName = user.firstName;
@@ -151,6 +203,65 @@ class MenuPage extends StatelessWidget {
                           ...MenuItems.all.map(buildMenuItem).toList(),
                           const Spacer(flex: 2),
                           const Spacer(),
+                          Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              child: Row(children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    socialMediasUrls('instagram');
+                                  },
+                                  child: Image.network(
+                                    '${dotenv.env['CDN_URL']}/assets/social-media/instagram.png',
+                                    width: 36,
+                                    height: 36,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    socialMediasUrls('facebook');
+                                  },
+                                  child: Image.network(
+                                    '${dotenv.env['CDN_URL']}/assets/social-media/facebook.png',
+                                    width: 35,
+                                    height: 35,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    socialMediasUrls('twitter');
+                                  },
+                                  child: Image.network(
+                                    '${dotenv.env['CDN_URL']}/assets/social-media/twitter.png',
+                                    width: 35,
+                                    height: 35,
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    socialMediasUrls('youtube');
+                                  },
+                                  child: Column(children: [
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Image.network(
+                                      '${dotenv.env['CDN_URL']}/assets/social-media/youtube.png',
+                                      width: 40,
+                                      height: 40,
+                                    )
+                                  ]),
+                                ),
+                              ])),
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 16.0),

@@ -59,5 +59,12 @@
 		<string>Allow access to microphone for video recording</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>Allow access to photo library</string>
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>instagram</string>
+			<string>youtube</string>
+			<string>facebook</string>
+			<string>twitter</string>
+		</array>
 	</dict>
 </plist>
