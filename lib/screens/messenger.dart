@@ -1100,6 +1100,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                 userId
                                                             ?  message.senderId
                                                             :  message.responderId;
+                                                              print("other userrrr otherrrrrrr");
+                                                              print(" messageeeeegroupId");
+                                                              print( message.groupId);
+                                                      print(otherUser);
 
                                                     if (userCount == 2) {
                                                       if(discussion.messages.length==0){
@@ -1107,8 +1111,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           print("other userrrr");
                                                       print(otherUser);
                                                       await send(
-                                                           message
-                                                                .groupId
+                                                           null
                                                                 ,
                                                           _textController.text,
                                                           otherUser);
@@ -1116,16 +1119,39 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       _textController.clear();
 
                                                       }else{
+                                                        send(
+                                                           message.groupId
+                                                                
+                                                                ,
+                                                          _textController.text,
+                                                          otherUser);
+
+                                                      _textController.clear();
+                                                      print("other userrrr 2222222");
+                                                      print(otherUser);
                                                         
                                                       }
                                                     
                                                     } else {
-                                                      await send(
+                                                       if(discussion.messages.length==0){
+                                                        await send(
                                                           null,
                                                           _textController.text,
                                                           otherUser);
 
                                                       _textController.clear();
+
+                                                       }else{
+                                                         await send(
+                                                          message
+                                                                .groupId,
+                                                          _textController.text,
+                                                          otherUser);
+                                                           _textController.clear();
+                                                          
+
+                                                       }
+                                                      
                                                     }
 
                                                     _handleSubmitted(
