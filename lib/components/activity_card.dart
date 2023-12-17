@@ -48,20 +48,6 @@ class ActivityCard extends StatelessWidget {
                             '${dotenv.env['CDN_URL']}/assets/${activity.imageName}'),
                       ),
                     ),
-                    child: GestureDetector(
-                        onTap: () {},
-                        child: Align(
-                            alignment: Alignment.topRight,
-                            child: Container(
-                                margin: const EdgeInsets.all(10),
-                                padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(40),
-                                    ),
-                                    color: Color.fromRGBO(0, 0, 0, 0.3)),
-                                child: const Icon(Icons.favorite_border_rounded,
-                                    color: Colors.white, size: 15)))),
                   ),
                   const SizedBox(
                     height: 8.0,

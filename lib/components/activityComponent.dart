@@ -207,24 +207,6 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                     maxFontSize: 28,
                                     textAlign: TextAlign.center,
                                   ),
-                                  GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color:
-                                            Color.fromARGB(255, 228, 241, 247),
-                                      ),
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(6.0),
-                                        child: Icon(
-                                          Icons.favorite,
-                                          color: Color(0xFF0081CF),
-                                          size: 20,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                               const SizedBox(

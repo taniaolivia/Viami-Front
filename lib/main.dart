@@ -21,10 +21,9 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Stripe.publishableKey =
-      "pk_test_51OO2PlE54fkNQ346pLVEhmdv2AyatenhKiEm02XBgWaTNefcUvVuYAmikZPXyam7Gwri8aujMILcvQgjNwalxFDe00gxti2DFr";
-
   await dotenv.load(fileName: "lib/.env");
+
+  Stripe.publishableKey = "${dotenv.env['STRIPE_PUBLIC_KEY']}";
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
