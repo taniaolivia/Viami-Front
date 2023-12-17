@@ -103,15 +103,27 @@ class GroupsService {
         });
 
     if (response.statusCode == 200) {
+
+      var res = json.decode(response.body);
+
+
       var message = "Le voyageur a été ajouté avec succès ";
 
       return message;
     } else if (response.statusCode == 400) {
+
+      var res = json.decode(response.body);
+
+
       var message = "Le voyageur existe déja dans ce groupe";
 
       return message;
     } else {
+
+      throw Exception('Failed to load messages');
+
       return "Erreur pendant l'ajout de nouveau utilisateur dans le groupe";
+
     }
   }
 
@@ -146,6 +158,25 @@ class GroupsService {
       var res = json.decode(response.body);
 
       return Groups.fromJson(res);
+    } else {
+      throw Exception('Failed to load messages');
+    }
+  }
+
+  Future<int> getUserCountInGroup(String token, String groupId) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/getUserCountInGroup/$groupId'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+   
+      print(res['count']);
+
+      return res['count'];
     } else {
       throw Exception('Failed to load messages');
     }

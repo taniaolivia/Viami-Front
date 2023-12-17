@@ -39,11 +39,15 @@ class _MessengerPageState extends State<MessengerPage> {
   final _formKeySearch = GlobalKey<FormState>();
 
   TextEditingController searchController = TextEditingController();
+  TextEditingController _textController = TextEditingController();
 
   String? token = "";
   String? userId = "";
 
   Groups? discussionMessages;
+
+  int? userCount;
+
 
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
@@ -99,6 +103,13 @@ class _MessengerPageState extends State<MessengerPage> {
   Future<Groups> getAllDiscussionsForUserByLocation(String location) {
     return GroupsService()
         .getGroupUsersDiscussionsByLocation(token!, userId!, location);
+  }
+
+  Future<void> send(int? groupId, String message, String? responderId) async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+    return MessageService()
+        .sendMessage(token.toString(), groupId, message, userId, responderId);
   }
 
   Future<void> getDiscussionsByFilter() async {
@@ -165,6 +176,12 @@ class _MessengerPageState extends State<MessengerPage> {
     token = await storage.read(key: "token");
 
     return await UserStatusService().getUserStatusById(travelerId!, token!);
+  }
+
+  void _handleSubmitted(String text) {
+    // Ajoutez votre logique ici pour gérer l'envoi du message
+    print("Message envoyé: $text");
+    _textController.clear(); // Efface le champ de saisie après l'envoi
   }
 
   @override
@@ -1044,6 +1061,91 @@ class _MessengerPageState extends State<MessengerPage> {
                                               },
                                             ),
                                           ),
+
+                                          //row send message
+                                          Container(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Row(
+                                              children: [
+                                                // Champ de saisie de texte avec icône à droite
+                                                Expanded(
+                                                  child: TextField(
+                                                    controller: _textController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      border: OutlineInputBorder(
+                                                          borderRadius:
+                                                              BorderRadius.all(
+                                                                  Radius
+                                                                      .circular(
+                                                                          15))),
+                                                      contentPadding:
+                                                          EdgeInsets.fromLTRB(
+                                                              15, 5, 10, 5),
+                                                      hintText:
+                                                          "Saisissez votre message...",
+                                                      labelStyle: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                  ),
+                                                ),
+                                                // Icône et bouton d'envoi
+                                                IconButton(
+                                                  icon: Icon(Icons.send),
+                                                  onPressed: () async {
+                                                    int count = await GroupsService()
+                                                        .getUserCountInGroup(
+                                                            token.toString(),
+                                                            message
+                                                                .groupId
+                                                                .toString());
+
+                                                    setState(() {
+                                                      userCount = count;
+                                                    });
+
+                                                    String otherUser =
+                                                        message.senderId !=
+                                                                userId
+                                                            ?  message.senderId
+                                                            :  message.responderId;
+
+                                                    if (userCount == 2) {
+                                                      if(discussion.messages.length==0){
+
+                                                          print("other userrrr");
+                                                      print(otherUser);
+                                                      await send(
+                                                           message
+                                                                .groupId
+                                                                ,
+                                                          _textController.text,
+                                                          otherUser);
+
+                                                      _textController.clear();
+
+                                                      }else{
+                                                        
+                                                      }
+                                                    
+                                                    } else {
+                                                      await send(
+                                                          null,
+                                                          _textController.text,
+                                                          otherUser);
+
+                                                      _textController.clear();
+                                                    }
+
+                                                    _handleSubmitted(
+                                                        _textController.text);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                          )
                                         ],
                                       ),
                                     );
