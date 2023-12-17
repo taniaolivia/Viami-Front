@@ -92,12 +92,43 @@ class _PaymentPageState extends State<PaymentPage> {
             ),
             onPressed: () async {
               await PaymentService().stripePaymentCheckout(
-                  {"name": "Premium", "price": 500}, 500, context, mounted,
+                  {"name": "Premium", "price": 50}, 50, context, mounted,
                   onSuccess: () {
-                print("Success");
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                          title: const Text('Information'),
+                          content: const Text(
+                              "Votre paiement a été traité avec succès. Vous pouvez commencer de profiter l'abonnement premium"),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pushNamed(context, "/home");
+                              },
+                              child: const Text("D'accord"),
+                            ),
+                          ]);
+                    });
               }, onCancel: () {
                 print("Cancel");
               }, onError: (e) {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                          title: const Text('Information'),
+                          content: const Text(
+                              "Votre paiement n'a pas été traité avec succès. Veuillez nous contacter si ce problème pérsiste !"),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () async {
+                                Navigator.pushNamed(context, "/home");
+                              },
+                              child: const Text("D'accord"),
+                            ),
+                          ]);
+                    });
                 print("Error: " + e.toString());
               });
             },
