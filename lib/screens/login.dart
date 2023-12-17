@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/connectionTemplate.dart';
 import 'package:viami/components/snackBar.dart';
 import 'package:viami/services/user/auth.service.dart';
+import 'package:viami/services/user/user.service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -120,7 +121,8 @@ class _LoginPageState extends State<LoginPage> {
                         minFontSize: 11,
                         maxFontSize: 13,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(fontFamily: "Poppins"),
+                        style: TextStyle(
+                            fontFamily: "Poppins", color: Colors.white),
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
@@ -150,6 +152,12 @@ class _LoginPageState extends State<LoginPage> {
                                   key: "userId", value: user["user"]["id"]);
                               await storage.write(
                                   key: "token", value: user['token']);
+
+                              var fcmToken =
+                                  await storage.read(key: "fcmToken");
+
+                              await UserService().setFcmToken(
+                                  user["user"]["id"], fcmToken!, user['token']);
 
                               Navigator.pushNamed(context, "/home");
                             }

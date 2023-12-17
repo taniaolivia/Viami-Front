@@ -38,6 +38,10 @@ dependencies:
   path_provider: ^2.0.4
   get: ^4.1.4
   jwt_decoder: ^2.0.1
+  firebase_core: ^2.24.0
+  firebase_messaging: ^14.7.6
+  firebase_analytics: ^10.7.2
+  url_launcher: ^6.0.6
 
 dev_dependencies:
   flutter_test:

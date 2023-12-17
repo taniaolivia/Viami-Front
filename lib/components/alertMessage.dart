@@ -21,7 +21,10 @@ Future<void> showAlertDialog(BuildContext context, String title, String content,
         ),
         actions: <Widget>[
           TextButton(
-            child: Text(buttonText),
+            child: Text(
+              buttonText,
+              style: const TextStyle(color: Color(0xFF0081CF)),
+            ),
             onPressed: () {
               Navigator.of(context).pop();
             },

@@ -1,14 +1,18 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/NavigationBarComponent.dart';
 import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/models-api/requestMessage/requests_messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models/menu_item.dart';
 import 'package:viami/models/menu_items.dart';
 import 'package:viami/screens/home.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/screens/explore.dart';
+import 'package:viami/services/requestMessage/requests_messages_service.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/widgets/menu_widget.dart';
@@ -36,6 +40,7 @@ class _MenusPageState extends State<MenusPage> {
   String? userId = "";
   String? userProfile;
   bool? tokenExpired;
+  int requests = 0;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -52,10 +57,28 @@ class _MenusPageState extends State<MenusPage> {
     return getConnectedUser();
   }
 
+  Future<RequestsMessages> getAllRequestsByUser() async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+
+    return RequestsMessageService()
+        .getAllRequestsMessagesByUser(token.toString(), userId.toString());
+  }
+
+  void fetchData() async {
+    await getUser();
+    var allRequests = await getAllRequestsByUser();
+
+    setState(() {
+      requests = allRequests.requestsMessages.length;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
-    getUser();
+    fetchData();
+
     _currentIndex = widget.currentIndex ?? _currentIndex;
     _pageController = PageController(initialPage: _currentIndex);
   }
@@ -102,6 +125,7 @@ class _MenusPageState extends State<MenusPage> {
     }
     ;
     return Scaffold(
+      extendBody: true,
       appBar: _currentIndex == 2
           ? AppBar(
               leading: MenuWidget(),
@@ -113,16 +137,17 @@ class _MenusPageState extends State<MenusPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return Text("");
-                        }
-
-                        if (snapshot.hasError) {
+                          return BackdropFilter(
+                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                              child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  height: MediaQuery.of(context).size.height));
+                        } else if (snapshot.hasError) {
                           return Text('Error: ${snapshot.error}');
+                        } else if (!snapshot.hasData) {
+                          return const Text('');
                         }
 
-                        if (!snapshot.hasData) {
-                          return Text('');
-                        }
                         var user = snapshot.data!;
 
                         return Row(
@@ -146,17 +171,59 @@ class _MenusPageState extends State<MenusPage> {
                       })),
               iconTheme: const IconThemeData(color: Color(0xFF6D7D95)),
               actions: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                    right: 16.0,
-                  ),
-                  child: GestureDetector(
-                      onTap: () {
-                        Navigator.pushNamed(context, "/home");
-                      },
-                      child: const Icon(Icons.favorite_border_outlined,
-                          color: Color(0xFF0081CF))),
-                ),
+                GestureDetector(
+                    onTap: () async {
+                      Navigator.pushNamed(context, "/notifications");
+                    },
+                    child: FutureBuilder<RequestsMessages>(
+                        future: getAllRequestsByUser(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height:
+                                        MediaQuery.of(context).size.height));
+                          } else if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          } else if (!snapshot.hasData) {
+                            return const Text('');
+                          }
+                          var requestsList = snapshot.data!;
+
+                          requests = requestsList.requestsMessages.length;
+
+                          return Padding(
+                              padding: const EdgeInsets.only(right: 16),
+                              child: requests != 0
+                                  ? Stack(children: [
+                                      const Icon(Icons.notifications_outlined,
+                                          color: Color(0xFF0081CF), size: 32),
+                                      Positioned(
+                                        right: 0,
+                                        top: 6,
+                                        child: CircleAvatar(
+                                          backgroundColor: const Color.fromARGB(
+                                              255, 207, 0, 0),
+                                          radius: 9,
+                                          child: Text(
+                                            requests > 99
+                                                ? "99+"
+                                                : requests.toString(),
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 8,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                    ])
+                                  : const Icon(Icons.notifications_outlined,
+                                      color: Color(0xFF0081CF), size: 32));
+                        })),
               ],
             )
           : null,
@@ -177,8 +244,11 @@ class _MenusPageState extends State<MenusPage> {
       drawer: const DrawerPage(),
       bottomNavigationBar: CustomCurvedNavigationBar(
         currentIndex: _currentIndex,
-        onTap: (index) {
+        onTap: (index) async {
+          var allRequests = await getAllRequestsByUser();
+
           setState(() {
+            requests = allRequests.requestsMessages.length;
             _currentIndex = index;
             _pageController.animateToPage(
               index,

@@ -91,8 +91,8 @@ class _TravelComponentState extends State<TravelComponent> {
 
   @override
   void initState() {
-    fetchData();
     super.initState();
+    fetchData();
   }
 
   @override
@@ -301,8 +301,8 @@ class _TravelComponentState extends State<TravelComponent> {
                               const SizedBox(
                                 height: 30,
                               ),
-                              Row(
-                                children: const [
+                              const Row(
+                                children: [
                                   AutoSizeText(
                                     "Activités proposées",
                                     style: TextStyle(
@@ -376,6 +376,7 @@ class _TravelComponentState extends State<TravelComponent> {
                 height: 50.0,
                 width: 250.00,
                 child: FloatingActionButton(
+                    backgroundColor: const Color(0xFF0081CF),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     onPressed: () async {

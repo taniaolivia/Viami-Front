@@ -70,6 +70,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 size: 20,
               )),
         ),
+        backgroundColor: Colors.white,
         body: SingleChildScrollView(
             child: FutureBuilder<User>(
                 future: getUser(),
@@ -92,9 +93,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Container(
                           padding: const EdgeInsets.fromLTRB(20, 20, 20, 60),
                           child: Column(
-                            children: <Widget>[
-                              EditProfilePage(user: user)
-                            ],
+                            children: <Widget>[EditProfilePage(user: user)],
                           )));
                 })));
   }

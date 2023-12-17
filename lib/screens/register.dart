@@ -202,7 +202,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         minFontSize: 11,
                         maxFontSize: 13,
                         overflow: TextOverflow.fade,
-                        style: TextStyle(fontFamily: "Poppins"),
+                        style: TextStyle(
+                            fontFamily: "Poppins", color: Colors.white),
                       ),
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {

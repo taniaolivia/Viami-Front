@@ -173,11 +173,11 @@ class _ActivityComponentState extends State<ActivityComponent> {
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
                             return BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                              child: Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: MediaQuery.of(context).size.height ) 
-                            );
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height:
+                                        MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
                             return Text('Error: ${snapshot.error}');
                           } else if (!snapshot.hasData) {
@@ -262,7 +262,9 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                 title: Text(
                                                     'Notez cette activité'),
                                                 content: RatingBar.builder(
-                                                  initialRating: note != null ? note!.toDouble() : 0.0,
+                                                  initialRating: note != null
+                                                      ? note!.toDouble()
+                                                      : 0.0,
                                                   minRating: 1,
                                                   direction: Axis.horizontal,
                                                   allowHalfRating: false,
@@ -328,19 +330,20 @@ class _ActivityComponentState extends State<ActivityComponent> {
                 height: 50.0,
                 width: 250.00,
                 child: FloatingActionButton(
+                    backgroundColor: const Color(0xFF0081CF),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     onPressed: () {
                       Navigator.pushNamed(context, "/profile");
                     },
-                    child: Row(
+                    child: const Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         AutoSizeText(
                           "Réserver",
                           minFontSize: 11,
                           maxFontSize: 13,
-                          style: const TextStyle(
+                          style: TextStyle(
                               color: Colors.white,
                               fontFamily: "Poppins",
                               fontWeight: FontWeight.bold),
