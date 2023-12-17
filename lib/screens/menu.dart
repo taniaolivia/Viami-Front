@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/payment.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
@@ -104,6 +105,10 @@ class MenuPage extends StatelessWidget {
                     },
                     child: const Text("D'accord")),
               );
+            } else if (item.title == "Paiement") {
+              onSelectedItem(item);
+
+              Navigator.push(context, FadePageRoute(page: const PaymentPage()));
             } else {
               onSelectedItem(item);
             }
