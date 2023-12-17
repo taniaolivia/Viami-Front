@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:viami/models-api/faq/Faq.dart';
+import 'package:viami/models-api/faqs/FaqData.dart';
 
 class FaqService {
   Future<Faq> getFaqById(int faqId, String token) async {
@@ -18,4 +18,6 @@ class FaqService {
       throw Exception('Failed to load faq');
     }
   }
+
+  
 }
