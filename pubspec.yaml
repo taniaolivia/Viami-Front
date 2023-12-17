@@ -42,6 +42,8 @@ dependencies:
   firebase_messaging: ^14.7.6
   firebase_analytics: ^10.7.2
   url_launcher: ^6.0.6
+  flutter_stripe: ^5.1.0
+  stripe_checkout: ^1.0.0
 
 dev_dependencies:
   flutter_test:
