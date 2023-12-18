@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:viami/firebase_api.dart';
 import 'package:viami/screens/allPopularActivities.dart';
 import 'package:viami/screens/drawer.dart';
+import 'package:viami/screens/faqDetails.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/messenger.dart';
@@ -13,12 +15,19 @@ import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/updatePassword.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 import 'components/myCustomDialog.dart';
 
 void main() async {
-  await dotenv.load(fileName: "lib/.env");
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load(fileName: "lib/.env");
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseApi().initNotifications();
 
   runApp(const MyApp());
 }
@@ -43,7 +52,7 @@ class MyApp extends StatelessWidget {
           "/start": (context) => const StartPage(),
           "/register": (context) => const RegisterPage(),
           "/settings": (context) => const SettingsPage(),
-          "/notif": (context) => NotificationsPage(),
+          "/notifications": (context) => const NotificationsPage(),
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
@@ -51,7 +60,9 @@ class MyApp extends StatelessWidget {
           "/activities/popular": (context) => const AllPopularActivitiesPage(),
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
-          "/messages": (context) => const MessengerPage(),
+
+          "faqDetails": (context) => const FaqDetailsPage()
+
         });
   }
 }

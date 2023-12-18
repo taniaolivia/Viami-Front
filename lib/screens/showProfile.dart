@@ -350,6 +350,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                 height: 40.0,
                 width: 140.0,
                 child: FloatingActionButton(
+                    backgroundColor: const Color(0xFF0081CF),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     onPressed: () {

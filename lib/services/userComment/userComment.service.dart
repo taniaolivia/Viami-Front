@@ -34,7 +34,6 @@ class UserCommentService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print(res['message']);
     } else {
       throw Exception('Failed to add comment');
     }
