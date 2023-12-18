@@ -11,6 +11,7 @@ void showSnackbar(BuildContext context, String message, String buttonText,
         )),
     action: SnackBarAction(
       label: buttonText,
+      textColor: Colors.white,
       onPressed: () {
         if (redirectAction != "") {
           Navigator.pushNamed(context, redirectAction);

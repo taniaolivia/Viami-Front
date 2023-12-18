@@ -2,7 +2,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/models-api/travelImage/travelsImages.dart';
-import 'package:viami/models-api/userImage/usersImages.dart';
 
 class TravelsImagesService {
   Future<TravelsImages> getAllTravelsImages(String token) async {

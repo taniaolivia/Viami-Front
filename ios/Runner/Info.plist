@@ -64,5 +64,12 @@
 		<key>NSLocationAlwaysUsageDescription</key>
 		<string>Allow access to location</string>
 
+		<key>LSApplicationQueriesSchemes</key>
+		<array>
+			<string>instagram</string>
+			<string>youtube</string>
+			<string>facebook</string>
+			<string>twitter</string>
+		</array>
 	</dict>
 </plist>

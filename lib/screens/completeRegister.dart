@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:gender_picker/gender_picker.dart';
 import 'package:gender_picker/source/enums.dart';
@@ -266,7 +267,9 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                   minFontSize: 11,
                                   maxFontSize: 13,
                                   overflow: TextOverflow.fade,
-                                  style: TextStyle(fontFamily: "Poppins"),
+                                  style: TextStyle(
+                                      fontFamily: "Poppins",
+                                      color: Colors.white),
                                 ),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
@@ -298,6 +301,12 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                           "Désolé, vous devez être 18 ans ou plus pour s'inscrire",
                                           "J'ai compris");
                                     } else {
+                                      var storage =
+                                          const FlutterSecureStorage();
+
+                                      var fcmToken =
+                                          await storage.read(key: "fcmToken");
+
                                       var user = await UserService().register(
                                           widget.firstName,
                                           widget.lastName,
@@ -306,7 +315,8 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                           widget.phone,
                                           location,
                                           birthday,
-                                          sex);
+                                          sex,
+                                          fcmToken.toString());
 
                                       if (user != null) {
                                         if (user.message ==

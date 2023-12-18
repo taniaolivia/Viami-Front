@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/dialogMessage.dart';
@@ -43,19 +44,8 @@ class _SettingsPage extends State<SettingsPage> {
 
   bool startAnimation = false;
   final List<String> items = [
-    "Supprimer le compte ",
-    "Changer le mot de passe ",
-    "item3",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
-    "item 2 ",
+    "Supprimer mon compte ",
+    "Changer mon mot de passe ",
   ];
   final List<IconData> icons = [
     Icons.delete,
@@ -100,75 +90,60 @@ class _SettingsPage extends State<SettingsPage> {
       });
     }
     return Scaffold(
-        body: FutureBuilder<User>(
-      future: getUser(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("");
-        }
-
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        }
-
-        if (!snapshot.hasData) {
-          return Text('');
-        }
-        var user = snapshot.data!;
-        return SafeArea(
-            child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(children: [
-            Container(
-                decoration: const BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(20),
-                      bottomRight: Radius.circular(20),
-                    )),
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        IconButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            icon: const Icon(
-                              Icons.arrow_back_ios,
-                              size: 20,
-                              color: Colors.white,
-                            )),
-                        const SizedBox(
-                          width: 30,
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.only(top: 40),
-                          child: Text(
-                            "Paramètres",
-                            style: TextStyle(color: Colors.white, fontSize: 35),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                )),
-            const SizedBox(
-              height: 15,
-            ),
-            ListView.builder(
-              primary: false,
-              shrinkWrap: true,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return item(index, token!, userId);
+        appBar: AppBar(
+          title: const AutoSizeText(
+            'Paramètres',
+            minFontSize: 16,
+            maxFontSize: 18,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, "/home");
               },
-            ),
-          ]),
+              icon: const Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+                size: 20,
+              )),
+          backgroundColor: const Color(0xFF0081CF),
+        ),
+        body: FutureBuilder<User>(
+          future: getUser(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Text("");
+            }
+
+            if (snapshot.hasError) {
+              return Text('Error: ${snapshot.error}');
+            }
+
+            if (!snapshot.hasData) {
+              return const Text('');
+            }
+            var user = snapshot.data!;
+            return SafeArea(
+                child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                ListView.builder(
+                  primary: false,
+                  shrinkWrap: true,
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return item(index, token!, userId);
+                  },
+                ),
+              ]),
+            ));
+          },
         ));
-      },
-    ));
   }
 
   bool validatePasswordChange(
