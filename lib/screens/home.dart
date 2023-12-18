@@ -29,9 +29,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -48,7 +48,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     if (tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /*WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -60,58 +60,59 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               },
             ),
             null);
-      });
+      });*/
     }
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-          child: Column(children: [
-        FutureBuilder<User>(
-            future: getUser(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Container(height: 28);
-              }
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: FutureBuilder<User>(
+              future: getUser(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(height: 28);
+                }
 
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              }
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
 
-              if (!snapshot.hasData) {
-                return Text('');
-              }
+                if (!snapshot.hasData) {
+                  return Text('');
+                }
 
-              var user = snapshot.data!;
+                var user = snapshot.data!;
 
-              return Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
-                  child: Align(
-                      alignment: Alignment.centerLeft,
+                return Column(children: [
+                  Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 0, 5),
+                      child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: AutoSizeText(
+                            "Salut ${toBeginningOfSentenceCase(user.firstName)},",
+                            minFontSize: 15,
+                            maxFontSize: 18,
+                            textAlign: TextAlign.left,
+                            style: const TextStyle(
+                                color: Color(0xFF39414B),
+                                fontWeight: FontWeight.w300),
+                          ))),
+                  const Padding(
+                      padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
                       child: AutoSizeText(
-                        "Salut ${toBeginningOfSentenceCase(user.firstName)},",
-                        minFontSize: 15,
-                        maxFontSize: 18,
+                        "Trouve ton / ta partenaire pour voyager ?",
+                        minFontSize: 22,
+                        maxFontSize: 25,
                         textAlign: TextAlign.left,
-                        style: const TextStyle(
-                            color: Color(0xFF39414B),
-                            fontWeight: FontWeight.w300),
-                      )));
-            }),
-        const Padding(
-            padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
-            child: AutoSizeText(
-              "Trouve ton / ta partenaire pour voyager ?",
-              minFontSize: 22,
-              maxFontSize: 25,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                  color: Color(0xFF0A2753), fontWeight: FontWeight.bold),
-            )),
-        const PopularThemePage(),
-        const RecommendationActivityPage(),
-        const FaqPage()
-      ])),
-    );
+                        style: TextStyle(
+                            color: Color(0xFF0A2753),
+                            fontWeight: FontWeight.bold),
+                      )),
+                  const PopularThemePage(),
+                  const RecommendationActivityPage(),
+                  const FaqPage()
+                ]);
+              }),
+        ));
   }
 }

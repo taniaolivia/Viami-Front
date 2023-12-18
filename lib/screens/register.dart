@@ -58,6 +58,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                             labelText: 'Prénom*',
                             labelStyle: TextStyle(fontSize: 12),
+                            focusedBorder: OutlineInputBorder(),
+                            floatingLabelStyle: TextStyle(
+                                color: Color.fromARGB(255, 81, 81, 81)),
                             prefixIcon: Icon(
                               Icons.account_circle_outlined,
                               color: Colors.grey,
@@ -78,6 +81,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Nom*',
+                            focusedBorder: OutlineInputBorder(),
+                            floatingLabelStyle: TextStyle(
+                                color: Color.fromARGB(255, 81, 81, 81)),
                             contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                             labelStyle: TextStyle(fontSize: 12),
                           ),
@@ -105,6 +111,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           labelText: 'Email*',
                           hintText: ' Ex: example@gmail.com',
                           labelStyle: TextStyle(fontSize: 12),
+                          focusedBorder: OutlineInputBorder(),
+                          floatingLabelStyle:
+                              TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
                           prefixIcon: Icon(
                             Icons.email_outlined,
                             color: Colors.grey,
@@ -118,6 +127,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         decoration: const InputDecoration(
                           labelText: 'Numéro de téléphone',
                           hintText: "690752111",
+                          focusedBorder: OutlineInputBorder(),
+                          floatingLabelStyle:
+                              TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
                           border: OutlineInputBorder(),
                           contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                           labelStyle: TextStyle(fontSize: 12),
@@ -160,6 +172,9 @@ class _RegisterPageState extends State<RegisterPage> {
                             contentPadding:
                                 const EdgeInsets.fromLTRB(10, 5, 10, 5),
                             labelStyle: const TextStyle(fontSize: 12),
+                            focusedBorder: const OutlineInputBorder(),
+                            floatingLabelStyle: const TextStyle(
+                                color: Color.fromARGB(255, 81, 81, 81)),
                             prefixIcon: const Icon(
                               Icons.fingerprint,
                               color: Colors.grey,

@@ -47,9 +47,9 @@ class _MenusPageState extends State<MenusPage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -109,7 +109,7 @@ class _MenusPageState extends State<MenusPage> {
     ];
 
     if (tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /*WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -121,7 +121,7 @@ class _MenusPageState extends State<MenusPage> {
               },
             ),
             null);
-      });
+      });*/
     }
     ;
     return Scaffold(

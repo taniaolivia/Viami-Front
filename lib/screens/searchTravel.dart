@@ -97,6 +97,9 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                                 border: UnderlineInputBorder(),
                                 labelText: 'Date de départ*',
                                 labelStyle: TextStyle(fontSize: 14),
+                                focusedBorder: UnderlineInputBorder(),
+                                floatingLabelStyle: TextStyle(
+                                    color: Color.fromARGB(255, 81, 81, 81)),
                                 icon: Icon(
                                   Icons.calendar_month_outlined,
                                   color: Colors.blue,

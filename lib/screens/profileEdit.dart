@@ -100,6 +100,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         filled: true,
                         fillColor: Color(0xFFF4F4F4),
                         border: OutlineInputBorder(),
+                        focusedBorder: OutlineInputBorder(),
+                        floatingLabelStyle:
+                            TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
                         contentPadding: EdgeInsets.fromLTRB(15, 5, 15, 5),
                         labelStyle: TextStyle(fontSize: 12),
                       ),

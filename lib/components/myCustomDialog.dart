@@ -91,6 +91,9 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                           ),
                           contentPadding: EdgeInsets.fromLTRB(15, 5, 10, 5),
                           labelText: 'Recherche par prénom',
+                          focusedBorder: OutlineInputBorder(),
+                          floatingLabelStyle:
+                              TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
                           hintText: '',
                           labelStyle: TextStyle(fontSize: 12),
                         ),

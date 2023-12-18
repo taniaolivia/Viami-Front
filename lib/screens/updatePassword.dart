@@ -160,6 +160,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                                 border: const OutlineInputBorder(),
                                 labelStyle: const TextStyle(fontSize: 12),
                                 labelText: 'Ancien mot de passe',
+                                focusedBorder: const OutlineInputBorder(),
+                                floatingLabelStyle: const TextStyle(
+                                    color: Color.fromARGB(255, 81, 81, 81)),
                                 suffixIcon: IconButton(
                                   icon: Icon(passwordVisible
                                       ? Icons.visibility
@@ -212,6 +215,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                                 ),
                                 border: const OutlineInputBorder(),
                                 labelStyle: const TextStyle(fontSize: 12),
+                                focusedBorder: const OutlineInputBorder(),
+                                floatingLabelStyle: const TextStyle(
+                                    color: Color.fromARGB(255, 81, 81, 81)),
                                 suffixIcon: IconButton(
                                   icon: Icon(passwordVisible
                                       ? Icons.visibility
@@ -264,6 +270,9 @@ class _UpdatePassword extends State<UpdatePassword> {
                                 ),
                                 border: const OutlineInputBorder(),
                                 labelStyle: const TextStyle(fontSize: 12),
+                                focusedBorder: const OutlineInputBorder(),
+                                floatingLabelStyle: const TextStyle(
+                                    color: Color.fromARGB(255, 81, 81, 81)),
                                 suffixIcon: IconButton(
                                   icon: Icon(passwordVisible
                                       ? Icons.visibility

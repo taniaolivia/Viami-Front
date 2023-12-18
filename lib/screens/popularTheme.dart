@@ -57,7 +57,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
   Future<Themes> getAllThemes() async {
     token = await storage.read(key: "token");
 
-    return ThemessService().getAllThemes(token.toString());
+    return ThemesService().getAllThemes(token.toString());
   }
 
   Future<Activities> getTopFivePopularTravels() async {

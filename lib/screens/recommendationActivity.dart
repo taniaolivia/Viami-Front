@@ -86,8 +86,8 @@ class _RecommendationActivityPageState
             var activity = snapshot.data!;
 
             return Container(
-                constraints:
-                    const BoxConstraints(minHeight: 280, maxHeight: 300),
+                width: MediaQuery.of(context).size.width,
+                height: 290,
                 margin: const EdgeInsets.only(
                     left: 10, right: 0, top: 0, bottom: 30),
                 child: ListView.builder(
@@ -96,7 +96,7 @@ class _RecommendationActivityPageState
                     itemBuilder: (context, index) {
                       return Padding(
                           padding: const EdgeInsets.only(
-                              left: 10, right: 15, top: 20, bottom: 20),
+                              left: 15, right: 15, top: 20, bottom: 20),
                           child: Row(children: [
                             GestureDetector(
                                 onTap: () {
@@ -111,8 +111,7 @@ class _RecommendationActivityPageState
                                 },
                                 child: Container(
                                     alignment: Alignment.center,
-                                    width:
-                                        MediaQuery.of(context).size.width / 1.5,
+                                    width: 280,
                                     padding: const EdgeInsets.all(20),
                                     decoration: BoxDecoration(
                                         borderRadius: const BorderRadius.all(
@@ -136,52 +135,31 @@ class _RecommendationActivityPageState
                                         ]),
                                     child: Column(children: [
                                       Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          height: MediaQuery.of(context)
-                                                      .size
-                                                      .width <=
-                                                  320
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  4
-                                              : MediaQuery.of(context)
-                                                      .size
-                                                      .height /
-                                                  6,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.all(
-                                                Radius.circular(10),
-                                              ),
-                                              boxShadow: const [
-                                                BoxShadow(
-                                                  color: Colors.grey,
-                                                  blurRadius: 10.0,
-                                                  spreadRadius: 0.0,
-                                                  offset: Offset(
-                                                    5.0,
-                                                    5.0,
-                                                  ),
-                                                )
-                                              ],
-                                              image: DecorationImage(
-                                                  fit: BoxFit.cover,
-                                                  image: NetworkImage(
-                                                    "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
-                                                  ))),
-                                          child: GestureDetector(onTap: () {
-                                            setState(() {
-                                              if (likedList.contains(index)) {
-                                                likedList.removeWhere(
-                                                    (element) =>
-                                                        element == index);
-                                              } else {
-                                                likedList.add(index);
-                                              }
-                                            });
-                                          })),
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 120,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.all(
+                                              Radius.circular(10),
+                                            ),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.grey,
+                                                blurRadius: 10.0,
+                                                spreadRadius: 0.0,
+                                                offset: Offset(
+                                                  5.0,
+                                                  5.0,
+                                                ),
+                                              )
+                                            ],
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image: NetworkImage(
+                                                  "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                                ))),
+                                      ),
                                       const SizedBox(
                                         height: 25,
                                       ),

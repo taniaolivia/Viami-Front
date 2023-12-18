@@ -54,6 +54,9 @@ class _LoginPageState extends State<LoginPage> {
                           contentPadding: EdgeInsets.fromLTRB(10, 5, 10, 5),
                           labelText: 'Email*',
                           hintText: ' Ex: example@gmail.com',
+                          floatingLabelStyle:
+                              TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
+                          focusedBorder: OutlineInputBorder(),
                           labelStyle: TextStyle(fontSize: 12),
                           prefixIcon: Icon(
                             Icons.email_outlined,
@@ -78,6 +81,9 @@ class _LoginPageState extends State<LoginPage> {
                             contentPadding:
                                 const EdgeInsets.fromLTRB(10, 5, 10, 5),
                             labelStyle: const TextStyle(fontSize: 12),
+                            focusedBorder: const OutlineInputBorder(),
+                            floatingLabelStyle: const TextStyle(
+                                color: Color.fromARGB(255, 81, 81, 81)),
                             prefixIcon: const Icon(
                               Icons.fingerprint,
                               color: Colors.grey,
