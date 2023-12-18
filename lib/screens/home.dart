@@ -1,7 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/faq.dart';
@@ -10,6 +13,8 @@ import 'package:viami/screens/recommendationActivity.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+
+import 'package:geolocator/geolocator.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +29,80 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String? token = "";
   String? userId = "";
   bool? tokenExpired;
+  final MapController mapController = MapController();
+  LatLng currentLocation = LatLng(0, 0);
+
+  Future<void> checkAndRequestLocationPermission() async {
+    PermissionStatus status = await Permission.location.status;
+
+    if (status != PermissionStatus.granted) {
+      status = await Permission.location.request();
+
+      if (status != PermissionStatus.granted) {
+        // L'utilisateur a refusé l'autorisation
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text("Accès à la localisation refusé"),
+              content: Text(
+                "Pour utiliser cette fonctionnalité, veuillez autoriser l'accès à votre emplacement dans les paramètres de l'application.",
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text("OK"),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
+    }
+  }
+
+  void _getCurrentLocation() async {
+    var locationPermission = await Permission.location.status;
+
+    if (locationPermission == PermissionStatus.granted) {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high,
+        );
+        print(
+            "Latitude: ${position.latitude}, Longitude: ${position.longitude}");
+        setState(() {
+          currentLocation = LatLng(position.latitude, position.longitude);
+        });
+      } catch (e) {
+        print("Error: $e");
+      }
+    } else {
+      print("Permission d'emplacement refusée");
+      // L'utilisateur a refusé l'autorisation
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text("Accès à la localisation refusé"),
+            content: Text(
+              "Pour utiliser cette fonctionnalité, veuillez autoriser l'accès à votre emplacement dans les paramètres de l'application.",
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+  }
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -43,6 +122,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    _getCurrentLocation();
     getUser();
   }
 
@@ -112,56 +192,52 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         const PopularThemePage(),
         const RecommendationActivityPage(),
         const FaqPage(),
-        
         Padding(
-        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 50),
-        child: Column(children: [
-          const Align(
-              alignment: Alignment.centerLeft,
-              child: AutoSizeText(
-                "La carte",
-                minFontSize: 18,
-                maxFontSize: 20,
-                style: TextStyle(
-                    fontWeight: FontWeight.bold, color: Color(0xFF0A2753)),
-              )),
-          const SizedBox(height: 20),
-        
-          Container(
-  height: 290,
-  width: MediaQuery.of(context).size.width / 1.5,
-  decoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(20),
-    image: DecorationImage(
-      fit: BoxFit.cover,
-      image: NetworkImage('assets/map.png'),
-    ),
-  ),
-  child: Stack(
-    children: [
-      Positioned(
-        top: 0,
-        left: 60,
-        right: 0,
-        bottom: 0,
-        child: Icon(
-          Icons.location_on,
-          size: 30,
-          color: Colors.blue, 
-        ),
-      ),
-    ],
-  ),
-),
-
-          const SizedBox(height: 20),
-         
-        ])),
-
-
-
-     
-        
+            padding: const EdgeInsets.only(left: 20, right: 20, bottom: 50),
+            child: Column(children: [
+              const Align(
+                  alignment: Alignment.centerLeft,
+                  child: AutoSizeText(
+                    "La carte",
+                    minFontSize: 18,
+                    maxFontSize: 20,
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold, color: Color(0xFF0A2753)),
+                  )),
+              const SizedBox(height: 20),
+              Container(
+                height: MediaQuery.of(context).size.height / 2,
+                child: FlutterMap(
+                  options: MapOptions(
+                    center: LatLng(51.509364, -0.128928),
+                    zoom: 9.2,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate:
+                          'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.example.app',
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                            width: 40.0,
+                            height: 40.0,
+                            point: LatLng(51.509364, -0.128928),
+                            builder: ((context) => Container(
+                                  child: Icon(
+                                    Icons.location_on,
+                                    color: Colors.blue,
+                                    size: 40.0,
+                                  ),
+                                )))
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ])),
       ])),
     );
   }
