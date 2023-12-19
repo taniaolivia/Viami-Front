@@ -48,7 +48,6 @@ class _MessengerPageState extends State<MessengerPage> {
 
   int? userCount;
 
-
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
   Color seulButtonColor = Colors.white;
@@ -1095,41 +1094,38 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 IconButton(
                                                   icon: Icon(Icons.send),
                                                   onPressed: () async {
-                                                    int count = await GroupsService()
-                                                        .getUserCountInGroup(
-                                                            token.toString(),
-                                                            message
-                                                                .groupId
-                                                                .toString());
+                                                    int count =
+                                                        await GroupsService()
+                                                            .getUserCountInGroup(
+                                                                token
+                                                                    .toString(),
+                                                                message.groupId
+                                                                    .toString());
 
                                                     setState(() {
                                                       userCount = count;
                                                     });
 
-                                                    String otherUser =
-                                                        message.senderId !=
-                                                                userId
-                                                            ?  message.senderId
-                                                            :  message.responderId;
+                                                    String otherUser = message
+                                                                .senderId !=
+                                                            userId
+                                                        ? message.senderId
+                                                        : message.responderId;
 
                                                     if (userCount == 2) {
-                                                      if(discussion.messages.length==0){
+                                                      if (discussion.messages
+                                                              .length ==
+                                                          0) {
+                                                        print("other userrrr");
+                                                        print(otherUser);
+                                                        await send(
+                                                            message.groupId,
+                                                            _textController
+                                                                .text,
+                                                            otherUser);
 
-                                                          print("other userrrr");
-                                                      print(otherUser);
-                                                      await send(
-                                                           message
-                                                                .groupId
-                                                                ,
-                                                          _textController.text,
-                                                          otherUser);
-
-                                                      _textController.clear();
-
-                                                      }else{
-                                                        
-                                                      }
-                                                    
+                                                        _textController.clear();
+                                                      } else {}
                                                     } else {
                                                       await send(
                                                           null,
