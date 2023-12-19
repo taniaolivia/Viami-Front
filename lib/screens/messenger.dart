@@ -38,16 +38,19 @@ class _MessengerPageState extends State<MessengerPage> {
   final _formKey = GlobalKey<FormState>();
   final _formKeySearch = GlobalKey<FormState>();
 
+  ScrollController _scrollController = ScrollController();
+
   TextEditingController searchController = TextEditingController();
   TextEditingController _textController = TextEditingController();
+  bool _isKeyboardVisible = false;
 
   String? token = "";
   String? userId = "";
 
   Groups? discussionMessages;
+  Messages? discussion;
 
   int? userCount;
-
 
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
@@ -108,6 +111,7 @@ class _MessengerPageState extends State<MessengerPage> {
   Future<void> send(int? groupId, String message, String? responderId) async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
+
     return MessageService()
         .sendMessage(token.toString(), groupId, message, userId, responderId);
   }
@@ -179,15 +183,22 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   void _handleSubmitted(String text) {
-    // Ajoutez votre logique ici pour gérer l'envoi du message
     print("Message envoyé: $text");
-    _textController.clear(); // Efface le champ de saisie après l'envoi
+    _textController.clear();
   }
 
   @override
   void initState() {
     fetchData();
     clearFilters();
+    _scrollController.addListener(() {
+      final isKeyboardVisible = _scrollController.position.maxScrollExtent > 0;
+      if (isKeyboardVisible != _isKeyboardVisible) {
+        setState(() {
+          _isKeyboardVisible = isKeyboardVisible;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -392,7 +403,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
                         return GestureDetector(
                           onTap: () async {
-                            var discussion = await getDiscussionsForMessageWith(
+                            discussion = await getDiscussionsForMessageWith(
                               discussionMessages!.groups[index].lastMessage.id
                                   .toString(),
                             );
@@ -725,12 +736,12 @@ class _MessengerPageState extends State<MessengerPage> {
                                           Expanded(
                                             child: ListView.builder(
                                               itemCount:
-                                                  discussion.messages.length,
+                                                  discussion?.messages.length,
                                               itemBuilder: (context, index) {
                                                 var message =
-                                                    discussion.messages[index];
+                                                    discussion?.messages[index];
                                                 bool isUserMessage =
-                                                    message.senderId == userId;
+                                                    message?.senderId == userId;
                                                 Color containerColor =
                                                     isUserMessage
                                                         ? const Color(
@@ -740,7 +751,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
                                                 DateTime messageDateTime =
                                                     DateTime.parse(
-                                                        message.date);
+                                                        message!.date);
                                                 DateTime now = DateTime.now();
                                                 bool isToday =
                                                     messageDateTime.year ==
@@ -1061,24 +1072,23 @@ class _MessengerPageState extends State<MessengerPage> {
                                               },
                                             ),
                                           ),
-
-                                          //row send message
                                           Container(
                                             padding: EdgeInsets.all(16.0),
                                             child: Row(
                                               children: [
                                                 // Champ de saisie de texte avec icône à droite
                                                 Expanded(
-                                                  child: TextField(
+                                                  child: TextFormField(
                                                     controller: _textController,
                                                     decoration:
                                                         const InputDecoration(
-                                                      border: OutlineInputBorder(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                                  Radius
-                                                                      .circular(
-                                                                          15))),
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15)),
+                                                      ),
                                                       contentPadding:
                                                           EdgeInsets.fromLTRB(
                                                               15, 5, 10, 5),
@@ -1095,83 +1105,89 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 IconButton(
                                                   icon: Icon(Icons.send),
                                                   onPressed: () async {
-                                                    int count = await GroupsService()
-                                                        .getUserCountInGroup(
-                                                            token.toString(),
-                                                            message
-                                                                .groupId
-                                                                .toString());
+                                                    int count =
+                                                        await GroupsService()
+                                                            .getUserCountInGroup(
+                                                      token.toString(),
+                                                      message.groupId
+                                                          .toString(),
+                                                    );
 
                                                     setState(() {
                                                       userCount = count;
                                                     });
 
-                                                    String otherUser =
-                                                        message.senderId !=
-                                                                userId
-                                                            ?  message.senderId
-                                                            :  message.responderId;
-                                                              print("other userrrr otherrrrrrr");
-                                                              print(" messageeeeegroupId");
-                                                              print( message.groupId);
-                                                      print(otherUser);
+                                                    String otherUser = message
+                                                                .senderId !=
+                                                            userId
+                                                        ? message.senderId
+                                                        : message.responderId;
 
                                                     if (userCount == 2) {
-                                                      if(discussion.messages.length==0){
-
-                                                          print("other userrrr");
-                                                      print(otherUser);
-                                                      await send(
-                                                           null
-                                                                ,
-                                                          _textController.text,
-                                                          otherUser);
-
-                                                      _textController.clear();
-
-                                                      }else{
-                                                        send(
-                                                           message.groupId
-                                                                
-                                                                ,
-                                                          _textController.text,
-                                                          otherUser);
-
-                                                      _textController.clear();
-                                                      print("other userrrr 2222222");
-                                                      print(otherUser);
-                                                        
-                                                      }
-                                                    
-                                                    } else {
-                                                       if(discussion.messages.length==0){
+                                                      if (discussion?.messages
+                                                              .length ==
+                                                          0) {
                                                         await send(
-                                                          null,
-                                                          _textController.text,
-                                                          otherUser);
-
-                                                      _textController.clear();
-
-                                                       }else{
-                                                         await send(
-                                                          message
-                                                                .groupId,
-                                                          _textController.text,
-                                                          otherUser);
-                                                           _textController.clear();
-                                                          
-
-                                                       }
-                                                      
+                                                            null,
+                                                            _textController
+                                                                .text,
+                                                            otherUser);
+                                                      } else {
+                                                        await send(
+                                                            message.groupId,
+                                                            _textController
+                                                                .text,
+                                                            otherUser);
+                                                      }
+                                                    } else {
+                                                      if (discussion?.messages
+                                                              .length ==
+                                                          0) {
+                                                        await send(
+                                                            null,
+                                                            _textController
+                                                                .text,
+                                                            otherUser);
+                                                      } else {
+                                                        await send(
+                                                            message.groupId,
+                                                            _textController
+                                                                .text,
+                                                            otherUser);
+                                                      }
                                                     }
 
+                                                    var newDisc =
+                                                        await getDiscussionsForMessageWith(
+                                                      discussionMessages!
+                                                          .groups[index]
+                                                          .lastMessage
+                                                          .id
+                                                          .toString(),
+                                                    );
+
+                                                    // Update the local state with the new discussions data
+                                                    setState(() {
+                                                      discussion = newDisc;
+                                                    });
+
+                                                    _textController.clear();
                                                     _handleSubmitted(
                                                         _textController.text);
+
+                                                    // Faites défiler vers le bas après l'envoi du message
+                                                    _scrollController.animateTo(
+                                                      _scrollController.position
+                                                          .maxScrollExtent,
+                                                      duration: Duration(
+                                                          milliseconds: 300),
+                                                      curve: Curves.easeOut,
+                                                    );
                                                   },
                                                 ),
                                               ],
                                             ),
-                                          )
+                                          ),
                                         ],
                                       ),
                                     );
