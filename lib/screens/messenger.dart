@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:viami/components/users_no_discussion.dart';
 import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
@@ -37,6 +38,7 @@ class _MessengerPageState extends State<MessengerPage> {
   final storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
   final _formKeySearch = GlobalKey<FormState>();
+  late IO.Socket socket;
 
   ScrollController _scrollController = ScrollController();
 
@@ -111,10 +113,20 @@ class _MessengerPageState extends State<MessengerPage> {
   Future<void> send(int? groupId, String message, String? responderId) async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
+    
 
     return MessageService()
         .sendMessage(token.toString(), groupId, message, userId, responderId);
   }
+
+  /*var newDisc =
+                                                        await getDiscussionsForMessageWith(
+                                                      discussionMessages!
+                                                          .groups[index]
+                                                          .lastMessage
+                                                          .id
+                                                          .toString(),
+                                                    );*/
 
   Future<void> getDiscussionsByFilter() async {
     switch (filterSeulGroup) {
@@ -188,9 +200,26 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   @override
+  void dispose() {
+    // Disconnect from the Socket.IO server when the widget is destroyed
+    socket.disconnect();
+    super.dispose();
+  }
+
+  @override
   void initState() {
     fetchData();
     clearFilters();
+    // Connect to the Socket.IO server
+    socket = IO.io('${dotenv.env['SO_URL']}/3001');
+    socket.connect();
+
+    // Listen for 'chat message' events for real-time updates
+    socket.on('chat message', (data) {
+      // Refresh the discussion when a new message is received
+      //refreshDiscussion();
+    });
+
     _scrollController.addListener(() {
       final isKeyboardVisible = _scrollController.position.maxScrollExtent > 0;
       if (isKeyboardVisible != _isKeyboardVisible) {
