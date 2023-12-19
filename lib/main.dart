@@ -61,9 +61,7 @@ class MyApp extends StatelessWidget {
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
           "/messages": (context) => const MessengerPage(),
-
           "faqDetails": (context) => const FaqDetailsPage()
-
         });
   }
 }

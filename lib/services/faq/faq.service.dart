@@ -18,4 +18,6 @@ class FaqService {
       throw Exception('Failed to load faq');
     }
   }
+
+  
 }

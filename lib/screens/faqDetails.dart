@@ -21,32 +21,38 @@ class FaqDetailsPage extends StatefulWidget {
 class _FaqDetailsPageState extends State<FaqDetailsPage> {
   String? token = "";
   final storage = const FlutterSecureStorage();
+  final _formKeySearchName = GlobalKey<FormState>();
+  TextEditingController searchControllerName = TextEditingController();
 
   late Faqs faqs;
-  late Faqs allFaqs;
+  late Future<Faqs?> all;
+  Faqs? allFaqs;
+
+  Future<void> getDisplayFaqs() async {
+    token = await storage.read(key: "token");
+    allFaqs = await FaqsService().getAllFaq(token.toString());
+
+    if (mounted) {
+      setState(() {});
+    }
+  }
 
   Future<Faqs> getAllFrqFaqs() {
-    Future<Faqs> getTopFiveFrequentedFaq() async {
+    //getAllFrqFaqs //getFFaqs
+    Future<Faqs> getFFaqs() async {
       token = await storage.read(key: "token");
       return FaqsService().getTopFiveFrequentedFaq(token.toString());
     }
 
-    return getTopFiveFrequentedFaq();
-  }
-
-  Future<Faqs> getDisplayFaqs() {
-    Future<Faqs> getAllFaqs() async {
-      token = await storage.read(key: "token");
-      return FaqsService().getAllFaq(token.toString());
-    }
-
-    return getAllFaqs();
+    return getFFaqs();
   }
 
   bool startAnimation = false;
   @override
   void initState() {
     super.initState();
+    getDisplayFaqs();
+    getAllFrqFaqs();
     WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
       setState(() {
         startAnimation = true;
@@ -105,6 +111,107 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                               ),
                             )
                           ]),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    // Barre de recherche
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width / 1.5,
+                            child: Form(
+                              key: _formKeySearchName,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return 'Veuillez remplir votre quistion';
+                                      }
+                                      return null;
+                                    },
+                                    controller: searchControllerName,
+                                    decoration: const InputDecoration(
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(15)),
+                                      ),
+                                      contentPadding:
+                                          EdgeInsets.fromLTRB(15, 5, 10, 5),
+                                      labelText: 'Recherche ',
+                                      hintText: '',
+                                      labelStyle: TextStyle(fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF0081CF),
+                              padding:
+                                  const EdgeInsets.only(top: 20, bottom: 20),
+                              shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15)),
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.search,
+                              color: Colors.white,
+                              size: 20.0,
+                            ),
+                            onPressed: () async {
+                              if (_formKeySearchName.currentState!.validate()) {
+                                var searchName = searchControllerName.text;
+
+                                var faqSearch = await FaqsService()
+                                    .searchFaqByKeyword(token!, searchName);
+
+                                if (faqSearch != null) {
+                                  setState(() {
+                                    allFaqs = faqSearch;
+                                  });
+                                }
+
+                                FocusScope.of(context).unfocus();
+                                setState(() {});
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () async {
+                            var clearName =
+                                await FaqsService().getAllFaq(token.toString());
+
+                            setState(() {
+                              allFaqs = clearName;
+                              searchControllerName.text = "";
+                            });
+
+                            FocusScope.of(context).unfocus();
+                          },
+                          child: const Text(
+                            "Réinitialiser",
+                            style: TextStyle(fontSize: 12),
+                          ),
+                        ),
+                      ),
                     ),
                   ])),
               Container(
@@ -272,41 +379,19 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                     }),
               ),
               //allll
-              Container(
-                height:MediaQuery.of(context).size.height /2,
-                child: FutureBuilder<Faqs>(
-                  future: getDisplayFaqs(),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                        ),
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else if (!snapshot.hasData) {
-                      return const Text('');
-                    }
-
-                    allFaqs = snapshot.data!;
-
-                    return ListView.builder(
-                      primary: false,
-                      shrinkWrap: true,
-                      itemCount: allFaqs.faqs.length,
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (context, index) {
-                        final allFaq = allFaqs.faqs[index];
-
-                        return item(allFaq, index);
-                      },
-                    );
-                  },
-                ),
-              ),
+              if (allFaqs?.faqs.isEmpty ?? true) Text('Aucun Faq trouvé'),
+              if (!(allFaqs?.faqs.isEmpty ?? true))
+                Container(
+                    height: MediaQuery.of(context).size.height / 2,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children:
+                            List.generate(allFaqs?.faqs.length ?? 0, (index) {
+                          var allFaq = allFaqs?.faqs[index];
+                          return item(allFaq!, index);
+                        }),
+                      ),
+                    )),
             ],
           ),
         )));

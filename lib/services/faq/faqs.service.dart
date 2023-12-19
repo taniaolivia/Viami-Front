@@ -38,4 +38,21 @@ class FaqsService {
       throw Exception('Failed to load faqs');
     }
   }
+
+  Future<Faqs> searchFaqByKeyword(String token, String keyword) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/faq/search/$keyword'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return Faqs.fromJson(res);
+    } else {
+      throw Exception('Failed to load faqs');
+    }
+  }
 }

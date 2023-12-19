@@ -21,9 +21,6 @@ import 'package:viami/services/message/groups.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/services/travel/travels.service.dart';
-
-
-
 import '../components/myCustomDialog.dart';
 import '../models-api/user/users.dart';
 import '../components/pageTransition.dart';
@@ -50,8 +47,6 @@ class _MessengerPageState extends State<MessengerPage> {
   Groups? discussionMessages;
 
   int? userCount;
-
-
 
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
@@ -1099,41 +1094,38 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 IconButton(
                                                   icon: Icon(Icons.send),
                                                   onPressed: () async {
-                                                    int count = await GroupsService()
-                                                        .getUserCountInGroup(
-                                                            token.toString(),
-                                                            message
-                                                                .groupId
-                                                                .toString());
+                                                    int count =
+                                                        await GroupsService()
+                                                            .getUserCountInGroup(
+                                                                token
+                                                                    .toString(),
+                                                                message.groupId
+                                                                    .toString());
 
                                                     setState(() {
                                                       userCount = count;
                                                     });
 
-                                                    String otherUser =
-                                                        message.senderId !=
-                                                                userId
-                                                            ?  message.senderId
-                                                            :  message.responderId;
+                                                    String otherUser = message
+                                                                .senderId !=
+                                                            userId
+                                                        ? message.senderId
+                                                        : message.responderId;
 
                                                     if (userCount == 2) {
-                                                      if(discussion.messages.length==0){
+                                                      if (discussion.messages
+                                                              .length ==
+                                                          0) {
+                                                        print("other userrrr");
+                                                        print(otherUser);
+                                                        await send(
+                                                            message.groupId,
+                                                            _textController
+                                                                .text,
+                                                            otherUser);
 
-                                                          print("other userrrr");
-                                                      print(otherUser);
-                                                      await send(
-                                                           message
-                                                                .groupId
-                                                                ,
-                                                          _textController.text,
-                                                          otherUser);
-
-                                                      _textController.clear();
-
-                                                      }else{
-                                                        
-                                                      }
-                                                    
+                                                        _textController.clear();
+                                                      } else {}
                                                     } else {
                                                       await send(
                                                           null,
