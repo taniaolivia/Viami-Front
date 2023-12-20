@@ -23,9 +23,9 @@ class UsersService {
     }
   }
 
-  Future<Users> getUsersWithConversation(String token, String userId) async {
+  Future<Users> getAllUsersBySerch(String token, String searchName) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/users/$userId/conversations'),
+      Uri.parse('${dotenv.env['API_URL']}/users/search/$searchName'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -33,8 +33,6 @@ class UsersService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print("resssssssssssssusers conversation ");
-      print(res);
 
       return Users.fromJson(res);
     } else {
@@ -42,9 +40,9 @@ class UsersService {
     }
   }
 
-  Future<Users> getAllUsersBySerch(String token, String searchName) async {
+  Future<Users> getUsersWithConversation(String token, String userId) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/users/search/$searchName'),
+      Uri.parse('${dotenv.env['API_URL']}/users/$userId/conversations'),
       headers: <String, String>{
         'Authorization': token,
       },
