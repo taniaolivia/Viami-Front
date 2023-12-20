@@ -38,6 +38,9 @@ dependencies:
   path_provider: ^2.0.4
   get: ^4.1.4
   jwt_decoder: ^2.0.1
+  flutter_map: ^4.0.0
+  latlong2: ^0.8.2
+  permission_handler: ^11.1.0
   firebase_core: ^2.24.0
   firebase_messaging: ^14.7.6
   firebase_analytics: ^10.7.2
@@ -45,6 +48,7 @@ dependencies:
   flutter_stripe: ^5.1.0
   stripe_checkout: ^1.0.0
   flutter_native_splash: ^2.3.8
+  socket_io_client: ^2.0.3+1
 
 dev_dependencies:
   flutter_test:

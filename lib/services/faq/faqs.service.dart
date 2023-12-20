@@ -1,12 +1,13 @@
-import 'package:viami/models-api/user/users.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-class UsersService {
-  Future<Users> getAllUsers(String token) async {
+import '../../models-api/faqs/faqDatas.dart';
+
+class FaqsService {
+  Future<Faqs> getAllFaq(String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/users'),
+      Uri.parse('${dotenv.env['API_URL']}/faq'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -14,18 +15,16 @@ class UsersService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print("resssssssssssssusers");
-      print(res);
 
-      return Users.fromJson(res);
+      return Faqs.fromJson(res);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load faqs');
     }
   }
 
-  Future<Users> getAllUsersBySerch(String token, String searchName) async {
+  Future<Faqs> getTopFiveFrequentedFaq(String token) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/users/search/$searchName'),
+      Uri.parse('${dotenv.env['API_URL']}/frequentedFive/faq'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -34,15 +33,15 @@ class UsersService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return Users.fromJson(res);
+      return Faqs.fromJson(res);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load faqs');
     }
   }
 
-  Future<Users> getUsersWithConversation(String token, String userId) async {
+  Future<Faqs> searchFaqByKeyword(String token, String keyword) async {
     final response = await http.get(
-      Uri.parse('${dotenv.env['API_URL']}/users/$userId/conversations'),
+      Uri.parse('${dotenv.env['API_URL']}/faq/search/$keyword'),
       headers: <String, String>{
         'Authorization': token,
       },
@@ -51,9 +50,9 @@ class UsersService {
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
-      return Users.fromJson(res);
+      return Faqs.fromJson(res);
     } else {
-      throw Exception('Failed to load user');
+      throw Exception('Failed to load faqs');
     }
   }
 }

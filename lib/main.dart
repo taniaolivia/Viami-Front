@@ -4,6 +4,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:viami/firebase_api.dart';
 import 'package:viami/screens/allPopularActivities.dart';
 import 'package:viami/screens/drawer.dart';
+import 'package:viami/screens/faqDetails.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/messenger.dart';
@@ -18,6 +19,8 @@ import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/updatePassword.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+
+import 'components/myCustomDialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +65,7 @@ class MyApp extends StatelessWidget {
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
           "/messages": (context) => const MessengerPage(),
+          "faqDetails": (context) => const FaqDetailsPage()
         });
   }
 }

@@ -1,6 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
+import 'faqDetails.dart';
+
 class FaqPage extends StatefulWidget {
   const FaqPage({Key? key}) : super(key: key);
 
@@ -36,7 +38,12 @@ class _FaqPageState extends State<FaqPage> {
           Align(
               alignment: Alignment.centerLeft,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FaqDetailsPage()),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.all(10),
                     minimumSize: const Size(100, 20),

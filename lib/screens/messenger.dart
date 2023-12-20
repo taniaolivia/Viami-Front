@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:viami/components/users_no_discussion.dart';
 import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
@@ -37,13 +38,21 @@ class _MessengerPageState extends State<MessengerPage> {
   final storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
   final _formKeySearch = GlobalKey<FormState>();
+  late IO.Socket socket;
+
+  ScrollController _scrollController = ScrollController();
 
   TextEditingController searchController = TextEditingController();
+  TextEditingController _textController = TextEditingController();
+  bool _isKeyboardVisible = false;
 
   String? token = "";
   String? userId = "";
 
   Groups? discussionMessages;
+  Messages? discussion;
+
+  int? userCount;
 
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
@@ -57,7 +66,6 @@ class _MessengerPageState extends State<MessengerPage> {
   String filterSeulGroup = "all";
   String? selectedLocation;
   List locationList = [""];
-  int numLoadingFinish = 0;
 
   Future<Travels> getListTravels() {
     Future<Travels> getAllTravels() async {
@@ -100,6 +108,29 @@ class _MessengerPageState extends State<MessengerPage> {
   Future<Groups> getAllDiscussionsForUserByLocation(String location) {
     return GroupsService()
         .getGroupUsersDiscussionsByLocation(token!, userId!, location);
+  }
+
+  Future<void> send(int? groupId, String message, String? responderId) async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+    // Envoyez le message à l'aide de l'ID de discussion
+    var messageData = {
+      'text': message,
+      'discussionId': groupId.toString(),
+    };
+
+    // Envoyez le message au serveur
+    socket.emit('chat message', messageData);
+    var newDisc = await MessagesService()
+        .getDiscussionsForGroup(token.toString(), groupId.toString());
+    setState(() {
+      discussion = newDisc;
+    });
+
+    _textController.clear();
+
+    return MessageService()
+        .sendMessage(token.toString(), groupId, message, userId, responderId);
   }
 
   Future<void> getDiscussionsByFilter() async {
@@ -168,10 +199,40 @@ class _MessengerPageState extends State<MessengerPage> {
     return await UserStatusService().getUserStatusById(travelerId!, token!);
   }
 
+  void _handleSubmitted(String text) {
+    print("Message envoyé: $text");
+    _textController.clear();
+  }
+
+  @override
+  void dispose() {
+    // Disconnect from the Socket.IO server when the widget is destroyed
+    socket.disconnect();
+    super.dispose();
+  }
+
   @override
   void initState() {
     fetchData();
     clearFilters();
+    // Connect to the Socket.IO server
+    socket = IO.io('${dotenv.env['SO_URL']}');
+    socket.connect();
+
+    // Listen for 'chat message' events for real-time updates
+    socket.on('chat message', (data) {
+      // Refresh the discussion when a new message is received
+      //refreshDiscussion();
+    });
+
+    _scrollController.addListener(() {
+      final isKeyboardVisible = _scrollController.position.maxScrollExtent > 0;
+      if (isKeyboardVisible != _isKeyboardVisible) {
+        setState(() {
+          _isKeyboardVisible = isKeyboardVisible;
+        });
+      }
+    });
     super.initState();
   }
 
@@ -270,9 +331,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                     contentPadding:
                                         EdgeInsets.fromLTRB(15, 5, 10, 5),
                                     labelText: 'Recherche par prénom',
-                                    focusedBorder: OutlineInputBorder(),
-                                    floatingLabelStyle: TextStyle(
-                                        color: Color.fromARGB(255, 81, 81, 81)),
                                     hintText: '',
                                     labelStyle: TextStyle(fontSize: 12),
                                   ),
@@ -280,7 +338,7 @@ class _MessengerPageState extends State<MessengerPage> {
                               ],
                             ))),
                     const SizedBox(
-                      width: 10,
+                      width: 5,
                     ),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
@@ -346,12 +404,13 @@ class _MessengerPageState extends State<MessengerPage> {
                             ConnectionState.waiting) {
                           return BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                            child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height,
+                            ),
                           );
                         } else if (snapshot.hasError) {
-                          return Text(
-                            '${snapshot.error}',
-                            textAlign: TextAlign.center,
-                          );
+                          return Text('Error: ${snapshot.error}');
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
@@ -378,7 +437,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
                         return GestureDetector(
                           onTap: () async {
-                            var discussion = await getDiscussionsForMessageWith(
+                            discussion = await getDiscussionsForMessageWith(
                               discussionMessages!.groups[index].lastMessage.id
                                   .toString(),
                             );
@@ -409,401 +468,64 @@ class _MessengerPageState extends State<MessengerPage> {
                                 return StatefulBuilder(
                                   builder: (BuildContext context,
                                       StateSetter setState) {
-                                    return Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 10, bottom: 10, left: 20),
-                                      height:
-                                          MediaQuery.of(context).size.height -
-                                              30,
-                                      decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(30),
-                                        ),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            height: 8,
-                                            width: 40,
-                                            margin: const EdgeInsets.symmetric(
-                                              vertical: 10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
+                                    return SingleChildScrollView(
+                                      child: Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 10, bottom: 10, left: 20),
+                                        height:
+                                            MediaQuery.of(context).size.height -
+                                                30,
+                                        decoration: const BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(30),
                                           ),
-                                          const SizedBox(height: 5),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                  width: 70,
-                                                  height: 50,
-                                                  alignment: Alignment.center,
-                                                  color: Colors.white,
-                                                  child: Stack(
-                                                      children: List.generate(
-                                                          users.length,
-                                                          (userIndex) {
-                                                    return FutureBuilder(
-                                                        future: getUserImages(
-                                                            userIds[
-                                                                userIndex]!),
-                                                        builder: (context,
-                                                            snapshot) {
-                                                          if (snapshot
-                                                                  .connectionState ==
-                                                              ConnectionState
-                                                                  .waiting) {
-                                                            return Container(
-                                                              width:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
-                                                              height:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height,
-                                                              child: BackdropFilter(
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Container(
+                                              height: 8,
+                                              width: 40,
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                vertical: 10,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.grey,
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Row(
+                                              children: [
+                                                Container(
+                                                    width: 70,
+                                                    height: 50,
+                                                    alignment: Alignment.center,
+                                                    color: Colors.white,
+                                                    child: Stack(
+                                                        children: List.generate(
+                                                            users.length,
+                                                            (userIndex) {
+                                                      return FutureBuilder(
+                                                          future: getUserImages(
+                                                              userIds[
+                                                                  userIndex]!),
+                                                          builder: (context,
+                                                              snapshot) {
+                                                            if (snapshot
+                                                                    .connectionState ==
+                                                                ConnectionState
+                                                                    .waiting) {
+                                                              return BackdropFilter(
                                                                   filter: ImageFilter
                                                                       .blur(
                                                                           sigmaX:
                                                                               5,
                                                                           sigmaY:
-                                                                              5)),
-                                                            );
-                                                          } else if (snapshot
-                                                              .hasError) {
-                                                            return Text(
-                                                                '${snapshot.error}');
-                                                          } else if (!snapshot
-                                                              .hasData) {
-                                                            return const Text(
-                                                                '');
-                                                          }
-
-                                                          var image =
-                                                              snapshot.data!;
-
-                                                          var avatar = image
-                                                                      .userImages
-                                                                      .length !=
-                                                                  0
-                                                              ? CircleAvatar(
-                                                                  backgroundImage:
-                                                                      NetworkImage(
-                                                                          "${image.userImages[0].image}"),
-                                                                  maxRadius: 25,
-                                                                )
-                                                              : CircleAvatar(
-                                                                  backgroundColor:
-                                                                      const Color
-                                                                          .fromARGB(
-                                                                          255,
-                                                                          220,
-                                                                          234,
-                                                                          250),
-                                                                  foregroundImage:
-                                                                      NetworkImage(
-                                                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                                  maxRadius: 25,
-                                                                );
-
-                                                          if (userIndex < 2) {
-                                                            if (users.length ==
-                                                                1) {
-                                                              return Positioned(
-                                                                left: 10,
-                                                                child: avatar,
-                                                              );
-                                                            } else {
-                                                              return Positioned(
-                                                                right: userIndex
-                                                                        .toDouble() *
-                                                                    15,
-                                                                child: avatar,
-                                                              );
-                                                            }
-                                                          } else if (userIndex >=
-                                                              2) {
-                                                            return Positioned(
-                                                              right: userIndex <
-                                                                      2
-                                                                  ? userIndex
-                                                                          .toDouble() *
-                                                                      15
-                                                                  : 0,
-                                                              child: Stack(
-                                                                children: [
-                                                                  avatar,
-                                                                  Positioned(
-                                                                    bottom: 0,
-                                                                    left: 0,
-                                                                    child:
-                                                                        CircleAvatar(
-                                                                      backgroundColor:
-                                                                          Colors
-                                                                              .blue,
-                                                                      maxRadius:
-                                                                          15,
-                                                                      child:
-                                                                          Text(
-                                                                        '+${users.length - 2}',
-                                                                        style: const TextStyle(
-                                                                            color:
-                                                                                Colors.white,
-                                                                            fontWeight: FontWeight.bold),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            );
-                                                          }
-                                                          return const SizedBox();
-                                                        });
-                                                  }))),
-                                              const SizedBox(width: 20),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    1.5,
-                                                padding: const EdgeInsets.only(
-                                                  top: 10,
-                                                  bottom: 10,
-                                                ),
-                                                decoration: const BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: Color(0XFFE8E6EA),
-                                                    ),
-                                                  ),
-                                                ),
-                                                child: Column(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    const SizedBox(height: 10),
-                                                    Align(
-                                                      alignment:
-                                                          Alignment.topLeft,
-                                                      child: AutoSizeText(
-                                                        allUsers,
-                                                        minFontSize: 10,
-                                                        maxFontSize: 12,
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width /
-                                                              1.7,
-                                                          child: Align(
-                                                              alignment:
-                                                                  Alignment
-                                                                      .topLeft,
-                                                              child: Row(
-                                                                children: [
-                                                                  status.status ==
-                                                                          "online"
-                                                                      ? const Icon(
-                                                                          Icons
-                                                                              .circle,
-                                                                          color: Color.fromARGB(
-                                                                              255,
-                                                                              0,
-                                                                              207,
-                                                                              62),
-                                                                          size:
-                                                                              10,
-                                                                        )
-                                                                      : Text(
-                                                                          ""),
-                                                                  const SizedBox(
-                                                                    width: 5,
-                                                                  ),
-                                                                  AutoSizeText(
-                                                                    status.status ==
-                                                                            "online"
-                                                                        ? toBeginningOfSentenceCase(
-                                                                            "en ligne",
-                                                                          )!
-                                                                        : toBeginningOfSentenceCase(
-                                                                            "hors ligne",
-                                                                          )!,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    minFontSize:
-                                                                        10,
-                                                                    maxFontSize:
-                                                                        12,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 5),
-                                                  ],
-                                                ),
-                                              ),
-                                              PopupMenuButton<String>(
-                                                child: Container(
-                                                  width: 20,
-                                                  child: Icon(Icons.more_vert),
-                                                ),
-                                                onSelected: (value) {
-                                                  if (value ==
-                                                      'ajouterVoyageur') {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        var groupeIdPass =
-                                                            discussionMessages!
-                                                                .groups[index]
-                                                                .lastMessage
-                                                                .groupId;
-
-                                                        return MyCustomDialog(
-                                                          groupId: groupeIdPass,
-                                                        );
-                                                      },
-                                                    );
-                                                  }
-                                                },
-                                                itemBuilder: (BuildContext
-                                                        context) =>
-                                                    <PopupMenuEntry<String>>[
-                                                  const PopupMenuItem<String>(
-                                                    value: 'ajouterVoyageur',
-                                                    child: ListTile(
-                                                      leading: Icon(
-                                                          Icons.person_add),
-                                                      title: Text(
-                                                          'Ajouter un Voyageur'),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                          Expanded(
-                                            child: ListView.builder(
-                                              itemCount:
-                                                  discussion.messages.length,
-                                              itemBuilder: (context, index) {
-                                                var message =
-                                                    discussion.messages[index];
-                                                bool isUserMessage =
-                                                    message.senderId == userId;
-                                                Color containerColor =
-                                                    isUserMessage
-                                                        ? const Color(
-                                                            0xFF0081CF)
-                                                        : const Color(
-                                                            0xFFF3F3F3);
-
-                                                DateTime messageDateTime =
-                                                    DateTime.parse(
-                                                        message.date);
-                                                DateTime now = DateTime.now();
-                                                bool isToday =
-                                                    messageDateTime.year ==
-                                                            now.year &&
-                                                        messageDateTime.month ==
-                                                            now.month &&
-                                                        messageDateTime.day ==
-                                                            now.day;
-
-                                                String formattedDate;
-
-                                                if (isToday) {
-                                                  formattedDate =
-                                                      DateFormat.jm().format(
-                                                          messageDateTime);
-                                                } else {
-                                                  formattedDate = DateFormat(
-                                                          'd MMM y, hh:mm')
-                                                      .format(messageDateTime);
-                                                }
-
-                                                return Align(
-                                                  alignment: isUserMessage
-                                                      ? Alignment.centerRight
-                                                      : Alignment.centerLeft,
-                                                  child: ListTile(
-                                                    title: Container(
-                                                      margin:
-                                                          const EdgeInsets.all(
-                                                              18),
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              18),
-                                                      decoration: BoxDecoration(
-                                                        color: containerColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                      child: Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          if (message
-                                                                  .senderId !=
-                                                              userId)
-                                                            Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      right:
-                                                                          10),
-                                                              width: 48,
-                                                              height: 48,
-                                                              decoration:
-                                                                  const BoxDecoration(
-                                                                shape: BoxShape
-                                                                    .circle,
-                                                                color: Colors
-                                                                    .transparent,
-                                                              ),
-                                                              child:
-                                                                  FutureBuilder(
-                                                                future: getUserImages(
-                                                                    message
-                                                                        .senderId),
-                                                                builder: (context,
-                                                                    snapshot) {
-                                                                  if (snapshot
-                                                                          .connectionState ==
-                                                                      ConnectionState
-                                                                          .waiting) {
-                                                                    return Container(
+                                                                              5),
+                                                                  child: Container(
                                                                       width: MediaQuery.of(
                                                                               context)
                                                                           .size
@@ -811,23 +533,443 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                       height: MediaQuery.of(
                                                                               context)
                                                                           .size
-                                                                          .height,
-                                                                      child: BackdropFilter(
-                                                                          filter: ImageFilter.blur(
-                                                                              sigmaX: 5,
-                                                                              sigmaY: 5)),
-                                                                    );
-                                                                  } else if (snapshot
-                                                                      .hasError) {
-                                                                    return Text(
-                                                                        'Error: ${snapshot.error}');
-                                                                  } else if (!snapshot
-                                                                          .hasData ||
-                                                                      snapshot
-                                                                          .data!
-                                                                          .userImages
-                                                                          .isEmpty) {
-                                                                    return GestureDetector(
+                                                                          .height));
+                                                            } else if (snapshot
+                                                                .hasError) {
+                                                              return Text(
+                                                                  'Error: ${snapshot.error}');
+                                                            } else if (!snapshot
+                                                                .hasData) {
+                                                              return const Text(
+                                                                  '');
+                                                            }
+
+                                                            var image =
+                                                                snapshot.data!;
+
+                                                            var avatar = image
+                                                                        .userImages
+                                                                        .length !=
+                                                                    0
+                                                                ? CircleAvatar(
+                                                                    backgroundImage:
+                                                                        NetworkImage(
+                                                                            "${image.userImages[0].image}"),
+                                                                    maxRadius:
+                                                                        25,
+                                                                  )
+                                                                : CircleAvatar(
+                                                                    backgroundColor:
+                                                                        const Color
+                                                                            .fromARGB(
+                                                                            255,
+                                                                            220,
+                                                                            234,
+                                                                            250),
+                                                                    foregroundImage:
+                                                                        NetworkImage(
+                                                                            "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                    maxRadius:
+                                                                        25,
+                                                                  );
+
+                                                            if (userIndex < 2) {
+                                                              if (users
+                                                                      .length ==
+                                                                  1) {
+                                                                return Positioned(
+                                                                  left: 10,
+                                                                  child: avatar,
+                                                                );
+                                                              } else {
+                                                                return Positioned(
+                                                                  right: userIndex
+                                                                          .toDouble() *
+                                                                      15,
+                                                                  child: avatar,
+                                                                );
+                                                              }
+                                                            } else if (userIndex >=
+                                                                2) {
+                                                              return Positioned(
+                                                                right: userIndex <
+                                                                        2
+                                                                    ? userIndex
+                                                                            .toDouble() *
+                                                                        15
+                                                                    : 0,
+                                                                child: Stack(
+                                                                  children: [
+                                                                    avatar,
+                                                                    Positioned(
+                                                                      bottom: 0,
+                                                                      left: 0,
+                                                                      child:
+                                                                          CircleAvatar(
+                                                                        backgroundColor:
+                                                                            Colors.blue,
+                                                                        maxRadius:
+                                                                            15,
+                                                                        child:
+                                                                            Text(
+                                                                          '+${users.length - 2}',
+                                                                          style: const TextStyle(
+                                                                              color: Colors.white,
+                                                                              fontWeight: FontWeight.bold),
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            }
+                                                            return const SizedBox();
+                                                          });
+                                                    }))),
+                                                const SizedBox(width: 20),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      2.0,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 10,
+                                                    bottom: 10,
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      const SizedBox(
+                                                          height: 10),
+                                                      Align(
+                                                        alignment:
+                                                            Alignment.topLeft,
+                                                        child: AutoSizeText(
+                                                          allUsers,
+                                                          minFontSize: 10,
+                                                          maxFontSize: 12,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      const SizedBox(height: 5),
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                2,
+                                                            child: Align(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .topLeft,
+                                                                child: Row(
+                                                                  children: [
+                                                                    status.status ==
+                                                                            "online"
+                                                                        ? const Icon(
+                                                                            Icons.circle,
+                                                                            color: Color.fromARGB(
+                                                                                255,
+                                                                                0,
+                                                                                207,
+                                                                                62),
+                                                                            size:
+                                                                                10,
+                                                                          )
+                                                                        : Text(
+                                                                            ""),
+                                                                    const SizedBox(
+                                                                      width: 5,
+                                                                    ),
+                                                                    AutoSizeText(
+                                                                      status.status ==
+                                                                              "online"
+                                                                          ? toBeginningOfSentenceCase(
+                                                                              "en ligne",
+                                                                            )!
+                                                                          : toBeginningOfSentenceCase(
+                                                                              "hors ligne",
+                                                                            )!,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      minFontSize:
+                                                                          10,
+                                                                      maxFontSize:
+                                                                          12,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                )),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Builder(builder:
+                                                    (BuildContext context) {
+                                                  return PopupMenuButton<
+                                                      String>(
+                                                    child: Container(
+                                                      height: 10,
+                                                      width: 50,
+                                                      child: Icon(
+                                                        Icons.more_vert,
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      if (value ==
+                                                          'ajouterVoyageur') {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            var groupeIdPass =
+                                                                discussionMessages!
+                                                                    .groups[
+                                                                        index]
+                                                                    .lastMessage
+                                                                    .groupId;
+
+                                                            return MyCustomDialog(
+                                                              groupId:
+                                                                  groupeIdPass,
+                                                            );
+                                                          },
+                                                        );
+                                                      }
+                                                    },
+                                                    itemBuilder: (BuildContext
+                                                            context) =>
+                                                        <PopupMenuEntry<
+                                                            String>>[
+                                                      const PopupMenuItem<
+                                                          String>(
+                                                        value:
+                                                            'ajouterVoyageur',
+                                                        child: ListTile(
+                                                          leading: Icon(
+                                                              color:
+                                                                  Colors.black,
+                                                              Icons.person_add),
+                                                          title: Text(
+                                                              'Ajouter un Voyageur'),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                })
+                                                ////
+                                              ],
+                                            ),
+                                            Divider(
+                                                thickness: 1,
+                                                height: 2,
+                                                color: Color(0XFFE8E6EA)),
+                                            Expanded(
+                                              child: ListView.builder(
+                                                itemCount:
+                                                    discussion?.messages.length,
+                                                itemBuilder: (context, index) {
+                                                  var message = discussion
+                                                      ?.messages[index];
+                                                  bool isUserMessage =
+                                                      message?.senderId ==
+                                                          userId;
+                                                  Color containerColor =
+                                                      isUserMessage
+                                                          ? const Color(
+                                                              0xFF0081CF)
+                                                          : const Color(
+                                                              0xFFF3F3F3);
+
+                                                  DateTime messageDateTime =
+                                                      DateTime.parse(
+                                                          message!.date);
+                                                  DateTime now = DateTime.now();
+
+                                                  bool isToday = messageDateTime
+                                                              .year ==
+                                                          now.year &&
+                                                      messageDateTime.month ==
+                                                          now.month &&
+                                                      messageDateTime.day ==
+                                                          now.day;
+
+                                                  String formattedDate;
+
+                                                  if (isToday) {
+                                                    formattedDate =
+                                                        DateFormat.jm().format(
+                                                            messageDateTime);
+                                                  } else {
+                                                    formattedDate = DateFormat(
+                                                            'd MMM y, hh:mm')
+                                                        .format(
+                                                            messageDateTime);
+                                                  }
+
+                                                  return Align(
+                                                    alignment: isUserMessage
+                                                        ? Alignment.centerRight
+                                                        : Alignment.centerLeft,
+                                                    child: ListTile(
+                                                      title: Container(
+                                                        margin: const EdgeInsets
+                                                            .all(18),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(18),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: containerColor,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                        ),
+                                                        child: Row(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            if (message
+                                                                    .senderId !=
+                                                                userId)
+                                                              Container(
+                                                                margin:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        right:
+                                                                            10),
+                                                                width: 48,
+                                                                height: 48,
+                                                                decoration:
+                                                                    const BoxDecoration(
+                                                                  shape: BoxShape
+                                                                      .circle,
+                                                                  color: Colors
+                                                                      .transparent,
+                                                                ),
+                                                                child:
+                                                                    FutureBuilder(
+                                                                  future: getUserImages(
+                                                                      message
+                                                                          .senderId),
+                                                                  builder: (context,
+                                                                      snapshot) {
+                                                                    if (snapshot
+                                                                            .connectionState ==
+                                                                        ConnectionState
+                                                                            .waiting) {
+                                                                      return BackdropFilter(
+                                                                        filter: ImageFilter.blur(
+                                                                            sigmaX:
+                                                                                5,
+                                                                            sigmaY:
+                                                                                5),
+                                                                        child:
+                                                                            Container(
+                                                                          width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width,
+                                                                          height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .height,
+                                                                        ),
+                                                                      );
+                                                                    } else if (snapshot
+                                                                        .hasError) {
+                                                                      return Text(
+                                                                          'Error: ${snapshot.error}');
+                                                                    } else if (!snapshot
+                                                                            .hasData ||
+                                                                        snapshot
+                                                                            .data!
+                                                                            .userImages
+                                                                            .isEmpty) {
+                                                                      return GestureDetector(
+                                                                        onTapDown:
+                                                                            (TapDownDetails
+                                                                                details) async {
+                                                                          final RenderBox
+                                                                              overlay =
+                                                                              Overlay.of(context)!.context.findRenderObject() as RenderBox;
+                                                                          final RelativeRect
+                                                                              position =
+                                                                              RelativeRect.fromRect(
+                                                                            details.globalPosition &
+                                                                                const Size(40, 40),
+                                                                            overlay.localToGlobal(Offset.zero) &
+                                                                                overlay.size,
+                                                                          );
+
+                                                                          final String?
+                                                                              choice =
+                                                                              await showMenu<String>(
+                                                                            context:
+                                                                                context,
+                                                                            position:
+                                                                                position,
+                                                                            items: [
+                                                                              const PopupMenuItem<String>(
+                                                                                value: 'go_to_profile',
+                                                                                child: Text('Voir le profil'),
+                                                                              ),
+                                                                            ],
+                                                                          );
+
+                                                                          if (choice ==
+                                                                              'go_to_profile') {
+                                                                            Navigator.push(
+                                                                              context,
+                                                                              FadePageRoute(
+                                                                                  page: ShowProfilePage(
+                                                                                showButton: false,
+                                                                                userId: message.senderId,
+                                                                                showComment: true,
+                                                                              )),
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                        child:
+                                                                            CircleAvatar(
+                                                                          backgroundColor: const Color
+                                                                              .fromARGB(
+                                                                              255,
+                                                                              220,
+                                                                              234,
+                                                                              250),
+                                                                          foregroundImage:
+                                                                              NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                          maxRadius:
+                                                                              15,
+                                                                        ),
+                                                                      );
+                                                                    }
+                                                                    var image =
+                                                                        snapshot
+                                                                            .data!;
+
+                                                                    var avatar =
+                                                                        GestureDetector(
                                                                       onTapDown:
                                                                           (TapDownDetails
                                                                               details) async {
@@ -875,180 +1017,251 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                       },
                                                                       child:
                                                                           CircleAvatar(
-                                                                        backgroundColor: const Color
-                                                                            .fromARGB(
-                                                                            255,
-                                                                            220,
-                                                                            234,
-                                                                            250),
-                                                                        foregroundImage:
-                                                                            NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                        backgroundImage:
+                                                                            NetworkImage("${image.userImages[0].image}"),
                                                                         maxRadius:
                                                                             15,
                                                                       ),
                                                                     );
-                                                                  }
-                                                                  var image =
-                                                                      snapshot
-                                                                          .data!;
 
-                                                                  var avatar =
-                                                                      GestureDetector(
-                                                                    onTapDown:
-                                                                        (TapDownDetails
-                                                                            details) async {
-                                                                      final RenderBox
-                                                                          overlay =
-                                                                          Overlay.of(context)!
-                                                                              .context
-                                                                              .findRenderObject() as RenderBox;
-                                                                      final RelativeRect
-                                                                          position =
-                                                                          RelativeRect
-                                                                              .fromRect(
-                                                                        details.globalPosition &
-                                                                            const Size(40,
-                                                                                40),
-                                                                        overlay.localToGlobal(Offset.zero) &
-                                                                            overlay.size,
-                                                                      );
-
-                                                                      final String?
-                                                                          choice =
-                                                                          await showMenu<
-                                                                              String>(
-                                                                        context:
-                                                                            context,
-                                                                        position:
-                                                                            position,
-                                                                        items: [
-                                                                          const PopupMenuItem<
-                                                                              String>(
-                                                                            value:
-                                                                                'go_to_profile',
-                                                                            child:
-                                                                                Text('Voir le profil'),
-                                                                          ),
-                                                                        ],
-                                                                      );
-
-                                                                      if (choice ==
-                                                                          'go_to_profile') {
-                                                                        Navigator
-                                                                            .push(
-                                                                          context,
-                                                                          FadePageRoute(
-                                                                              page: ShowProfilePage(
-                                                                            showButton:
-                                                                                false,
-                                                                            userId:
-                                                                                message.senderId,
-                                                                            showComment:
-                                                                                true,
-                                                                          )),
-                                                                        );
-                                                                      }
-                                                                    },
-                                                                    child:
-                                                                        CircleAvatar(
-                                                                      backgroundImage:
-                                                                          NetworkImage(
-                                                                              "${image.userImages[0].image}"),
-                                                                      maxRadius:
-                                                                          15,
-                                                                    ),
-                                                                  );
-
-                                                                  return avatar;
-                                                                },
+                                                                    return avatar;
+                                                                  },
+                                                                ),
                                                               ),
-                                                            ),
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                if (message
-                                                                        .senderId !=
-                                                                    userId)
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  if (message
+                                                                          .senderId !=
+                                                                      userId)
+                                                                    AutoSizeText(
+                                                                      message
+                                                                          .senderFirstName,
+                                                                      minFontSize:
+                                                                          10,
+                                                                      maxFontSize:
+                                                                          12,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        color: Colors
+                                                                            .blue,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
                                                                   AutoSizeText(
-                                                                    message
-                                                                        .senderFirstName,
+                                                                    toBeginningOfSentenceCase(
+                                                                        message
+                                                                            .message)!,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
                                                                     minFontSize:
                                                                         10,
                                                                     maxFontSize:
                                                                         12,
                                                                     style:
                                                                         const TextStyle(
-                                                                      color: Colors
-                                                                          .blue,
                                                                       fontWeight:
                                                                           FontWeight
-                                                                              .bold,
+                                                                              .w500,
                                                                     ),
                                                                   ),
-                                                                AutoSizeText(
-                                                                  toBeginningOfSentenceCase(
-                                                                      message
-                                                                          .message)!,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  minFontSize:
-                                                                      10,
-                                                                  maxFontSize:
-                                                                      12,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
-                                                                ),
-                                                              ],
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ],
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    subtitle: Align(
-                                                      alignment: isUserMessage
-                                                          ? Alignment
-                                                              .centerRight
-                                                          : Alignment
-                                                              .centerLeft,
-                                                      child: Container(
-                                                        margin: const EdgeInsets
-                                                            .only(right: 10),
-                                                        child:
-                                                            Text(formattedDate),
+                                                      subtitle: Align(
+                                                        alignment: isUserMessage
+                                                            ? Alignment
+                                                                .centerRight
+                                                            : Alignment
+                                                                .centerLeft,
+                                                        child: Container(
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .only(
+                                                                  right: 10),
+                                                          child: Text(
+                                                              formattedDate),
+                                                        ),
                                                       ),
+                                                      dense: true,
+                                                      contentPadding:
+                                                          const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8),
+                                                      leading: isUserMessage
+                                                          ? Container(
+                                                              width: 48,
+                                                              height: 48,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Colors
+                                                                    .transparent,
+                                                              ),
+                                                            )
+                                                          : null,
                                                     ),
-                                                    dense: true,
-                                                    contentPadding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 8),
-                                                    leading: isUserMessage
-                                                        ? Container(
-                                                            width: 48,
-                                                            height: 48,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                              shape: BoxShape
-                                                                  .circle,
-                                                              color: Colors
-                                                                  .transparent,
-                                                            ),
-                                                          )
-                                                        : null,
-                                                  ),
-                                                );
-                                              },
+                                                  );
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                            SingleChildScrollView(
+                                              child: Column(
+                                                children: [
+                                                  Container(
+                                                    padding:
+                                                        EdgeInsets.all(16.0),
+                                                    child: Row(
+                                                      children: [
+                                                        // Champ de saisie de texte avec icône à droite
+                                                        Expanded(
+                                                          child: TextFormField(
+                                                            controller:
+                                                                _textController,
+                                                            decoration:
+                                                                const InputDecoration(
+                                                              border:
+                                                                  OutlineInputBorder(
+                                                                borderRadius: BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            15)),
+                                                              ),
+                                                              contentPadding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          15,
+                                                                          5,
+                                                                          10,
+                                                                          5),
+                                                              hintText:
+                                                                  "Saisissez votre message...",
+                                                              labelStyle:
+                                                                  TextStyle(
+                                                                      fontSize:
+                                                                          12),
+                                                            ),
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .text,
+                                                          ),
+                                                        ),
+                                                        // Icône et bouton d'envoi
+                                                        IconButton(
+                                                          icon:
+                                                              Icon(Icons.send),
+                                                          onPressed: () async {
+                                                            int count =
+                                                                await GroupsService()
+                                                                    .getUserCountInGroup(
+                                                              token.toString(),
+                                                              message.groupId
+                                                                  .toString(),
+                                                            );
+
+                                                            setState(() {
+                                                              userCount = count;
+                                                            });
+
+                                                            String otherUser =
+                                                                message.senderId !=
+                                                                        userId
+                                                                    ? message
+                                                                        .senderId
+                                                                    : message
+                                                                        .responderId;
+
+                                                            if (userCount ==
+                                                                2) {
+                                                              if (discussion
+                                                                      ?.messages
+                                                                      .length ==
+                                                                  0) {
+                                                                await send(
+                                                                    null,
+                                                                    _textController
+                                                                        .text,
+                                                                    otherUser);
+                                                              } else {
+                                                                await send(
+                                                                    message
+                                                                        .groupId,
+                                                                    _textController
+                                                                        .text,
+                                                                    otherUser);
+                                                              }
+                                                            } else {
+                                                              if (discussion
+                                                                      ?.messages
+                                                                      .length ==
+                                                                  0) {
+                                                                await send(
+                                                                    null,
+                                                                    _textController
+                                                                        .text,
+                                                                    otherUser);
+                                                              } else {
+                                                                await send(
+                                                                    message
+                                                                        .groupId,
+                                                                    _textController
+                                                                        .text,
+                                                                    otherUser);
+                                                              }
+                                                            }
+
+                                                            var newDisc =
+                                                                await getDiscussionsForMessageWith(
+                                                              discussionMessages!
+                                                                  .groups[index]
+                                                                  .lastMessage
+                                                                  .id
+                                                                  .toString(),
+                                                            );
+
+                                                            // Update the local state with the new discussions data
+                                                            setState(() {
+                                                              discussion =
+                                                                  newDisc;
+                                                            });
+
+                                                            _textController
+                                                                .clear();
+                                                            _handleSubmitted(
+                                                                _textController
+                                                                    .text);
+
+                                                            // Faites défiler vers le bas après l'envoi du message
+                                                            _scrollController
+                                                                .animateTo(
+                                                              _scrollController
+                                                                  .position
+                                                                  .maxScrollExtent,
+                                                              duration: Duration(
+                                                                  milliseconds:
+                                                                      300),
+                                                              curve: Curves
+                                                                  .easeOut,
+                                                            );
+                                                          },
+                                                        ), //build
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     );
                                   },
@@ -1078,17 +1291,18 @@ class _MessengerPageState extends State<MessengerPage> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return Container(
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height,
-                                              child: BackdropFilter(
-                                                  filter: ImageFilter.blur(
-                                                      sigmaX: 5, sigmaY: 5)),
-                                            );
+                                            return BackdropFilter(
+                                                filter: ImageFilter.blur(
+                                                    sigmaX: 5, sigmaY: 5),
+                                                child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .width,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                            .size
+                                                            .height));
                                           } else if (snapshot.hasError) {
                                             return Text(
                                                 'Error: ${snapshot.error}');

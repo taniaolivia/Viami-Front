@@ -20,4 +20,21 @@ class MessagesService {
       throw Exception('Failed to load travels');
     }
   }
+
+  Future<Messages> getDiscussionsForGroup(
+      String token, String? groupId) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/messages/discussions/group/$groupId'),
+      headers: <String, String>{
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+      return Messages.fromJson(res);
+    } else {
+      throw Exception('Failed to load travels');
+    }
+  }
 }
