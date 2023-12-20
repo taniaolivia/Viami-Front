@@ -9,11 +9,14 @@ import 'package:viami/models-api/requestMessage/requests_messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
+import 'package:viami/services/message/message.service.dart';
+import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/requestMessage/requests_messages_service.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class UsersNoDiscussionPage extends StatefulWidget {
   const UsersNoDiscussionPage({
@@ -31,6 +34,34 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
   String? userId = "";
   bool? tokenExpired;
   List? users;
+  ScrollController _scrollController = ScrollController();
+  late IO.Socket socket;
+
+  TextEditingController searchController = TextEditingController();
+  TextEditingController _textReqController = TextEditingController();
+  bool _isKeyboardVisible = false;
+
+  Future<void> send(int? groupId, String message, String? responderId) async {
+    token = await storage.read(key: "token");
+    userId = await storage.read(key: "userId");
+    // Envoyez le message à l'aide de l'ID de discussion
+    var messageData = {
+      'text': message,
+      'discussionId': responderId,
+    };
+
+    // Envoyez le message au serveur
+    socket.emit('chat message', messageData);
+
+    if (mounted) {
+      setState(() {});
+    }
+
+    _textReqController.clear();
+
+    return MessageService()
+        .sendMessage(token.toString(), groupId, message, userId, responderId);
+  }
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -67,11 +98,31 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
     return await UserStatusService().getUserStatusById(travelerId!, token!);
   }
 
+  void _handleSubmitted(String text) {
+    print("Message envoyé: $text");
+    _textReqController.clear();
+  }
+
+  @override
+  void dispose() {
+    // Disconnect from the Socket.IO server when the widget is destroyed
+    socket.disconnect();
+    super.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
     getUser();
     getAllRequestsAcceptedByUser();
+    // Connect to the Socket.IO server
+    socket = IO.io('${dotenv.env['SO_URL']}');
+    socket.connect();
+
+    // Listen for 'chat message' events for real-time updates
+    socket.on('chat message', (data) {
+      
+    });
   }
 
   @override
@@ -150,6 +201,13 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
 
                           var image = snapshot.data![0] as UsersImages;
                           var status = snapshot.data![1] as UserStatus;
+                          String otherUser = acceptedRequests
+                                      .requestsMessages[index].requesterId !=
+                                  userId
+                              ? acceptedRequests
+                                  .requestsMessages[index].requesterId
+                              : acceptedRequests
+                                  .requestsMessages[index].receiverId;
 
                           return GestureDetector(
                               onTap: () {
@@ -342,8 +400,55 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                                       ),
                                                       const SizedBox(height: 5),
                                                     ]),
-                                              )
+                                              ) //builddd
                                             ],
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.all(16.0),
+                                            child: Row(
+                                              children: [
+                                                // Champ de saisie de texte avec icône à droite
+                                                Expanded(
+                                                  child: TextFormField(
+                                                    controller:
+                                                        _textReqController,
+                                                    decoration:
+                                                        const InputDecoration(
+                                                      border:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    15)),
+                                                      ),
+                                                      contentPadding:
+                                                          EdgeInsets.fromLTRB(
+                                                              15, 5, 10, 5),
+                                                      hintText:
+                                                          "Saisissez votre message...",
+                                                      labelStyle: TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                    keyboardType:
+                                                        TextInputType.text,
+                                                  ),
+                                                ),
+                                                // Icône et bouton d'envoi
+                                                IconButton(
+                                                  icon: Icon(Icons.send),
+                                                  onPressed: () async {
+                                                    await send(
+                                                        null,
+                                                        _textReqController.text,
+                                                        otherUser);
+                                                    _textReqController.clear();
+                                                    _handleSubmitted(
+                                                        _textReqController
+                                                            .text);
+                                                  },
+                                                ), //build
+                                              ],
+                                            ),
                                           ),
                                         ]),
                                       );
