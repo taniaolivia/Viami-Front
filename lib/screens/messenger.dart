@@ -796,8 +796,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           userId;
                                                   Color containerColor =
                                                       isUserMessage
-                                                          ? const Color(
-                                                              0xFF0081CF)
+                                                          ? Color.fromARGB(255,
+                                                              225, 238, 245)
                                                           : const Color(
                                                               0xFFF3F3F3);
 
@@ -833,8 +833,12 @@ class _MessengerPageState extends State<MessengerPage> {
                                                         : Alignment.centerLeft,
                                                     child: ListTile(
                                                       title: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(18),
+                                                        margin: isUserMessage
+                                                            ? const EdgeInsets
+                                                                .all(0)
+                                                            : const EdgeInsets
+                                                                .only(
+                                                                right: 35),
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(18),
@@ -905,62 +909,64 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             .data!
                                                                             .userImages
                                                                             .isEmpty) {
-                                                                      return GestureDetector(
-                                                                        onTapDown:
-                                                                            (TapDownDetails
-                                                                                details) async {
-                                                                          final RenderBox
-                                                                              overlay =
-                                                                              Overlay.of(context)!.context.findRenderObject() as RenderBox;
-                                                                          final RelativeRect
-                                                                              position =
-                                                                              RelativeRect.fromRect(
-                                                                            details.globalPosition &
-                                                                                const Size(40, 40),
-                                                                            overlay.localToGlobal(Offset.zero) &
-                                                                                overlay.size,
-                                                                          );
-
-                                                                          final String?
-                                                                              choice =
-                                                                              await showMenu<String>(
-                                                                            context:
-                                                                                context,
-                                                                            position:
-                                                                                position,
-                                                                            items: [
-                                                                              const PopupMenuItem<String>(
-                                                                                value: 'go_to_profile',
-                                                                                child: Text('Voir le profil'),
-                                                                              ),
-                                                                            ],
-                                                                          );
-
-                                                                          if (choice ==
-                                                                              'go_to_profile') {
-                                                                            Navigator.push(
-                                                                              context,
-                                                                              FadePageRoute(
-                                                                                  page: ShowProfilePage(
-                                                                                showButton: false,
-                                                                                userId: message.senderId,
-                                                                                showComment: true,
-                                                                              )),
-                                                                            );
-                                                                          }
-                                                                        },
+                                                                      return Container(
+                                                                        width:
+                                                                            10,
+                                                                        height:
+                                                                            10,
                                                                         child:
-                                                                            CircleAvatar(
-                                                                          backgroundColor: const Color
-                                                                              .fromARGB(
-                                                                              255,
-                                                                              220,
-                                                                              234,
-                                                                              250),
-                                                                          foregroundImage:
-                                                                              NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                                          maxRadius:
-                                                                              15,
+                                                                            GestureDetector(
+                                                                          onTapDown:
+                                                                              (TapDownDetails details) async {
+                                                                            final RenderBox
+                                                                                overlay =
+                                                                                Overlay.of(context)!.context.findRenderObject() as RenderBox;
+                                                                            final RelativeRect
+                                                                                position =
+                                                                                RelativeRect.fromRect(
+                                                                              details.globalPosition & const Size(40, 40),
+                                                                              overlay.localToGlobal(Offset.zero) & overlay.size,
+                                                                            );
+
+                                                                            final String?
+                                                                                choice =
+                                                                                await showMenu<String>(
+                                                                              context: context,
+                                                                              position: position,
+                                                                              items: [
+                                                                                const PopupMenuItem<String>(
+                                                                                  value: 'go_to_profile',
+                                                                                  child: Text('Voir le profil'),
+                                                                                ),
+                                                                              ],
+                                                                            );
+
+                                                                            if (choice ==
+                                                                                'go_to_profile') {
+                                                                              Navigator.push(
+                                                                                context,
+                                                                                FadePageRoute(
+                                                                                    page: ShowProfilePage(
+                                                                                  showButton: false,
+                                                                                  userId: message.senderId,
+                                                                                  showComment: true,
+                                                                                )),
+                                                                              );
+                                                                            }
+                                                                          },
+                                                                          child:
+                                                                              Container(
+                                                                            width:
+                                                                                10, // Largeur spécifique
+                                                                            height:
+                                                                                10, // Hauteur spécifique
+                                                                            child:
+                                                                                CircleAvatar(
+                                                                              backgroundColor: const Color.fromARGB(255, 220, 234, 250),
+                                                                              foregroundImage: NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                              radius: 5,
+                                                                            ),
+                                                                          ),
                                                                         ),
                                                                       );
                                                                     }
@@ -1020,7 +1026,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                         backgroundImage:
                                                                             NetworkImage("${image.userImages[0].image}"),
                                                                         maxRadius:
-                                                                            15,
+                                                                            1,
                                                                       ),
                                                                     );
 
