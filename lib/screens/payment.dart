@@ -22,9 +22,9 @@ class _PaymentPageState extends State<PaymentPage> {
   String? token;
   String? userId;
   bool? tokenExpired;
-  int selectedPlan = 1;
-  String selectedPrice = "8.99";
-  String selectedPlanName = "1 semaine";
+  String priceText = "3.99";
+  int priceInt = 399;
+  String planName = "1 semaine";
   List description = [];
 
   Future<User> getUser() {
@@ -71,7 +71,10 @@ class _PaymentPageState extends State<PaymentPage> {
               }
 
               if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Text(
+                  '${snapshot.error}',
+                  textAlign: TextAlign.center,
+                );
               }
 
               if (!snapshot.hasData) {
@@ -83,6 +86,9 @@ class _PaymentPageState extends State<PaymentPage> {
               var plans = snapshot.data!;
 
               description = plans.plans[0].description.split(", ");
+              planName = plans.plans[0].plan;
+              priceText = plans.plans[0].price;
+              priceInt = (double.parse(plans.plans[0].price) * 100).round();
 
               return SingleChildScrollView(
                   child: Padding(
@@ -115,7 +121,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                   )),
                             )),
                         const SizedBox(
-                          height: 5,
+                          height: 20,
                         ),
                         Container(
                             width: MediaQuery.of(context).size.width / 1.8,
@@ -135,146 +141,77 @@ class _PaymentPageState extends State<PaymentPage> {
                           const SizedBox(
                             height: 20,
                           ),
-                          const Align(
-                              alignment: Alignment.centerLeft,
-                              child: AutoSizeText("Choisissez un abonnement",
-                                  minFontSize: 14,
-                                  maxFontSize: 16,
-                                  style: TextStyle(
-                                      color: Color(0xFF0A2753),
-                                      fontWeight: FontWeight.w400))),
-                          const SizedBox(
-                            height: 20,
-                          ),
-                          SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  children: List.generate(2, (index) {
-                                return Column(children: [
-                                  GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedPlan = plans.plans[index].id;
-                                          selectedPrice =
-                                              plans.plans[index].price;
-                                          selectedPlanName =
-                                              plans.plans[index].plan;
-                                        });
-                                      },
-                                      child: Container(
-                                          alignment: Alignment.center,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              1.4,
-                                          padding: const EdgeInsets.all(15),
-                                          margin:
-                                              const EdgeInsets.only(right: 10),
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.all(
-                                              Radius.circular(20),
+                          Column(children: [
+                            Container(
+                                alignment: Alignment.center,
+                                width: MediaQuery.of(context).size.width / 1.4,
+                                padding: const EdgeInsets.all(15),
+                                margin: const EdgeInsets.only(right: 10),
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.all(
+                                    Radius.circular(20),
+                                  ),
+                                  border: Border.all(
+                                    width: 2,
+                                    color: const Color(0xFFDADADA),
+                                  ),
+                                  color: const Color(0xFFEDEEEF),
+                                ),
+                                child: Column(children: [
+                                  Container(
+                                    width: 260,
+                                    height: 140,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 10.0,
+                                            spreadRadius: 0.0,
+                                            offset: Offset(
+                                              0.0,
+                                              0.0,
                                             ),
-                                            border: Border.all(
-                                              width: 2,
-                                              color: selectedPlan ==
-                                                      plans.plans[index].id
-                                                  ? const Color(0xFF0081CF)
-                                                  : const Color(0xFFDADADA),
-                                            ),
-                                            color: selectedPlan ==
-                                                    plans.plans[index].id
-                                                ? const Color(0xFF0081CF)
-                                                : const Color(0xFFEDEEEF),
-                                          ),
-                                          child: Column(children: [
-                                            Container(
-                                              width: 260,
-                                              height: 140,
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      const BorderRadius.all(
-                                                    Radius.circular(10),
-                                                  ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: selectedPlan ==
-                                                              plans.plans[index]
-                                                                  .id
-                                                          ? const Color
-                                                              .fromARGB(127,
-                                                              255, 255, 255)
-                                                          : Colors.grey,
-                                                      blurRadius: 10.0,
-                                                      spreadRadius: 0.0,
-                                                      offset: const Offset(
-                                                        0.0,
-                                                        0.0,
-                                                      ),
-                                                    )
-                                                  ],
-                                                  image: DecorationImage(
-                                                      fit: BoxFit.cover,
-                                                      image: plans.plans[index]
-                                                                  .plan ==
-                                                              "1 semaine"
-                                                          ? NetworkImage(
-                                                              "${dotenv.env['CDN_URL']}/assets/premium/one_week.png",
-                                                            )
-                                                          : NetworkImage(
-                                                              "${dotenv.env['CDN_URL']}/assets/premium/one_month.png",
-                                                            ))),
-                                            ),
-                                            const SizedBox(
-                                              height: 10,
-                                            ),
-                                            Column(children: [
-                                              Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: AutoSizeText(
-                                                      toBeginningOfSentenceCase(
-                                                          plans.plans[index]
-                                                              .plan)!,
-                                                      minFontSize: 16,
-                                                      maxFontSize: 18,
-                                                      style: TextStyle(
-                                                          color: selectedPlan ==
-                                                                  plans
-                                                                      .plans[
-                                                                          index]
-                                                                      .id
-                                                              ? Colors.white
-                                                              : const Color(
-                                                                  0xFF0A2753),
-                                                          fontWeight: FontWeight
-                                                              .w600))),
-                                              const SizedBox(
-                                                height: 20,
-                                              ),
-                                              Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: AutoSizeText(
-                                                      plans.plans[index].by,
-                                                      minFontSize: 11,
-                                                      maxFontSize: 13,
-                                                      style: TextStyle(
-                                                          color: selectedPlan ==
-                                                                  plans
-                                                                      .plans[
-                                                                          index]
-                                                                      .id
-                                                              ? Colors.white
-                                                              : const Color(
-                                                                  0xFF0A2753)))),
-                                            ]),
-                                          ]))),
+                                          )
+                                        ],
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                              "${dotenv.env['CDN_URL']}/assets/premium/one_week.png",
+                                            ))),
+                                  ),
                                   const SizedBox(
-                                    height: 35,
-                                  )
-                                ]);
-                              }).toList())),
+                                    height: 10,
+                                  ),
+                                  Column(children: [
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                            toBeginningOfSentenceCase(
+                                                plans.plans[0].plan)!,
+                                            minFontSize: 16,
+                                            maxFontSize: 18,
+                                            style: const TextStyle(
+                                                color: Color(0xFF0A2753),
+                                                fontWeight: FontWeight.w600))),
+                                    const SizedBox(
+                                      height: 20,
+                                    ),
+                                    Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(plans.plans[0].by,
+                                            minFontSize: 11,
+                                            maxFontSize: 13,
+                                            style: const TextStyle(
+                                                color: Color(0xFF0A2753)))),
+                                  ]),
+                                ])),
+                            const SizedBox(
+                              height: 35,
+                            )
+                          ]),
                           Column(
                               children: List.generate(description.length,
                                   (indexDesc) {
@@ -326,7 +263,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(15)))),
                                   child: AutoSizeText(
-                                    "Continuer - $selectedPrice€ total",
+                                    "Continuer - $priceText€ total",
                                     maxLines: 1,
                                     minFontSize: 17,
                                     maxFontSize: 20,
@@ -338,8 +275,8 @@ class _PaymentPageState extends State<PaymentPage> {
                                   onPressed: () async {
                                     await PaymentService()
                                         .stripePaymentCheckout({
-                                      "name": "Premium $selectedPlanName",
-                                      "price": 50
+                                      "name": "Premium 1 semaine",
+                                      "price": priceInt
                                     }, 50, context, mounted, onSuccess: () {
                                       showDialog(
                                           context: context,

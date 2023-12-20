@@ -56,15 +56,18 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                   future: getListActivitiesByTheme(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return SizedBox.shrink();
+                      return const SizedBox.shrink();
                     }
 
                     if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
+                      return Text(
+                        '${snapshot.error}',
+                        textAlign: TextAlign.center,
+                      );
                     }
 
                     if (!snapshot.hasData) {
-                      return Text('');
+                      return const Text('');
                     }
                     var activity = snapshot.data!;
 
@@ -142,14 +145,22 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        AutoSizeText(
-                                            toBeginningOfSentenceCase(activity
-                                                .activities[index].name)!,
-                                            minFontSize: 16,
-                                            maxFontSize: 20,
-                                            style: const TextStyle(
-                                                color: Color(0xFF0A2753))),
-                                        Row(children: [
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.7,
+                                            child: AutoSizeText(
+                                                toBeginningOfSentenceCase(
+                                                    activity.activities[index]
+                                                        .name)!,
+                                                minFontSize: 16,
+                                                maxFontSize: 20,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF0A2753)))),
+                                        /*Row(children: [
                                           const Icon(
                                             Icons.people_alt,
                                             size: 20,
@@ -170,7 +181,7 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                                               maxFontSize: 18,
                                               style: const TextStyle(
                                                   color: Color(0xFF0A2753))),
-                                        ])
+                                        ])*/
                                       ]),
                                   const SizedBox(
                                     height: 10,

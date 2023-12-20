@@ -78,7 +78,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
               }
 
               if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
+                return Text(
+                  '${snapshot.error}',
+                  textAlign: TextAlign.center,
+                );
               }
 
               if (!snapshot.hasData) {
@@ -137,7 +140,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       "D'accord",
                       "");
 
-                  Navigator.pop(context);
+                  Navigator.pushNamed(context, "/home");
                 }
               }
             },

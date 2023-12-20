@@ -3,7 +3,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/travelComponent.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userDateLocation/usersDateLocation.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userDateLocation/usersDateLocation.service.dart';
 
@@ -32,9 +31,9 @@ class _TravelDetailsPageState extends State<TravelDetailsPage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,7 +18,8 @@ class UserCommentService {
       var res = json.decode(response.body);
       return res['hasUserLeftComment'] ?? false;
     } else {
-      throw Exception('Failed to check user comment status');
+      throw ErrorDescription(
+          "Échec de vérification du statut du commentaire de l'utilisateur.");
     }
   }
 
@@ -33,9 +35,8 @@ class UserCommentService {
     );
 
     if (response.statusCode == 200) {
-      var res = json.decode(response.body);
     } else {
-      throw Exception('Failed to add comment');
+      throw ErrorDescription("Échec d'ajout de commentaire");
     }
   }
 }

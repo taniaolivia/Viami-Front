@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
-import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/menus.dart';
 import 'package:viami/screens/settings.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import '../models/menu_item.dart';
 import '../models/menu_items.dart';
@@ -34,9 +32,9 @@ class _DrawerPageState extends State<DrawerPage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -47,7 +45,7 @@ class _DrawerPageState extends State<DrawerPage> {
   @override
   Widget build(BuildContext context) {
     if (tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /*WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -59,7 +57,7 @@ class _DrawerPageState extends State<DrawerPage> {
               },
             ),
             null);
-      });
+      });*/
     }
     return ZoomDrawer(
         style: DrawerStyle.Style1,

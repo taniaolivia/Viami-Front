@@ -13,7 +13,15 @@ TravelActivity _$TravelActivityFromJson(Map<String?, dynamic> json) =>
         imageName: json['imageName'],
         isRecommended: json['isRecommended'],
         activityNbParticipant: json["activityNbParticipant"],
-        activityLocation: json['activityLocation']);
+        activityLocation: json['activityLocation'],
+        activityUrl: json["activityUrl"],
+        activityTelephone: json["activityTelephone"],
+        activityAddress: json["activityAddress"],
+        activityLatitude: json["activityLatitude"],
+        activityLongitude: json["activityLongitude"],
+        activitySchedule: json["activitySchedule"],
+        activityLanguage: json["activityLanguage"],
+        activityAccessibility: json["activityAccessibility"]);
 
 Map<String?, dynamic> _$TravelActivityToJson(TravelActivity instance) =>
     <String?, dynamic>{
@@ -28,7 +36,15 @@ Map<String?, dynamic> _$TravelActivityToJson(TravelActivity instance) =>
       'imageName': instance.imageName,
       'isRecommended': instance.isRecommended,
       'activityNbParticipant': instance.activityNbParticipant,
-      'activityLocation': instance.activityLocation
+      'activityLocation': instance.activityLocation,
+      'activityUrl': instance.activityUrl,
+      'activityTelephone': instance.activityTelephone,
+      'activityAddress': instance.activityAddress,
+      'activityLatitude': instance.activityLatitude,
+      'activityLongitude': instance.activityLongitude,
+      'activitySchedule': instance.activitySchedule,
+      'activityLanguage': instance.activityLanguage,
+      'activityAccessibility': instance.activityAccessibility
     };
 
 TravelsActivities _$TravelsActivitiesFromJson(Map<String?, dynamic> json) =>

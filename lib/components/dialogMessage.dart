@@ -4,11 +4,12 @@ Future<void> showDialogMessage(BuildContext context, String title,
     Widget content, Widget button, Widget? button2) async {
   return showDialog<void>(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(title),
         alignment: Alignment.center,
+        surfaceTintColor: Colors.white,
         titleTextStyle: const TextStyle(
             fontSize: 20,
             color: Colors.black,

@@ -134,31 +134,55 @@ class _TravelComponentState extends State<TravelComponent> {
                             });
                           },
                           itemBuilder: (context, index) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(20),
-                                  bottomRight: Radius.circular(20),
-                                ),
-                                image: DecorationImage(
-                                  image:
-                                      NetworkImage(travelImages[selectedImage]),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: List.generate(
-                                      travelImages.length,
-                                      (index) => buildDot(index: index),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
+                            return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Image.network(
+                                              travelImages[selectedImage]),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: Center(
+                                    child: Hero(
+                                        tag: travelImages[selectedImage],
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              bottomLeft: Radius.circular(20),
+                                              bottomRight: Radius.circular(20),
+                                            ),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                  travelImages[selectedImage]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: List.generate(
+                                                  travelImages.length,
+                                                  (index) =>
+                                                      buildDot(index: index),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ))));
                           },
                         ),
                       ),
@@ -214,7 +238,10 @@ class _TravelComponentState extends State<TravelComponent> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
+                            return Text(
+                              '${snapshot.error}',
+                              textAlign: TextAlign.center,
+                            );
                           } else if (!snapshot.hasData) {
                             return const Text('');
                           }

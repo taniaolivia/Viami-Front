@@ -52,6 +52,7 @@ class _FaqPageState extends State<FaqPage> {
                     style:
                         TextStyle(fontFamily: "Poppins", color: Colors.white)),
               )),
+          const SizedBox(height: 50),
         ]));
   }
 }

@@ -16,7 +16,6 @@ import 'package:viami/screens/allThemeActivities.dart';
 import 'package:viami/services/activity/activities.service.dart';
 import 'package:viami/services/theme/themes.service.dart';
 import 'package:viami/services/themeActivity/themesActivities.service.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 class PopularThemePage extends StatefulWidget {
@@ -44,9 +43,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -110,7 +109,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
           }
 
           if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Text(
+              '${snapshot.error}',
+              textAlign: TextAlign.center,
+            );
           }
 
           if (!snapshot.hasData) {
@@ -150,29 +152,35 @@ class _PopularThemePageState extends State<PopularThemePage> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              AutoSizeText(
-                                clicked == "popular"
-                                    ? toBeginningOfSentenceCase(
-                                        activity.activities[index].name)!
-                                    : toBeginningOfSentenceCase(
-                                        themeActivityName[index])!,
-                                minFontSize: 25,
-                                maxFontSize: 30,
-                                style: const TextStyle(
-                                    shadows: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 20.0,
-                                        spreadRadius: 5.0,
-                                        offset: Offset(
-                                          0.0,
-                                          0.0,
-                                        ),
-                                      )
-                                    ],
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.2,
+                                  child: AutoSizeText(
+                                    clicked == "popular"
+                                        ? toBeginningOfSentenceCase(
+                                            activity.activities[index].name)!
+                                        : toBeginningOfSentenceCase(
+                                            themeActivityName[index])!,
+                                    minFontSize: 25,
+                                    maxFontSize: 30,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        shadows: [
+                                          BoxShadow(
+                                            color: Colors.black,
+                                            blurRadius: 20.0,
+                                            spreadRadius: 5.0,
+                                            offset: Offset(
+                                              0.0,
+                                              0.0,
+                                            ),
+                                          )
+                                        ],
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  )),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [

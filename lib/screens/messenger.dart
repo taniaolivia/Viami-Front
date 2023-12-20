@@ -57,6 +57,7 @@ class _MessengerPageState extends State<MessengerPage> {
   String filterSeulGroup = "all";
   String? selectedLocation;
   List locationList = [""];
+  int numLoadingFinish = 0;
 
   Future<Travels> getListTravels() {
     Future<Travels> getAllTravels() async {
@@ -345,13 +346,12 @@ class _MessengerPageState extends State<MessengerPage> {
                             ConnectionState.waiting) {
                           return BackdropFilter(
                             filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
-                            ),
                           );
                         } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                          return Text(
+                            '${snapshot.error}',
+                            textAlign: TextAlign.center,
+                          );
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
@@ -457,26 +457,29 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                   .connectionState ==
                                                               ConnectionState
                                                                   .waiting) {
-                                                            return BackdropFilter(
-                                                                filter: ImageFilter
-                                                                    .blur(
-                                                                        sigmaX:
-                                                                            5,
-                                                                        sigmaY:
-                                                                            5),
-                                                                child: Container(
-                                                                    width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width,
-                                                                    height: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .height));
+                                                            return Container(
+                                                              width:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width,
+                                                              height:
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height,
+                                                              child: BackdropFilter(
+                                                                  filter: ImageFilter
+                                                                      .blur(
+                                                                          sigmaX:
+                                                                              5,
+                                                                          sigmaY:
+                                                                              5)),
+                                                            );
                                                           } else if (snapshot
                                                               .hasError) {
                                                             return Text(
-                                                                'Error: ${snapshot.error}');
+                                                                '${snapshot.error}');
                                                           } else if (!snapshot
                                                               .hasData) {
                                                             return const Text(
@@ -800,21 +803,19 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           .connectionState ==
                                                                       ConnectionState
                                                                           .waiting) {
-                                                                    return BackdropFilter(
-                                                                      filter: ImageFilter.blur(
-                                                                          sigmaX:
-                                                                              5,
-                                                                          sigmaY:
-                                                                              5),
-                                                                      child:
-                                                                          Container(
-                                                                        width: MediaQuery.of(context)
-                                                                            .size
-                                                                            .width,
-                                                                        height: MediaQuery.of(context)
-                                                                            .size
-                                                                            .height,
-                                                                      ),
+                                                                    return Container(
+                                                                      width: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .width,
+                                                                      height: MediaQuery.of(
+                                                                              context)
+                                                                          .size
+                                                                          .height,
+                                                                      child: BackdropFilter(
+                                                                          filter: ImageFilter.blur(
+                                                                              sigmaX: 5,
+                                                                              sigmaY: 5)),
                                                                     );
                                                                   } else if (snapshot
                                                                       .hasError) {
@@ -1077,18 +1078,17 @@ class _MessengerPageState extends State<MessengerPage> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return BackdropFilter(
-                                                filter: ImageFilter.blur(
-                                                    sigmaX: 5, sigmaY: 5),
-                                                child: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .height));
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height,
+                                              child: BackdropFilter(
+                                                  filter: ImageFilter.blur(
+                                                      sigmaX: 5, sigmaY: 5)),
+                                            );
                                           } else if (snapshot.hasError) {
                                             return Text(
                                                 'Error: ${snapshot.error}');

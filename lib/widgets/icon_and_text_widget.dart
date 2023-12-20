@@ -28,13 +28,13 @@ class IconAndTextWidget extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Color(0xFFFFFFFF),
+              color: const Color(0xFFFFFFFF),
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.5),
                   spreadRadius: 2,
                   blurRadius: 5,
-                  offset: Offset(0, 3),
+                  offset: const Offset(0, 3),
                 ),
               ],
             ),
@@ -43,25 +43,41 @@ class IconAndTextWidget extends StatelessWidget {
               child: Icon(
                 icon,
                 color: iconColor,
-                size: 20,
+                size: 28,
               ),
             ),
           ),
-          SizedBox(width: 10),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: AutoSizeText(
-              text,
-              style: TextStyle(
-                color: Color(0xFF6A778B),
-                fontWeight: FontWeight.normal,
-                fontFamily: "Poppins",
-              ),
-              minFontSize: 12,
-              maxFontSize: 13,
-              textAlign: TextAlign.center,
-            ),
-          ),
+          const SizedBox(width: 10),
+          Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: AutoSizeText(
+                    text,
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 171, 171, 172),
+                      fontWeight: FontWeight.normal,
+                      fontFamily: "Poppins",
+                    ),
+                    minFontSize: 10,
+                    maxFontSize: 11,
+                    textAlign: TextAlign.left,
+                  ),
+                ),
+                AutoSizeText(
+                  subtext != null ? subtext! : "",
+                  style: const TextStyle(
+                    color: Color(0xFF0A2753),
+                    fontWeight: FontWeight.normal,
+                    fontFamily: "Poppins",
+                  ),
+                  minFontSize: 8,
+                  maxFontSize: 10,
+                  textAlign: TextAlign.left,
+                )
+              ]),
         ],
       ),
     );

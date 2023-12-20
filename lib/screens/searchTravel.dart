@@ -63,7 +63,10 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                 }
 
                 if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Text(
+                    '${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  );
                 }
 
                 if (!snapshot.hasData) {

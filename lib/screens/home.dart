@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -70,11 +72,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               future: getUser(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(height: 28);
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 1.2,
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF0081CF)),
+                    ),
+                  );
                 }
 
                 if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Text(
+                    '${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  );
                 }
 
                 if (!snapshot.hasData) {

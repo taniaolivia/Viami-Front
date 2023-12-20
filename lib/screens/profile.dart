@@ -1,12 +1,7 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:viami/components/dialogMessage.dart';
-import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/profileEdit.dart';
-import 'package:viami/screens/showProfile.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -29,9 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -42,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     if (tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /*WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -54,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
               },
             ),
             null);
-      });
+      });*/
     }
 
     return Scaffold(
@@ -80,7 +75,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   if (snapshot.hasError) {
-                    return Text('Error: ${snapshot.error}');
+                    return Text(
+                      '${snapshot.error}',
+                      textAlign: TextAlign.center,
+                    );
                   }
 
                   if (!snapshot.hasData) {

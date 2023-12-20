@@ -10,6 +10,14 @@ class Activity {
       required this.imageName,
       required this.location,
       required this.isRecommended,
+      this.url,
+      this.telephone,
+      this.address,
+      this.latitude,
+      this.longitude,
+      this.schedule,
+      this.language,
+      this.accessibility,
       this.nbParticipant,
       this.description,
       this.note});
@@ -26,4 +34,12 @@ class Activity {
   final int? nbParticipant;
   final String? description;
   final int? note;
+  final String? url;
+  final String? telephone;
+  final String? address;
+  final String? latitude;
+  final String? longitude;
+  final String? schedule;
+  final String? language;
+  final String? accessibility;
 }

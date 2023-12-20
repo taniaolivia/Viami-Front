@@ -58,8 +58,8 @@ class MenuPage extends StatelessWidget {
       await launchUrl(Uri.parse('${dotenv.env['INSTA_URL']}'));
     } else if (socmed == 'facebook') {
       await launchUrl(Uri.parse('${dotenv.env['FACEBOOK_URL']}'));
-    } else if (socmed == 'twitter') {
-      await launchUrl(Uri.parse('${dotenv.env['TWITTER_URL']}'));
+    } else if (socmed == 'tiktok') {
+      await launchUrl(Uri.parse('${dotenv.env['TIKTOK_URL']}'));
     } else if (socmed == 'youtube') {
       await launchUrl(Uri.parse('${dotenv.env['YOUTUBE_URL']}'));
     }
@@ -89,22 +89,25 @@ class MenuPage extends StatelessWidget {
               onSelectedItem(item);
 
               showDialogMessage(
-                context,
-                "Information",
-                const Text(
-                    'Veuillez utiliser votre mail inscrit à Viami pour nous contacter !'),
-                ElevatedButton(
+                  context,
+                  "Information",
+                  const Text(
+                      'Veuillez utiliser votre mail inscrit à Viami pour nous contacter !'),
+                  TextButton(
                     onPressed: () async {
                       Navigator.pop(context);
                     },
-                    child: const Text("Annuler")),
-                ElevatedButton(
+                    child: const Text("Annuler",
+                        style: TextStyle(color: Colors.black)),
+                  ),
+                  TextButton(
                     onPressed: () async {
                       Navigator.pop(context);
                       await launchUrlString(_emailLaunchUri.toString());
                     },
-                    child: const Text("D'accord")),
-              );
+                    child: const Text("D'accord",
+                        style: TextStyle(color: Colors.black)),
+                  ));
             } else if (item.title == "Paiement") {
               onSelectedItem(item);
 
@@ -131,7 +134,10 @@ class MenuPage extends StatelessWidget {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Text(
+                    '${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  );
                 } else if (!snapshot.hasData) {
                   return const Text('');
                 }
@@ -240,10 +246,10 @@ class MenuPage extends StatelessWidget {
                                 ),
                                 GestureDetector(
                                   onTap: () {
-                                    socialMediasUrls('twitter');
+                                    socialMediasUrls('tiktok');
                                   },
                                   child: Image.network(
-                                    '${dotenv.env['CDN_URL']}/assets/social-media/twitter.png',
+                                    '${dotenv.env['CDN_URL']}/assets/social-media/tiktok.png',
                                     width: 35,
                                     height: 35,
                                   ),

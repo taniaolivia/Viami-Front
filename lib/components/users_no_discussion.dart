@@ -4,13 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/requestMessage/requests_messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
 import 'package:viami/services/requestMessage/requests_messages_service.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
@@ -36,9 +34,9 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -77,7 +75,7 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
   @override
   Widget build(BuildContext context) {
     if (tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /* WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -89,20 +87,27 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
               },
             ),
             null);
-      });
+      });*/
     }
 
     return FutureBuilder(
         future: getAllRequestsAcceptedByUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height));
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height / 2,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0081CF)),
+              ),
+            );
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Text(
+              '${snapshot.error}',
+              textAlign: TextAlign.center,
+            );
           } else if (!snapshot.hasData) {
             return const Text('');
           }
@@ -143,7 +148,10 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
+                            return Text(
+                              '${snapshot.error}',
+                              textAlign: TextAlign.center,
+                            );
                           } else if (!snapshot.hasData) {
                             return const Text('');
                           }

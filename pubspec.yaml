@@ -1,8 +1,8 @@
 name: viami
-description: Viami project
+description: Viami
 publish_to: 'none' 
 
-version: 1.0.0+1
+version: 1.0.5
 
 environment:
   sdk: '>=2.19.6 <3.0.0'
@@ -44,12 +44,12 @@ dependencies:
   url_launcher: ^6.0.6
   flutter_stripe: ^5.1.0
   stripe_checkout: ^1.0.0
+  flutter_native_splash: ^2.3.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  flutter_native_splash: ^2.0.1+1
 
 flutter:
   uses-material-design: true

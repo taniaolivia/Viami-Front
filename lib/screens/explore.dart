@@ -6,11 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
+import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/activity/activities.dart';
 import 'package:viami/screens/activityDetails.dart';
 import 'package:viami/screens/drawer.dart';
-import 'package:viami/services/activity/recommendedActivities.service.dart';
+import 'package:viami/services/activity/activities.service.dart';
 
 class ExplorePage extends StatefulWidget {
   const ExplorePage({Key? key}) : super(key: key);
@@ -23,30 +24,34 @@ class _ExplorePageState extends State<ExplorePage> {
   final storage = const FlutterSecureStorage();
 
   String? token = "";
-
-  Future<Activities> getListRecommendedActivities() {
-    Future<Activities> getAllRActivities() async {
-      token = await storage.read(key: "token");
-
-      return RecommendedActivitiesService()
-          .getAllRecommendedActivities(token.toString());
-    }
-
-    return getAllRActivities();
-  }
+  String message = "";
+  String currentLocation = "";
 
   @override
   void initState() {
-    getListRecommendedActivities();
+    //getNearActivities();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    Future<Activities> getNearActivities() {
+      Future<Activities> getAllNearActivities() async {
+        token = await storage.read(key: "token");
+        String? location = await getMyCurrentPositionLatLon(context);
+
+        return ActivitiesService().getNearActivities(token.toString(),
+            location!.split(", ")[0], location.split(", ")[1]);
+      }
+
+      return getAllNearActivities();
+    }
+
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
         body: GeneralTemplate(
+            redirect: "/home",
             image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
@@ -58,24 +63,30 @@ class _ExplorePageState extends State<ExplorePage> {
               padding: EdgeInsets.fromLTRB(
                   20, 50, 20, MediaQuery.of(context).size.height / 3.5),
               child: FutureBuilder<Activities>(
-                  future: getListRecommendedActivities(),
+                  future: getNearActivities(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
+                      return Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.height / 2,
+                        alignment: Alignment.center,
+                        child: const CircularProgressIndicator(
+                          backgroundColor: Colors.white,
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Color(0xFF0081CF)),
                         ),
                       );
                     }
 
                     if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
+                      return Text(
+                        '${snapshot.error}',
+                        textAlign: TextAlign.center,
+                      );
                     }
 
                     if (!snapshot.hasData) {
-                      return Text("");
+                      return const Text("");
                     }
 
                     var activity = snapshot.data!;
@@ -155,14 +166,22 @@ class _ExplorePageState extends State<ExplorePage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        AutoSizeText(
-                                            toBeginningOfSentenceCase(activity
-                                                .activities[index].name)!,
-                                            minFontSize: 16,
-                                            maxFontSize: 20,
-                                            style: const TextStyle(
-                                                color: Color(0xFF0A2753))),
-                                        Row(children: [
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.7,
+                                            child: AutoSizeText(
+                                                toBeginningOfSentenceCase(
+                                                    activity.activities[index]
+                                                        .name)!,
+                                                minFontSize: 16,
+                                                maxFontSize: 20,
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF0A2753)))),
+                                        /*Row(children: [
                                           const Icon(
                                             Icons.people_alt,
                                             size: 20,
@@ -183,7 +202,7 @@ class _ExplorePageState extends State<ExplorePage> {
                                               maxFontSize: 18,
                                               style: const TextStyle(
                                                   color: Color(0xFF0A2753))),
-                                        ])
+                                        ])*/
                                       ]),
                                   const SizedBox(
                                     height: 10,

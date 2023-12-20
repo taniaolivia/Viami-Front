@@ -9,7 +9,6 @@ import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/screens/travelDetails.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 
@@ -45,9 +44,9 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
       users = widget.users;
 
       return UserService().getUserById(userId.toString(), token.toString());
@@ -181,7 +180,10 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                   }
 
                                   if (snapshot.hasError) {
-                                    return Text('Error: ${snapshot.error}');
+                                    return Text(
+                                      '${snapshot.error}',
+                                      textAlign: TextAlign.center,
+                                    );
                                   }
 
                                   if (!snapshot.hasData) {

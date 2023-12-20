@@ -3,8 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:viami/models-api/messenger/message.dart';
-
 import '../models-api/user/users.dart';
 import '../models-api/userImage/usersImages.dart';
 import '../services/message/groups.service.dart';
@@ -180,7 +178,10 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                                 ConnectionState.waiting) {
                               return Container();
                             } else if (snapshot.hasError) {
-                              return Text('Error: ${snapshot.error}');
+                              return Text(
+                                '${snapshot.error}',
+                                textAlign: TextAlign.center,
+                              );
                             } else if (!snapshot.hasData) {
                               return const Text('');
                             }
@@ -204,7 +205,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                           },
                         ),
                         const SizedBox(width: 8),
-                        Text('${user?.firstName} ${user?.lastName}')
+                        Text('${user.firstName} ${user.lastName}')
                       ]),
                       IconButton(
                         style: ButtonStyle(
@@ -215,7 +216,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                           try {
                             var result = await GroupsService().addUserToGroup(
                                 token.toString(),
-                                user?.id,
+                                user.id,
                                 widget.groupId.toString());
                             var message = result.toString();
                             print("messagee");

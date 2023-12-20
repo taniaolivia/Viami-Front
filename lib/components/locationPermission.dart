@@ -62,3 +62,20 @@ Future<String?> getMyCurrentPosition(BuildContext context) async {
     }
   }
 }
+
+Future<String?> getMyCurrentPositionLatLon(BuildContext context) async {
+  final hasPermission = await _handleLocationPermission(context);
+  if (!hasPermission) {
+    return null;
+  } else {
+    try {
+      _currentPosition = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
+
+      return "${_currentPosition?.latitude}, ${_currentPosition?.longitude}";
+    } catch (e) {
+      debugPrint(e.toString());
+      return null;
+    }
+  }
+}

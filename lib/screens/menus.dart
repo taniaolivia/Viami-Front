@@ -4,7 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/NavigationBarComponent.dart';
-import 'package:viami/components/dialogMessage.dart';
+import 'package:viami/components/locationPermission.dart';
 import 'package:viami/models-api/requestMessage/requests_messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models/menu_item.dart';
@@ -13,7 +13,6 @@ import 'package:viami/screens/home.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/screens/explore.dart';
 import 'package:viami/services/requestMessage/requests_messages_service.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
@@ -41,6 +40,7 @@ class _MenusPageState extends State<MenusPage> {
   String? userProfile;
   bool? tokenExpired;
   int requests = 0;
+  String currentLocation = "";
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -123,7 +123,7 @@ class _MenusPageState extends State<MenusPage> {
             null);
       });*/
     }
-    ;
+
     return Scaffold(
       extendBody: true,
       appBar: _currentIndex == 2
@@ -132,8 +132,8 @@ class _MenusPageState extends State<MenusPage> {
               elevation: 0,
               backgroundColor: Colors.white,
               title: Center(
-                  child: FutureBuilder<User>(
-                      future: getUser(),
+                  child: FutureBuilder<String?>(
+                      future: getMyCurrentPosition(context),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -143,12 +143,15 @@ class _MenusPageState extends State<MenusPage> {
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height));
                         } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                          return Text(
+                            '${snapshot.error}',
+                            textAlign: TextAlign.center,
+                          );
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
 
-                        var user = snapshot.data!;
+                        var location = snapshot.data!;
 
                         return Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -161,7 +164,7 @@ class _MenusPageState extends State<MenusPage> {
                             ),
                             const SizedBox(width: 8.0),
                             AutoSizeText(
-                              user.location.split(',')[0],
+                              location,
                               minFontSize: 11,
                               maxFontSize: 13,
                               style: const TextStyle(color: Color(0xFF000000)),
@@ -187,7 +190,10 @@ class _MenusPageState extends State<MenusPage> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
+                            return Text(
+                              '${snapshot.error}',
+                              textAlign: TextAlign.center,
+                            );
                           } else if (!snapshot.hasData) {
                             return const Text('');
                           }
@@ -232,7 +238,7 @@ class _MenusPageState extends State<MenusPage> {
           physics: const NeverScrollableScrollPhysics(),
           children: [
             const SearchTravelPage(),
-            ExplorePage(),
+            const ExplorePage(),
             const HomePage(),
             const MessengerPage(),
             ShowProfilePage(

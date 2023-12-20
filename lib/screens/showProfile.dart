@@ -70,6 +70,9 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
 
   @override
   void initState() {
+    getUser();
+    getUserImages();
+    getHasComment();
     super.initState();
   }
 
@@ -83,11 +86,23 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
               future: Future.wait([getUser(), getUserImages()]),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Text("");
+                  return Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height / 1.2,
+                    alignment: Alignment.center,
+                    child: const CircularProgressIndicator(
+                      backgroundColor: Colors.white,
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFF0081CF)),
+                    ),
+                  );
                 }
 
                 if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
+                  return Text(
+                    '${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  );
                 }
 
                 if (!snapshot.hasData) {
@@ -101,76 +116,131 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                     height: MediaQuery.of(context).size.height,
                     child: SingleChildScrollView(
                         child: Column(children: [
-                      Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height / 2.3,
-                          padding: const EdgeInsets.fromLTRB(20, 40, 0, 0),
-                          decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(30),
-                                  bottomRight: Radius.circular(30)),
-                              color: const Color.fromRGBO(0, 0, 0, 0.1),
-                              image: images.userImages.length != 0
-                                  ? DecorationImage(
-                                      image: NetworkImage(
-                                          images.userImages[0].image),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : DecorationImage(
-                                      colorFilter:
-                                          const ColorFilter.linearToSrgbGamma(),
-                                      image: NetworkImage(
-                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                      fit: BoxFit.contain,
-                                      alignment: Alignment.center)),
-                          child: Column(children: [
-                            Align(
-                                alignment: Alignment.topLeft,
-                                child: Container(
-                                    width: 50,
-                                    height: 50,
-                                    padding:
-                                        const EdgeInsets.fromLTRB(5, 2, 0, 0),
-                                    decoration: const BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(10))),
-                                    child: IconButton(
-                                        onPressed: () {
-                                          Navigator.pushNamed(context, "/home");
-                                        },
-                                        icon: const Icon(
-                                          Icons.arrow_back_ios,
-                                          color: Color.fromRGBO(0, 0, 0, 0.4),
-                                          size: 20,
-                                        )))),
-                            widget.showButton == false
-                                ? Container(
-                                    height: MediaQuery.of(context).size.height /
-                                        3.5,
-                                    child: Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: Container(
-                                            width: 70,
-                                            height: 70,
-                                            padding: const EdgeInsets.fromLTRB(
-                                                0, 2, 0, 0),
-                                            decoration: const BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(40))),
-                                            child: IconButton(
-                                                onPressed: () {
-                                                  Navigator.pushNamed(
-                                                      context, "/messages");
-                                                },
-                                                icon: const Icon(
-                                                  Icons.message_rounded,
-                                                  color: Color(0xFF0081CF),
-                                                  size: 30,
-                                                )))))
-                                : Container(),
-                          ])),
+                      GestureDetector(
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height,
+                                      decoration: BoxDecoration(
+                                        image: DecorationImage(
+                                          image: images.userImages.length != 0
+                                              ? NetworkImage(
+                                                  images.userImages[0].image)
+                                              : NetworkImage(
+                                                  "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: Center(
+                              child: Hero(
+                                  tag: images.userImages.length != 0
+                                      ? images.userImages[0].image
+                                      : "${dotenv.env['CDN_URL']}/assets/noprofile.png",
+                                  child: Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              2.3,
+                                      padding: const EdgeInsets.fromLTRB(
+                                          20, 40, 0, 0),
+                                      decoration: BoxDecoration(
+                                          borderRadius: const BorderRadius.only(
+                                              bottomLeft: Radius.circular(30),
+                                              bottomRight: Radius.circular(30)),
+                                          color: const Color.fromRGBO(
+                                              0, 0, 0, 0.1),
+                                          image: images.userImages.length != 0
+                                              ? DecorationImage(
+                                                  image: NetworkImage(images
+                                                      .userImages[0].image),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : DecorationImage(
+                                                  colorFilter: const ColorFilter
+                                                      .linearToSrgbGamma(),
+                                                  image: NetworkImage(
+                                                      "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                  fit: BoxFit.contain,
+                                                  alignment: Alignment.center)),
+                                      child: Column(children: [
+                                        Align(
+                                            alignment: Alignment.topLeft,
+                                            child: Container(
+                                                width: 50,
+                                                height: 50,
+                                                padding:
+                                                    const EdgeInsets.fromLTRB(
+                                                        5, 2, 0, 0),
+                                                decoration: const BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.all(
+                                                            Radius.circular(
+                                                                10))),
+                                                child: IconButton(
+                                                    onPressed: () {
+                                                      Navigator.pushNamed(
+                                                          context, "/home");
+                                                    },
+                                                    icon: const Icon(
+                                                      Icons.arrow_back_ios,
+                                                      color: Color.fromRGBO(
+                                                          0, 0, 0, 0.4),
+                                                      size: 20,
+                                                    )))),
+                                        widget.showButton == false
+                                            ? Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height /
+                                                    3.5,
+                                                child: Align(
+                                                    alignment:
+                                                        Alignment.bottomCenter,
+                                                    child: Container(
+                                                        width: 70,
+                                                        height: 70,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .fromLTRB(
+                                                                0, 2, 0, 0),
+                                                        decoration: const BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            40))),
+                                                        child: IconButton(
+                                                            onPressed: () {
+                                                              Navigator.pushNamed(
+                                                                  context,
+                                                                  "/messages");
+                                                            },
+                                                            icon: const Icon(
+                                                              Icons
+                                                                  .message_rounded,
+                                                              color: Color(
+                                                                  0xFF0081CF),
+                                                              size: 30,
+                                                            )))))
+                                            : Container(),
+                                      ]))))),
                       Container(
                           padding: const EdgeInsets.fromLTRB(30, 30, 30, 30),
                           alignment: Alignment.bottomCenter,
@@ -212,38 +282,68 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                           MainAxisAlignment.spaceBetween,
                                       children: List.generate(
                                           images.userImages.length, (index) {
-                                        return Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                4,
-                                            height: 150,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    const BorderRadius.all(
-                                                        Radius.circular(10)),
-                                                color: const Color.fromRGBO(
-                                                    0, 0, 0, 0.1),
-                                                image: images.userImages
-                                                            .length !=
-                                                        0
-                                                    ? DecorationImage(
-                                                        image: NetworkImage(
-                                                            images
-                                                                .userImages[
-                                                                    index]
-                                                                .image),
-                                                        fit: BoxFit.cover,
-                                                      )
-                                                    : DecorationImage(
-                                                        colorFilter:
-                                                            const ColorFilter
-                                                                .linearToSrgbGamma(),
-                                                        image: NetworkImage(
-                                                            "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                        fit: BoxFit.contain,
-                                                        alignment:
-                                                            Alignment.center)));
+                                        return GestureDetector(
+                                            onTap: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return Dialog(
+                                                    child: GestureDetector(
+                                                      onTap: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: images.userImages
+                                                                  .length !=
+                                                              0
+                                                          ? Image.network(images
+                                                              .userImages[index]
+                                                              .image)
+                                                          : Image.network(
+                                                              "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Center(
+                                                child: Hero(
+                                                    tag: images.userImages.length != 0
+                                                        ? images
+                                                            .userImages[index]
+                                                            .image
+                                                        : "${dotenv.env['CDN_URL']}/assets/noprofile.png",
+                                                    child: Container(
+                                                        width: MediaQuery.of(context)
+                                                                .size
+                                                                .width /
+                                                            4,
+                                                        height: 150,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                                borderRadius:
+                                                                    const BorderRadius.all(
+                                                                        Radius.circular(
+                                                                            10)),
+                                                                color: const Color.fromRGBO(
+                                                                    0, 0, 0, 0.1),
+                                                                image: images
+                                                                            .userImages
+                                                                            .length !=
+                                                                        0
+                                                                    ? DecorationImage(
+                                                                        image: NetworkImage(images
+                                                                            .userImages[index]
+                                                                            .image),
+                                                                        fit: BoxFit
+                                                                            .cover,
+                                                                      )
+                                                                    : DecorationImage(
+                                                                        colorFilter:
+                                                                            const ColorFilter.linearToSrgbGamma(),
+                                                                        image: NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                        fit: BoxFit.contain,
+                                                                        alignment: Alignment.center))))));
                                       })),
                               const SizedBox(height: 100),
                               Container(
@@ -338,7 +438,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                             }
                                           },
                                         ),
-                                        const SizedBox(height: 120),
+                                        const SizedBox(height: 10),
                                       ]))
                             ]),
                           )),
@@ -349,6 +449,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
             ? Container(
                 height: 40.0,
                 width: 140.0,
+                margin: const EdgeInsets.only(bottom: 70),
                 child: FloatingActionButton(
                     backgroundColor: const Color(0xFF0081CF),
                     shape: const RoundedRectangleBorder(
