@@ -205,44 +205,98 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             }
 
                             var currentLocation = snapshot.data!;
-                            return Container(
-                              height: MediaQuery.of(context).size.height / 2,
-                              child: FlutterMap(
-                                options: MapOptions(
-                                  center: LatLng(
-                                    currentLocation.latitude,
-                                    currentLocation.longitude,
-                                  ),
-                                  zoom: 9.6,
-                                ),
-                                children: [
-                                  TileLayer(
-                                    urlTemplate:
-                                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                                    userAgentPackageName: 'com.example.app',
-                                  ),
-                                  MarkerLayer(
-                                    markers: [
-                                      Marker(
-                                        width: 40.0,
-                                        height: 40.0,
-                                        point: LatLng(
-                                          currentLocation.latitude,
-                                          currentLocation.longitude,
-                                        ),
-                                        builder: ((context) => Container(
-                                              child: const Icon(
-                                                Icons.location_on,
-                                                color: Colors.blue,
-                                                size: 40.0,
+                            return GestureDetector(
+                                onTap: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return Dialog(
+                                            child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height /
+                                              1.2,
+                                          child: FlutterMap(
+                                            options: MapOptions(
+                                              center: LatLng(
+                                                currentLocation.latitude,
+                                                currentLocation.longitude,
                                               ),
-                                            )),
+                                              zoom: 9.6,
+                                            ),
+                                            children: [
+                                              TileLayer(
+                                                urlTemplate:
+                                                    'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                                userAgentPackageName:
+                                                    'com.example.app',
+                                              ),
+                                              MarkerLayer(
+                                                markers: [
+                                                  Marker(
+                                                    width: 40.0,
+                                                    height: 40.0,
+                                                    point: LatLng(
+                                                      currentLocation.latitude,
+                                                      currentLocation.longitude,
+                                                    ),
+                                                    builder: ((context) =>
+                                                        Container(
+                                                          child: const Icon(
+                                                            Icons.location_on,
+                                                            color: Colors.blue,
+                                                            size: 40.0,
+                                                          ),
+                                                        )),
+                                                  )
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ));
+                                      });
+                                },
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 3.5,
+                                  child: FlutterMap(
+                                    options: MapOptions(
+                                      center: LatLng(
+                                        currentLocation.latitude,
+                                        currentLocation.longitude,
+                                      ),
+                                      zoom: 9.6,
+                                    ),
+                                    children: [
+                                      TileLayer(
+                                        urlTemplate:
+                                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                        userAgentPackageName: 'com.example.app',
+                                      ),
+                                      MarkerLayer(
+                                        markers: [
+                                          Marker(
+                                            width: 40.0,
+                                            height: 40.0,
+                                            point: LatLng(
+                                              currentLocation.latitude,
+                                              currentLocation.longitude,
+                                            ),
+                                            builder: ((context) => Container(
+                                                  child: const Icon(
+                                                    Icons.location_on,
+                                                    color: Colors.blue,
+                                                    size: 40.0,
+                                                  ),
+                                                )),
+                                          )
+                                        ],
                                       )
                                     ],
-                                  )
-                                ],
-                              ),
-                            );
+                                  ),
+                                ));
                           },
                         ),
                         const SizedBox(height: 70),

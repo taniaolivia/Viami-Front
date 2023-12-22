@@ -36,7 +36,7 @@ class MessageService {
               "responderId": responderId,
             }));
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       var res = json.decode(response.body);
 
       return res;

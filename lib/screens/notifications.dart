@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:viami/models-api/requestMessage/requests_messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
-import 'package:viami/services/requestMessage/request_message_service%20copy.dart';
+import 'package:viami/services/requestMessage/request_message_service.dart';
 import 'package:viami/services/requestMessage/requests_messages_service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
@@ -241,7 +241,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                                                 .all(Colors
                                                                     .blue)),
                                                     onPressed: () async {
-                                                      await RequestMessagService().answerRequest(
+                                                      await RequestMessageService().answerRequest(
                                                           token!,
                                                           requests!
                                                               .requestsMessages[
@@ -278,7 +278,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                                                 .all(Colors
                                                                     .grey)),
                                                     onPressed: () async {
-                                                      await RequestMessagService().answerRequest(
+                                                      await RequestMessageService().answerRequest(
                                                           token!,
                                                           requests!
                                                               .requestsMessages[

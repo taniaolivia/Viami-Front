@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/models-api/premium-plan/premium_plans.dart';
 
-/*class PremiumPlansService {
+/*class UserPremiumPlansService {
   Future<PremiumPlans> getAllPremiumPlans(String token) async {
     final response = await http.post(
         Uri.parse('${dotenv.env['API_URL']}/premiumPlans'),

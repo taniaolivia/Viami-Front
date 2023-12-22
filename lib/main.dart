@@ -8,7 +8,6 @@ import 'package:viami/screens/faqDetails.dart';
 import 'package:viami/screens/introduction.dart';
 import 'package:viami/screens/login.dart';
 import 'package:viami/screens/messenger.dart';
-import 'package:viami/screens/payment.dart';
 import 'package:viami/screens/profile.dart';
 import 'package:viami/screens/allRecommendedActivities.dart';
 import 'package:viami/screens/register.dart';
@@ -19,8 +18,6 @@ import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/updatePassword.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-
-import 'components/myCustomDialog.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
