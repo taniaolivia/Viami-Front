@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 import 'package:viami/services/message/groups.service.dart';
 import '../models-api/user/users.dart';
 import '../models-api/userImage/usersImages.dart';
@@ -60,7 +61,11 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text('Sélectionnez un voyageur'),
+      surfaceTintColor: Colors.white,
+      title: const Text(
+        'Sélectionnez un voyageur',
+        style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+      ),
       content: SingleChildScrollView(
         child: Column(
           children: [
@@ -68,7 +73,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
             Row(
               children: [
                 Container(
-                  width: MediaQuery.of(context).size.width / 2.4,
+                  width: MediaQuery.of(context).size.width / 2.2,
                   child: Form(
                     key: _formKeySearchNameUser,
                     child: Column(
@@ -88,7 +93,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                                   BorderRadius.all(Radius.circular(15)),
                             ),
                             contentPadding: EdgeInsets.fromLTRB(15, 5, 10, 5),
-                            labelText: 'Recherche par prénom',
+                            labelText: 'Prénom',
                             hintText: '',
                             labelStyle: TextStyle(fontSize: 12),
                           ),
@@ -103,7 +108,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0081CF),
-                    padding: const EdgeInsets.only(top: 20, bottom: 20),
+                    padding: const EdgeInsets.only(top: 14, bottom: 14),
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(15)),
                     ),
@@ -149,7 +154,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                 },
                 child: const Text(
                   "Réinitialiser",
-                  style: TextStyle(fontSize: 12),
+                  style: TextStyle(fontSize: 12, color: Colors.blue),
                 ),
               ),
             ),
@@ -184,21 +189,22 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                                   ? CircleAvatar(
                                       backgroundImage: NetworkImage(
                                           image.userImages[0].image),
-                                      maxRadius: 25,
+                                      maxRadius: 20,
                                     )
                                   : CircleAvatar(
                                       backgroundColor: const Color.fromARGB(
                                           255, 220, 234, 250),
                                       foregroundImage: NetworkImage(
                                           "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                      maxRadius: 25,
+                                      maxRadius: 20,
                                     );
 
                               return avatar;
                             },
                           ),
                           const SizedBox(width: 8),
-                          Text('${user.firstName} ${user.lastName}')
+                          Text(
+                              '${toBeginningOfSentenceCase(user.firstName)} ${toBeginningOfSentenceCase(user.lastName)}')
                         ]),
                         IconButton(
                           style: ButtonStyle(
@@ -218,6 +224,7 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
+                                    surfaceTintColor: Colors.white,
                                     content: Text(message),
                                     actions: <Widget>[
                                       TextButton(
@@ -237,14 +244,15 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: Text('Error'),
+                                    surfaceTintColor: Colors.white,
+                                    title: const Text('Erreur'),
                                     content: Text(e.toString()),
                                     actions: <Widget>[
                                       TextButton(
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         },
-                                        child: Text('OK'),
+                                        child: const Text("D'accord"),
                                       ),
                                     ],
                                   );
@@ -252,9 +260,9 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                               );
                             }
                           },
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.add,
-                            size: 25,
+                            size: 20,
                             color: Colors.white,
                           ),
                         ),

@@ -37,6 +37,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
   List themeActivityLocation = [];
   int? currentIndex;
   int? clickedThemeId;
+  List activities = [];
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -130,8 +131,11 @@ class _PopularThemePageState extends State<PopularThemePage> {
                       Navigator.push(
                         context,
                         FadePageRoute(
-                          page: ActivityDetailsPage(
-                              activityId: activity.activities[index].id),
+                          page: clicked == "popular"
+                              ? ActivityDetailsPage(
+                                  activityId: activity.activities[index].id)
+                              : ActivityDetailsPage(
+                                  activityId: activities[index].id),
                         ),
                       );
                     },
@@ -266,6 +270,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                             onPressed: () {
                               setState(() {
                                 clicked = "popular";
+                                activities = activity.activities;
                               });
                             },
                             style: ElevatedButton.styleFrom(
@@ -309,7 +314,8 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 ]),
                           )),
                       Row(
-                          children: List.generate(theme.themes.length, (index) {
+                          children:
+                              List.generate(theme.themes.length, (indexTheme) {
                         return Container(
                             margin: const EdgeInsets.fromLTRB(6, 5, 0, 5),
                             child: ElevatedButton(
@@ -318,11 +324,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 themeActivityName = [];
                                 themeActivityLocation = [];
 
-                                clickedThemeId = theme.themes[index].id;
-
                                 var themeTravel =
                                     await getFirstFiveThemeActivities(
-                                        theme.themes[index].id);
+                                        theme.themes[indexTheme].id);
 
                                 List.generate(themeTravel.activities.length,
                                     (index) {
@@ -336,18 +340,20 @@ class _PopularThemePageState extends State<PopularThemePage> {
 
                                 setState(() {
                                   clicked = "theme";
-                                  currentIndex = index;
+                                  currentIndex = indexTheme;
+                                  clickedThemeId = theme.themes[indexTheme].id;
+                                  activities = themeTravel.activities;
                                 });
                               },
                               style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.all(8),
                                   elevation: 7,
                                   shadowColor: clicked == "theme" &&
-                                          currentIndex == index
+                                          currentIndex == indexTheme
                                       ? const Color(0xFF0081CF)
                                       : Colors.transparent,
                                   backgroundColor: clicked == "theme" &&
-                                          currentIndex == index
+                                          currentIndex == indexTheme
                                       ? const Color(0xFF0081CF)
                                       : Colors.white,
                                   shape: RoundedRectangleBorder(
@@ -355,7 +361,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                           Radius.circular(10)),
                                       side: BorderSide(
                                           color: clicked == "theme" &&
-                                                  currentIndex == index
+                                                  currentIndex == indexTheme
                                               ? const Color(0xFF0081CF)
                                               : const Color(0xFFD6D6D6),
                                           width: 2.0))),
@@ -364,9 +370,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                   children: [
                                     Icon(
                                         getIconDataFromName(
-                                            theme.themes[index].icon),
+                                            theme.themes[indexTheme].icon),
                                         color: clicked == "theme" &&
-                                                currentIndex == index
+                                                currentIndex == indexTheme
                                             ? Colors.white
                                             : const Color(0xFF6A778B)),
                                     const SizedBox(
@@ -374,14 +380,14 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                     ),
                                     AutoSizeText(
                                       toBeginningOfSentenceCase(
-                                          theme.themes[index].theme)!,
+                                          theme.themes[indexTheme].theme)!,
                                       maxLines: 1,
                                       minFontSize: 11,
                                       maxFontSize: 13,
                                       style: TextStyle(
                                           fontFamily: "Poppins",
                                           color: clicked == "theme" &&
-                                                  currentIndex == index
+                                                  currentIndex == indexTheme
                                               ? Colors.white
                                               : const Color(0xFF6A778B)),
                                     )

@@ -9,7 +9,6 @@ import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
 import 'package:viami/services/message/message.service.dart';
-import 'package:viami/services/message/messages.service.dart';
 import 'package:viami/services/requestMessage/requests_messages_service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
@@ -118,9 +117,7 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
     socket.connect();
 
     // Listen for 'chat message' events for real-time updates
-    socket.on('chat message', (data) {
-      
-    });
+    socket.on('chat message', (data) {});
   }
 
   @override
@@ -147,7 +144,7 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 2,
+              height: 100,
               alignment: Alignment.center,
               child: const CircularProgressIndicator(
                 backgroundColor: Colors.white,
@@ -196,8 +193,7 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                                 child: Container(
                                     width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.height));
+                                    height: 100));
                           } else if (snapshot.hasError) {
                             return Text(
                               '${snapshot.error}',
@@ -302,13 +298,6 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                                   top: 10,
                                                   bottom: 10,
                                                 ),
-                                                decoration: const BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: Color(0XFFE8E6EA),
-                                                    ),
-                                                  ),
-                                                ),
                                                 child: Column(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment
@@ -408,11 +397,15 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                                       ),
                                                       const SizedBox(height: 5),
                                                     ]),
-                                              ) //builddd
+                                              )
                                             ],
                                           ),
+                                          const Divider(
+                                              thickness: 1,
+                                              height: 2,
+                                              color: Color(0XFFE8E6EA)),
                                           Container(
-                                            padding: EdgeInsets.all(16.0),
+                                            padding: const EdgeInsets.all(16.0),
                                             child: Row(
                                               children: [
                                                 // Champ de saisie de texte avec icône à droite
@@ -432,10 +425,9 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                                       contentPadding:
                                                           EdgeInsets.fromLTRB(
                                                               15, 5, 10, 5),
-                                                      hintText:
-                                                          "Saisissez votre message...",
-                                                      labelStyle: TextStyle(
-                                                          fontSize: 12),
+                                                      hintText: "Message",
+                                                      hintStyle: TextStyle(
+                                                          fontSize: 13),
                                                     ),
                                                     keyboardType:
                                                         TextInputType.text,
@@ -443,7 +435,7 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                                 ),
                                                 // Icône et bouton d'envoi
                                                 IconButton(
-                                                  icon: Icon(Icons.send),
+                                                  icon: const Icon(Icons.send),
                                                   onPressed: () async {
                                                     await send(
                                                         null,

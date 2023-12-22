@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:viami/models-api/activity/activity.dart';
@@ -39,7 +38,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
     setState(() {
       activityImages = images.activityImages.map((image) {
-        return '${dotenv.env['CDN_URL']}/assets/${image.imageName}';
+        return image.image;
       }).toList();
     });
   }
@@ -217,7 +216,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
                           url = activity.url != null ? activity.url! : "";
                           schedule = activity.schedule != null
-                              ? activity.schedule!.split(', "')
+                              ? activity.schedule!.split(' | ')
                               : [];
 
                           return Column(
@@ -424,7 +423,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                           .width /
                                                       2.5,
                                                   child: AutoSizeText(
-                                                    activity.address != null
+                                                    activity.address != ""
                                                         ? activity.address!
                                                         : "-",
                                                     style: const TextStyle(
@@ -452,7 +451,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                 children: [
                                   GestureDetector(
                                       onTap: () {
-                                        if (activity.accessibility != null) {
+                                        if (activity.accessibility != "") {
                                           showDialog(
                                             context: context,
                                             builder: (BuildContext context) {
@@ -559,7 +558,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                             3,
                                                     child: AutoSizeText(
                                                       activity.accessibility !=
-                                                              null
+                                                              ""
                                                           ? activity
                                                               .accessibility!
                                                           : "-",
@@ -693,7 +692,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                                 .width /
                                                             4,
                                                     child: AutoSizeText(
-                                                      activity.language != null
+                                                      activity.language != ""
                                                           ? activity.language!
                                                           : "-",
                                                       style: const TextStyle(
@@ -716,22 +715,25 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                 height: 30,
                               ),
                               Column(
+                                  mainAxisAlignment: MainAxisAlignment.start,
                                   children: List.generate(schedule.length,
                                       (indexDesc) {
-                                return AutoSizeText(
-                                  activity.schedule!,
-                                  style: const TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.normal,
-                                    fontFamily: "Poppins",
-                                  ),
-                                  minFontSize: 12,
-                                  maxFontSize: 14,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  textAlign: TextAlign.left,
-                                );
-                              })),
+                                    return Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: AutoSizeText(
+                                          schedule[indexDesc],
+                                          style: const TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.normal,
+                                            fontFamily: "Poppins",
+                                          ),
+                                          minFontSize: 12,
+                                          maxFontSize: 14,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          textAlign: TextAlign.left,
+                                        ));
+                                  })),
                               const SizedBox(
                                 height: 20,
                               ),
@@ -753,8 +755,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                 height: 50.0,
                 width: 250.00,
                 child: FloatingActionButton(
-                    backgroundColor:
-                        url != "" ? const Color(0xFF0081CF) : Colors.grey,
+                    backgroundColor: const Color(0xFF0081CF),
                     shape: const RoundedRectangleBorder(
                         borderRadius: BorderRadius.all(Radius.circular(20))),
                     onPressed: () {
