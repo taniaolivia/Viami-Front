@@ -200,7 +200,6 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   void _handleSubmitted(String text) {
-    print("Message envoyé: $text");
     _textController.clear();
   }
 
@@ -848,9 +847,12 @@ class _MessengerPageState extends State<MessengerPage> {
                                                         : Alignment.centerLeft,
                                                     child: ListTile(
                                                       title: Container(
-                                                        margin: const EdgeInsets
-                                                            .fromLTRB(
-                                                            0, 18, 0, 18),
+                                                        margin: isUserMessage
+                                                            ? const EdgeInsets
+                                                                .all(0)
+                                                            : const EdgeInsets
+                                                                .only(
+                                                                right: 35),
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(18),
