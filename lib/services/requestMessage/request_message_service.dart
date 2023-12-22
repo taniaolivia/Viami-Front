@@ -54,13 +54,13 @@ class RequestMessageService {
   }
 
   Future<void> setChat(String token, int requestId) async {
-    final response =
-        await http.post(Uri.parse('${dotenv.env['API_URL']}/$requestId/chat'),
-            headers: <String, String>{
-              "Content-Type": "application/json",
-              'Authorization': token,
-            },
-            body: jsonEncode(<String, dynamic>{"requestId": requestId}));
+    final response = await http.patch(
+        Uri.parse('${dotenv.env['API_URL']}/requestsMessages/$requestId/chat'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          'Authorization': token,
+        },
+        body: jsonEncode(<String, dynamic>{"requestId": requestId}));
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
