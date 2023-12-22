@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -128,6 +129,11 @@ class _MessengerPageState extends State<MessengerPage> {
     });
 
     _textController.clear();
+
+    Timer(
+        const Duration(milliseconds: 300),
+        () => _scrollController
+            .jumpTo(_scrollController.position.maxScrollExtent));
 
     return MessageService()
         .sendMessage(token.toString(), groupId, message, userId, responderId);
@@ -475,6 +481,12 @@ class _MessengerPageState extends State<MessengerPage> {
                               builder: (context) {
                                 currentContext = context;
 
+                                Timer(
+                                    const Duration(milliseconds: 100),
+                                    () => _scrollController.jumpTo(
+                                        _scrollController
+                                            .position.maxScrollExtent));
+
                                 return StatefulBuilder(
                                   builder: (BuildContext context,
                                       StateSetter setState) {
@@ -797,7 +809,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 color: Color(0XFFE8E6EA)),
                                             Expanded(
                                               child: ListView.builder(
-                                                reverse: true,
                                                 controller: _scrollController,
                                                 itemCount:
                                                     discussion?.messages.length,
