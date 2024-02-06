@@ -54,11 +54,14 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                   future: getListPopularActivities(),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Text("");
+                      return const Text("");
                     }
 
                     if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
+                      return Text(
+                        '${snapshot.error}',
+                        textAlign: TextAlign.center,
+                      );
                     }
 
                     if (!snapshot.hasData) {
@@ -106,68 +109,33 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                                     ]),
                                 child: Column(children: [
                                   Container(
-                                      width: MediaQuery.of(context).size.width,
-                                      height: MediaQuery.of(context).size.width <=
-                                              320
-                                          ? MediaQuery.of(context).size.height /
-                                              4
-                                          : MediaQuery.of(context).size.height /
-                                              6,
-                                      decoration: BoxDecoration(
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(10),
-                                          ),
-                                          boxShadow: const [
-                                            BoxShadow(
-                                              color: Colors.grey,
-                                              blurRadius: 10.0,
-                                              spreadRadius: 0.0,
-                                              offset: Offset(
-                                                5.0,
-                                                5.0,
-                                              ),
-                                            )
-                                          ],
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: NetworkImage(
-                                                "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
-                                              ))),
-                                      child: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              if (likedList.contains(index)) {
-                                                likedList.removeWhere(
-                                                    (element) =>
-                                                        element == index);
-                                              } else {
-                                                likedList.add(index);
-                                              }
-                                            });
-                                          },
-                                          child: Align(
-                                              alignment: Alignment.topRight,
-                                              child: Container(
-                                                  margin:
-                                                      const EdgeInsets.all(10),
-                                                  padding:
-                                                      const EdgeInsets.all(10),
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius.all(
-                                                            Radius.circular(50),
-                                                          ),
-                                                          color: Color.fromRGBO(
-                                                              0, 0, 0, 0.3)),
-                                                  child: Icon(
-                                                      Icons
-                                                          .favorite_border_rounded,
-                                                      color: likedList
-                                                              .contains(index)
-                                                          ? Colors.pink
-                                                          : Colors.white,
-                                                      size: 20))))),
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.width <=
+                                            320
+                                        ? MediaQuery.of(context).size.height / 4
+                                        : MediaQuery.of(context).size.height /
+                                            6,
+                                    decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        boxShadow: const [
+                                          BoxShadow(
+                                            color: Colors.grey,
+                                            blurRadius: 10.0,
+                                            spreadRadius: 0.0,
+                                            offset: Offset(
+                                              5.0,
+                                              5.0,
+                                            ),
+                                          )
+                                        ],
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                              "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                            ))),
+                                  ),
                                   const SizedBox(
                                     height: 25,
                                   ),
@@ -175,14 +143,22 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        AutoSizeText(
-                                            toBeginningOfSentenceCase(activity
-                                                .activities[index].name)!,
-                                            minFontSize: 16,
-                                            maxFontSize: 20,
-                                            style: const TextStyle(
-                                                color: Color(0xFF0A2753))),
-                                        Row(children: [
+                                        Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.7,
+                                            child: AutoSizeText(
+                                                toBeginningOfSentenceCase(
+                                                    activity.activities[index]
+                                                        .name)!,
+                                                minFontSize: 16,
+                                                maxFontSize: 20,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 2,
+                                                style: const TextStyle(
+                                                    color: Color(0xFF0A2753)))),
+                                        /*Row(children: [
                                           const Icon(
                                             Icons.people_alt,
                                             size: 20,
@@ -203,7 +179,7 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                                               maxFontSize: 18,
                                               style: const TextStyle(
                                                   color: Color(0xFF0A2753))),
-                                        ])
+                                        ])*/
                                       ]),
                                   const SizedBox(
                                     height: 10,

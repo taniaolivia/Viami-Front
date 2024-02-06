@@ -1,9 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/user/user.dart';
-import 'package:viami/services/user/auth.service.dart';
 import '../services/user/user.service.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -16,8 +14,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPage extends State<SettingsPage> {
   final storage = const FlutterSecureStorage();
-  final _formKey = GlobalKey<FormState>();
-
   String? token = "";
   String? userId = "";
   bool passwordVisible = false;
@@ -25,16 +21,16 @@ class _SettingsPage extends State<SettingsPage> {
   TextEditingController newPasswordController = TextEditingController();
   TextEditingController confirmNewPasswordController = TextEditingController();
   FocusNode focusNode = FocusNode();
-  bool? tokenExpired;
+  //bool? tokenExpired;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -75,7 +71,7 @@ class _SettingsPage extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     if (widget.tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /*WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -87,7 +83,7 @@ class _SettingsPage extends State<SettingsPage> {
               },
             ),
             null);
-      });
+      });*/
     }
     return Scaffold(
         appBar: AppBar(
@@ -114,17 +110,21 @@ class _SettingsPage extends State<SettingsPage> {
           future: getUser(),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Text("");
+              return const Text("");
             }
 
             if (snapshot.hasError) {
-              return Text('Error: ${snapshot.error}');
+              return Text(
+                '${snapshot.error}',
+                textAlign: TextAlign.center,
+              );
             }
 
             if (!snapshot.hasData) {
               return const Text('');
             }
             var user = snapshot.data!;
+
             return SafeArea(
                 child: SingleChildScrollView(
               physics: const BouncingScrollPhysics(),
@@ -214,12 +214,13 @@ class _SettingsPage extends State<SettingsPage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Card(
+                surfaceTintColor: const Color.fromARGB(255, 35, 143, 231),
                 child: ListTile(
-              title: Text(
-                " ${items[index]}",
-                style: const TextStyle(fontSize: 16),
-              ),
-              trailing: Icon(icons[index]),
-            ))));
+                  title: Text(
+                    " ${items[index]}",
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                  trailing: Icon(icons[index]),
+                ))));
   }
 }

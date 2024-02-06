@@ -20,7 +20,7 @@ class CustomCurvedNavigationBar extends StatelessWidget {
         color: Colors.white,
       ),
       Icon(
-        Icons.favorite,
+        Icons.explore,
         size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
         color: Colors.white,
       ),
@@ -32,7 +32,7 @@ class CustomCurvedNavigationBar extends StatelessWidget {
       Icon(
         Icons.message,
         size: MediaQuery.of(context).size.width <= 320 ? 25 : 30,
-        color: Colors.white,
+        color: const Color.fromARGB(255, 255, 255, 255),
       ),
       Icon(
         Icons.person,

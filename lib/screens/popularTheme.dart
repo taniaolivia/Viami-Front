@@ -16,7 +16,6 @@ import 'package:viami/screens/allThemeActivities.dart';
 import 'package:viami/services/activity/activities.service.dart';
 import 'package:viami/services/theme/themes.service.dart';
 import 'package:viami/services/themeActivity/themesActivities.service.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 class PopularThemePage extends StatefulWidget {
@@ -38,15 +37,16 @@ class _PopularThemePageState extends State<PopularThemePage> {
   List themeActivityLocation = [];
   int? currentIndex;
   int? clickedThemeId;
+  List activities = [];
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -57,7 +57,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
   Future<Themes> getAllThemes() async {
     token = await storage.read(key: "token");
 
-    return ThemessService().getAllThemes(token.toString());
+    return ThemesService().getAllThemes(token.toString());
   }
 
   Future<Activities> getTopFivePopularTravels() async {
@@ -110,7 +110,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
           }
 
           if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Text(
+              '${snapshot.error}',
+              textAlign: TextAlign.center,
+            );
           }
 
           if (!snapshot.hasData) {
@@ -128,8 +131,11 @@ class _PopularThemePageState extends State<PopularThemePage> {
                       Navigator.push(
                         context,
                         FadePageRoute(
-                          page: ActivityDetailsPage(
-                              activityId: activity.activities[index].id),
+                          page: clicked == "popular"
+                              ? ActivityDetailsPage(
+                                  activityId: activity.activities[index].id)
+                              : ActivityDetailsPage(
+                                  activityId: activities[index].id),
                         ),
                       );
                     },
@@ -150,29 +156,35 @@ class _PopularThemePageState extends State<PopularThemePage> {
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              AutoSizeText(
-                                clicked == "popular"
-                                    ? toBeginningOfSentenceCase(
-                                        activity.activities[index].name)!
-                                    : toBeginningOfSentenceCase(
-                                        themeActivityName[index])!,
-                                minFontSize: 25,
-                                maxFontSize: 30,
-                                style: const TextStyle(
-                                    shadows: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 20.0,
-                                        spreadRadius: 5.0,
-                                        offset: Offset(
-                                          0.0,
-                                          0.0,
-                                        ),
-                                      )
-                                    ],
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold),
-                              ),
+                              Container(
+                                  width:
+                                      MediaQuery.of(context).size.width / 1.2,
+                                  child: AutoSizeText(
+                                    clicked == "popular"
+                                        ? toBeginningOfSentenceCase(
+                                            activity.activities[index].name)!
+                                        : toBeginningOfSentenceCase(
+                                            themeActivityName[index])!,
+                                    minFontSize: 25,
+                                    maxFontSize: 30,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        shadows: [
+                                          BoxShadow(
+                                            color: Colors.black,
+                                            blurRadius: 20.0,
+                                            spreadRadius: 5.0,
+                                            offset: Offset(
+                                              0.0,
+                                              0.0,
+                                            ),
+                                          )
+                                        ],
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold),
+                                  )),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -258,6 +270,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                             onPressed: () {
                               setState(() {
                                 clicked = "popular";
+                                activities = activity.activities;
                               });
                             },
                             style: ElevatedButton.styleFrom(
@@ -301,7 +314,8 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 ]),
                           )),
                       Row(
-                          children: List.generate(theme.themes.length, (index) {
+                          children:
+                              List.generate(theme.themes.length, (indexTheme) {
                         return Container(
                             margin: const EdgeInsets.fromLTRB(6, 5, 0, 5),
                             child: ElevatedButton(
@@ -310,11 +324,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 themeActivityName = [];
                                 themeActivityLocation = [];
 
-                                clickedThemeId = theme.themes[index].id;
-
                                 var themeTravel =
                                     await getFirstFiveThemeActivities(
-                                        theme.themes[index].id);
+                                        theme.themes[indexTheme].id);
 
                                 List.generate(themeTravel.activities.length,
                                     (index) {
@@ -328,18 +340,20 @@ class _PopularThemePageState extends State<PopularThemePage> {
 
                                 setState(() {
                                   clicked = "theme";
-                                  currentIndex = index;
+                                  currentIndex = indexTheme;
+                                  clickedThemeId = theme.themes[indexTheme].id;
+                                  activities = themeTravel.activities;
                                 });
                               },
                               style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.all(8),
                                   elevation: 7,
                                   shadowColor: clicked == "theme" &&
-                                          currentIndex == index
+                                          currentIndex == indexTheme
                                       ? const Color(0xFF0081CF)
                                       : Colors.transparent,
                                   backgroundColor: clicked == "theme" &&
-                                          currentIndex == index
+                                          currentIndex == indexTheme
                                       ? const Color(0xFF0081CF)
                                       : Colors.white,
                                   shape: RoundedRectangleBorder(
@@ -347,7 +361,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                           Radius.circular(10)),
                                       side: BorderSide(
                                           color: clicked == "theme" &&
-                                                  currentIndex == index
+                                                  currentIndex == indexTheme
                                               ? const Color(0xFF0081CF)
                                               : const Color(0xFFD6D6D6),
                                           width: 2.0))),
@@ -356,9 +370,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                   children: [
                                     Icon(
                                         getIconDataFromName(
-                                            theme.themes[index].icon),
+                                            theme.themes[indexTheme].icon),
                                         color: clicked == "theme" &&
-                                                currentIndex == index
+                                                currentIndex == indexTheme
                                             ? Colors.white
                                             : const Color(0xFF6A778B)),
                                     const SizedBox(
@@ -366,14 +380,14 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                     ),
                                     AutoSizeText(
                                       toBeginningOfSentenceCase(
-                                          theme.themes[index].theme)!,
+                                          theme.themes[indexTheme].theme)!,
                                       maxLines: 1,
                                       minFontSize: 11,
                                       maxFontSize: 13,
                                       style: TextStyle(
                                           fontFamily: "Poppins",
                                           color: clicked == "theme" &&
-                                                  currentIndex == index
+                                                  currentIndex == indexTheme
                                               ? Colors.white
                                               : const Color(0xFF6A778B)),
                                     )

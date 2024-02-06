@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/models-api/activity/activities.dart';
@@ -17,7 +18,7 @@ class RecommendedActivitiesService {
 
       return Activities.fromJson(res);
     } else {
-      throw Exception('Failed to load recommended activities');
+      throw ErrorDescription('Échec du chargement des activités recommandées');
     }
   }
 
@@ -34,7 +35,7 @@ class RecommendedActivitiesService {
 
       return Activities.fromJson(res);
     } else {
-      throw Exception('Failed to load recommended activities');
+      throw ErrorDescription('Échec du chargement des activités recommandées');
     }
   }
 
@@ -52,7 +53,7 @@ class RecommendedActivitiesService {
 
       return Activities.fromJson(res['activity'][0]);
     } else {
-      throw Exception('Failed to load activity');
+      throw ErrorDescription('Échec du chargement des activités recommandées');
     }
   }
 }

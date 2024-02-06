@@ -135,6 +135,11 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                                     EdgeInsets.fromLTRB(
                                                         10, 5, 10, 5),
                                                 labelText: 'Email*',
+                                                focusedBorder:
+                                                    OutlineInputBorder(),
+                                                floatingLabelStyle: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 81, 81, 81)),
                                                 hintText:
                                                     ' Ex: example@gmail.com',
                                                 labelStyle:

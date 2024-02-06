@@ -41,7 +41,8 @@ class _FaqPageState extends State<FaqPage> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => FaqDetailsPage()),
+                    MaterialPageRoute(
+                        builder: (context) => const FaqDetailsPage()),
                   );
                 },
                 style: ElevatedButton.styleFrom(

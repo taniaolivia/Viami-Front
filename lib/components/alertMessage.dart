@@ -4,7 +4,7 @@ Future<void> showAlertDialog(BuildContext context, String title, String content,
     String buttonText) async {
   return showDialog<void>(
     context: context,
-    barrierDismissible: false,
+    barrierDismissible: true,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(title),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -15,11 +16,11 @@ class ActivityService {
 
       return Activity.fromJson(res["data"][0]);
     } else {
-      throw Exception('Failed to load activity');
+      throw ErrorDescription('Échec du chargement une activité');
     }
   }
 
-  Future<void> updateActivityNote(
+  /*Future<void> updateActivityNote(
       int activityId, double newNote, String token) async {
     try {
       final response = await http.post(
@@ -36,5 +37,5 @@ class ActivityService {
     } catch (error) {
       print('Erreur lors de la mise à jour de la note: $error');
     }
-  }
+  }*/
 }

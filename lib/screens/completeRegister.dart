@@ -189,6 +189,9 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                 border: UnderlineInputBorder(),
                                 labelText: 'Date de naissance*',
                                 labelStyle: TextStyle(fontSize: 12),
+                                focusedBorder: UnderlineInputBorder(),
+                                floatingLabelStyle: TextStyle(
+                                    color: Color.fromARGB(255, 81, 81, 81)),
                                 icon: Icon(
                                   Icons.cake_outlined,
                                   color: Colors.blue,
@@ -230,6 +233,9 @@ class _CompleteRegisterPageState extends State<CompleteRegisterPage> {
                                 border: UnderlineInputBorder(),
                                 labelText: 'Localisation*',
                                 labelStyle: TextStyle(fontSize: 12),
+                                focusedBorder: UnderlineInputBorder(),
+                                floatingLabelStyle: TextStyle(
+                                    color: Color.fromARGB(255, 81, 81, 81)),
                                 icon: Icon(
                                   Icons.location_on,
                                   color: Colors.blue,

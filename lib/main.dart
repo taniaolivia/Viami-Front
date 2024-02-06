@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:viami/firebase_api.dart';
 import 'package:viami/screens/allPopularActivities.dart';
 import 'package:viami/screens/drawer.dart';
@@ -18,11 +19,11 @@ import 'package:viami/screens/updatePassword.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
-import 'components/myCustomDialog.dart';
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "lib/.env");
+
+  Stripe.publishableKey = "${dotenv.env['STRIPE_PUBLIC_KEY']}";
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,

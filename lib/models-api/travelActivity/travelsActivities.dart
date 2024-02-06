@@ -16,7 +16,15 @@ class TravelActivity {
       required this.imageName,
       required this.activityLocation,
       required this.isRecommended,
-      this.activityNbParticipant});
+      this.activityNbParticipant,
+      this.activityUrl,
+      this.activityTelephone,
+      this.activityAddress,
+      this.activityLatitude,
+      this.activityLongitude,
+      this.activitySchedule,
+      this.activityLanguage,
+      this.activityAccessibility});
 
   factory TravelActivity.fromJson(Map<String?, dynamic> json) =>
       _$TravelActivityFromJson(json);
@@ -34,6 +42,14 @@ class TravelActivity {
   final String activityLocation;
   final int isRecommended;
   final int? activityNbParticipant;
+  final String? activityUrl;
+  final String? activityTelephone;
+  final String? activityAddress;
+  final String? activityLatitude;
+  final String? activityLongitude;
+  final String? activitySchedule;
+  final String? activityLanguage;
+  final String? activityAccessibility;
 }
 
 class TravelsActivities {

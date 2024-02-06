@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/models-api/theme/themes.dart';
 
-class ThemessService {
+class ThemesService {
   Future<Themes> getAllThemes(String token) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/themes'),

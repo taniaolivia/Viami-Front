@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -129,6 +130,11 @@ class _MessengerPageState extends State<MessengerPage> {
 
     _textController.clear();
 
+    Timer(
+        const Duration(milliseconds: 300),
+        () => _scrollController
+            .jumpTo(_scrollController.position.maxScrollExtent));
+
     return MessageService()
         .sendMessage(token.toString(), groupId, message, userId, responderId);
   }
@@ -200,7 +206,6 @@ class _MessengerPageState extends State<MessengerPage> {
   }
 
   void _handleSubmitted(String text) {
-    print("Message envoyé: $text");
     _textController.clear();
   }
 
@@ -263,6 +268,14 @@ class _MessengerPageState extends State<MessengerPage> {
 
   @override
   Widget build(BuildContext context) {
+    void scrollToBottom() {
+      _scrollController.animateTo(
+        _scrollController.position.maxScrollExtent,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOut,
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
@@ -353,16 +366,19 @@ class _MessengerPageState extends State<MessengerPage> {
                           size: 25.0,
                         ),
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
+                          if (_formKeySearch.currentState!.validate()) {
                             var search = searchController.text;
 
                             var userMessage = await GroupsService()
                                 .getSearchedUsers(token!, userId!, search);
+                            print("ij");
 
                             if (userMessage != null) {
                               setState(() {
                                 discussionMessages = userMessage;
                               });
+
+                              print(discussionMessages);
                             }
 
                             FocusScope.of(context).unfocus();
@@ -402,15 +418,14 @@ class _MessengerPageState extends State<MessengerPage> {
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
-                          return BackdropFilter(
-                            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                            child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              height: MediaQuery.of(context).size.height,
-                            ),
+                          return Container(
+                            width: MediaQuery.of(context).size.width,
+                            height: MediaQuery.of(context).size.height / 2,
+                            child: BackdropFilter(
+                                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5)),
                           );
                         } else if (snapshot.hasError) {
-                          return Text('Error: ${snapshot.error}');
+                          return Text('${snapshot.error}');
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
@@ -419,8 +434,9 @@ class _MessengerPageState extends State<MessengerPage> {
                             ?.groups[index].lastMessage as LastMessage;
 
                         bool isUserMessage = message.senderId == userId;
-                        Color containerColor =
-                            isUserMessage ? Colors.green : Colors.blue;
+                        Color containerColor = isUserMessage
+                            ? Colors.green
+                            : Color.fromARGB(255, 174, 218, 254);
 
                         List<UserData> users =
                             discussionMessages!.groups[index].users;
@@ -464,6 +480,12 @@ class _MessengerPageState extends State<MessengerPage> {
                               ),
                               builder: (context) {
                                 currentContext = context;
+
+                                Timer(
+                                    const Duration(milliseconds: 100),
+                                    () => _scrollController.jumpTo(
+                                        _scrollController
+                                            .position.maxScrollExtent));
 
                                 return StatefulBuilder(
                                   builder: (BuildContext context,
@@ -518,26 +540,27 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                     .connectionState ==
                                                                 ConnectionState
                                                                     .waiting) {
-                                                              return BackdropFilter(
-                                                                  filter: ImageFilter
-                                                                      .blur(
-                                                                          sigmaX:
-                                                                              5,
-                                                                          sigmaY:
-                                                                              5),
-                                                                  child: Container(
-                                                                      width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width,
-                                                                      height: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height));
+                                                              return Container(
+                                                                width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width,
+                                                                height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height /
+                                                                    2,
+                                                                child: BackdropFilter(
+                                                                    filter: ImageFilter.blur(
+                                                                        sigmaX:
+                                                                            5,
+                                                                        sigmaY:
+                                                                            5)),
+                                                              );
                                                             } else if (snapshot
                                                                 .hasError) {
                                                               return Text(
-                                                                  'Error: ${snapshot.error}');
+                                                                  '${snapshot.error}');
                                                             } else if (!snapshot
                                                                 .hasData) {
                                                               return const Text(
@@ -688,7 +711,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             size:
                                                                                 10,
                                                                           )
-                                                                        : Text(
+                                                                        : const Text(
                                                                             ""),
                                                                     const SizedBox(
                                                                       width: 5,
@@ -730,7 +753,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                     child: Container(
                                                       height: 10,
                                                       width: 50,
-                                                      child: Icon(
+                                                      child: const Icon(
                                                         Icons.more_vert,
                                                         color: Colors.black,
                                                       ),
@@ -771,7 +794,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                   Colors.black,
                                                               Icons.person_add),
                                                           title: Text(
-                                                              'Ajouter un Voyageur'),
+                                                              'Ajouter un voyageur'),
                                                         ),
                                                       ),
                                                     ],
@@ -786,6 +809,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                 color: Color(0XFFE8E6EA)),
                                             Expanded(
                                               child: ListView.builder(
+                                                controller: _scrollController,
                                                 itemCount:
                                                     discussion?.messages.length,
                                                 itemBuilder: (context, index) {
@@ -796,8 +820,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           userId;
                                                   Color containerColor =
                                                       isUserMessage
-                                                          ? const Color(
-                                                              0xFF0081CF)
+                                                          ? const Color
+                                                              .fromARGB(255,
+                                                              195, 226, 245)
                                                           : const Color(
                                                               0xFFF3F3F3);
 
@@ -833,8 +858,12 @@ class _MessengerPageState extends State<MessengerPage> {
                                                         : Alignment.centerLeft,
                                                     child: ListTile(
                                                       title: Container(
-                                                        margin: const EdgeInsets
-                                                            .all(18),
+                                                        margin: isUserMessage
+                                                            ? const EdgeInsets
+                                                                .all(0)
+                                                            : const EdgeInsets
+                                                                .only(
+                                                                right: 35),
                                                         padding:
                                                             const EdgeInsets
                                                                 .all(18),
@@ -859,8 +888,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                         .only(
                                                                         right:
                                                                             10),
-                                                                width: 48,
-                                                                height: 48,
+                                                                width: 40,
+                                                                height: 40,
                                                                 decoration:
                                                                     const BoxDecoration(
                                                                   shape: BoxShape
@@ -879,26 +908,21 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             .connectionState ==
                                                                         ConnectionState
                                                                             .waiting) {
-                                                                      return BackdropFilter(
-                                                                        filter: ImageFilter.blur(
-                                                                            sigmaX:
-                                                                                5,
-                                                                            sigmaY:
-                                                                                5),
-                                                                        child:
-                                                                            Container(
-                                                                          width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width,
-                                                                          height: MediaQuery.of(context)
-                                                                              .size
-                                                                              .height,
-                                                                        ),
+                                                                      return Container(
+                                                                        width: MediaQuery.of(context)
+                                                                            .size
+                                                                            .width,
+                                                                        height:
+                                                                            MediaQuery.of(context).size.height /
+                                                                                2,
+                                                                        child: BackdropFilter(
+                                                                            filter:
+                                                                                ImageFilter.blur(sigmaX: 5, sigmaY: 5)),
                                                                       );
                                                                     } else if (snapshot
                                                                         .hasError) {
                                                                       return Text(
-                                                                          'Error: ${snapshot.error}');
+                                                                          '${snapshot.error}');
                                                                     } else if (!snapshot
                                                                             .hasData ||
                                                                         snapshot
@@ -960,7 +984,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           foregroundImage:
                                                                               NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
                                                                           maxRadius:
-                                                                              15,
+                                                                              1,
                                                                         ),
                                                                       );
                                                                     }
@@ -1038,8 +1062,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           .senderId !=
                                                                       userId)
                                                                     AutoSizeText(
-                                                                      message
-                                                                          .senderFirstName,
+                                                                      toBeginningOfSentenceCase(
+                                                                          message
+                                                                              .senderFirstName)!,
                                                                       minFontSize:
                                                                           10,
                                                                       maxFontSize:
@@ -1056,9 +1081,6 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                     toBeginningOfSentenceCase(
                                                                         message
                                                                             .message)!,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
                                                                     minFontSize:
                                                                         10,
                                                                     maxFontSize:
@@ -1144,8 +1166,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                           10,
                                                                           5),
                                                               hintText:
-                                                                  "Saisissez votre message...",
-                                                              labelStyle:
+                                                                  "Message",
+                                                              hintStyle:
                                                                   TextStyle(
                                                                       fontSize:
                                                                           12),
@@ -1270,7 +1292,7 @@ class _MessengerPageState extends State<MessengerPage> {
                               context: currentContext!,
                             );
 
-                            if (!discussionMessages!.groups[index].usersRead
+                            if (!discussionMessages!.groups[index].usersRead!
                                 .contains(userId)) {
                               await MessageService()
                                   .setMessageRead(token!, message.id, userId!);
@@ -1291,21 +1313,20 @@ class _MessengerPageState extends State<MessengerPage> {
                                         builder: (context, snapshot) {
                                           if (snapshot.connectionState ==
                                               ConnectionState.waiting) {
-                                            return BackdropFilter(
-                                                filter: ImageFilter.blur(
-                                                    sigmaX: 5, sigmaY: 5),
-                                                child: Container(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .width,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                            .size
-                                                            .height));
+                                            return Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height /
+                                                  2,
+                                              child: BackdropFilter(
+                                                  filter: ImageFilter.blur(
+                                                      sigmaX: 5, sigmaY: 5)),
+                                            );
                                           } else if (snapshot.hasError) {
-                                            return Text(
-                                                'Error: ${snapshot.error}');
+                                            return Text('${snapshot.error}');
                                           } else if (!snapshot.hasData) {
                                             return const Text('');
                                           }
@@ -1442,7 +1463,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                           fontWeight: FontWeight
                                                               .w500)))),
                                           !discussionMessages!
-                                                      .groups[index].usersRead
+                                                      .groups[index].usersRead!
                                                       .contains(userId) &&
                                                   discussionMessages!
                                                           .groups[index]
@@ -1774,8 +1795,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                 vertical: 15, horizontal: 25),
                             child: AutoSizeText(
                                 "Appliquer le filtre localisation",
-                                minFontSize: 16,
-                                maxFontSize: 18,
+                                minFontSize: 15,
+                                maxFontSize: 17,
                                 style: TextStyle(color: Colors.white)),
                           ),
                         ),

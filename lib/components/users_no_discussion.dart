@@ -4,15 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:viami/components/dialogMessage.dart';
 import 'package:viami/models-api/requestMessage/requests_messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/models-api/userStatus/userStatus.dart';
 import 'package:viami/services/message/message.service.dart';
-import 'package:viami/services/message/messages.service.dart';
+import 'package:viami/services/requestMessage/request_message_service.dart';
 import 'package:viami/services/requestMessage/requests_messages_service.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 import 'package:viami/services/userStatus/userStatus.service.dart';
@@ -41,7 +39,8 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
   TextEditingController _textReqController = TextEditingController();
   bool _isKeyboardVisible = false;
 
-  Future<void> send(int? groupId, String message, String? responderId) async {
+  Future<void> send(
+      int? groupId, String message, String? responderId, int requestId) async {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
     // Envoyez le message à l'aide de l'ID de discussion
@@ -59,6 +58,8 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
 
     _textReqController.clear();
 
+    await RequestMessageService().setChat(token.toString(), requestId);
+
     return MessageService()
         .sendMessage(token.toString(), groupId, message, userId, responderId);
   }
@@ -67,9 +68,9 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      bool isTokenExpired = AuthService().isTokenExpired(token!);
+      //bool isTokenExpired = AuthService().isTokenExpired(token!);
 
-      tokenExpired = isTokenExpired;
+      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -99,7 +100,6 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
   }
 
   void _handleSubmitted(String text) {
-    print("Message envoyé: $text");
     _textReqController.clear();
   }
 
@@ -120,15 +120,13 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
     socket.connect();
 
     // Listen for 'chat message' events for real-time updates
-    socket.on('chat message', (data) {
-      
-    });
+    socket.on('chat message', (data) {});
   }
 
   @override
   Widget build(BuildContext context) {
     if (tokenExpired == true) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+      /* WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialogMessage(
             context,
             "Connectez-vous",
@@ -140,20 +138,27 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
               },
             ),
             null);
-      });
+      });*/
     }
 
     return FutureBuilder(
         future: getAllRequestsAcceptedByUser(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height));
+            return Container(
+              width: MediaQuery.of(context).size.width,
+              height: 100,
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(
+                backgroundColor: Colors.white,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0081CF)),
+              ),
+            );
           } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
+            return Text(
+              '${snapshot.error}',
+              textAlign: TextAlign.center,
+            );
           } else if (!snapshot.hasData) {
             return const Text('');
           }
@@ -191,10 +196,12 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
                                 child: Container(
                                     width: MediaQuery.of(context).size.width,
-                                    height:
-                                        MediaQuery.of(context).size.height));
+                                    height: 100));
                           } else if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
+                            return Text(
+                              '${snapshot.error}',
+                              textAlign: TextAlign.center,
+                            );
                           } else if (!snapshot.hasData) {
                             return const Text('');
                           }
@@ -211,251 +218,227 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
 
                           return GestureDetector(
                               onTap: () {
-                                BuildContext currentContext = context;
-                                showModalBottomSheet(
-                                  backgroundColor:
-                                      const Color.fromARGB(255, 255, 255, 255),
-                                  isScrollControlled: true,
-                                  shape: const RoundedRectangleBorder(
-                                    side: BorderSide(
-                                      color: Colors.white,
-                                    ),
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(30),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    currentContext = context;
-
-                                    return StatefulBuilder(builder:
-                                        (BuildContext context,
-                                            StateSetter setState) {
-                                      return Container(
-                                        padding: const EdgeInsets.only(
-                                            top: 10, bottom: 10, left: 20),
-                                        height:
-                                            MediaQuery.of(context).size.height -
-                                                30,
-                                        decoration: const BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(30),
-                                          ),
-                                        ),
-                                        child: Column(children: [
-                                          Container(
-                                            height: 8,
-                                            width: 40,
-                                            margin: const EdgeInsets.symmetric(
-                                              vertical: 10,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: Colors.grey,
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                  width: 70,
-                                                  height: 50,
-                                                  alignment: Alignment.center,
-                                                  color: Colors.white,
-                                                  child: Stack(children: [
-                                                    image.userImages.length != 0
-                                                        ? CircleAvatar(
-                                                            backgroundImage:
-                                                                NetworkImage(
-                                                                    "${image.userImages[0].image}"),
-                                                            maxRadius: 25,
-                                                          )
-                                                        : CircleAvatar(
-                                                            backgroundColor:
-                                                                const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    220,
-                                                                    234,
-                                                                    250),
-                                                            foregroundImage:
-                                                                NetworkImage(
-                                                                    "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                            maxRadius: 25,
-                                                          )
-                                                  ])),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width /
-                                                    1.5,
-                                                padding: const EdgeInsets.only(
-                                                  top: 10,
-                                                  bottom: 10,
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                          backgroundColor: Colors.white,
+                                          surfaceTintColor: Colors.white,
+                                          scrollable: true,
+                                          content: Container(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width,
+                                              height: 205,
+                                              decoration: const BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.vertical(
+                                                  top: Radius.circular(30),
                                                 ),
-                                                decoration: const BoxDecoration(
-                                                  border: Border(
-                                                    bottom: BorderSide(
-                                                      color: Color(0XFFE8E6EA),
+                                              ),
+                                              child: Column(children: [
+                                                Container(
+                                                    width: 70,
+                                                    height: 50,
+                                                    alignment: Alignment.center,
+                                                    color: Colors.white,
+                                                    child: Stack(children: [
+                                                      image.userImages.length !=
+                                                              0
+                                                          ? CircleAvatar(
+                                                              backgroundImage:
+                                                                  NetworkImage(
+                                                                      "${image.userImages[0].image}"),
+                                                              maxRadius: 25,
+                                                            )
+                                                          : CircleAvatar(
+                                                              backgroundColor:
+                                                                  const Color
+                                                                      .fromARGB(
+                                                                      255,
+                                                                      220,
+                                                                      234,
+                                                                      250),
+                                                              foregroundImage:
+                                                                  NetworkImage(
+                                                                      "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                              maxRadius: 25,
+                                                            )
+                                                    ])),
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width /
+                                                      1.5,
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                    top: 10,
+                                                    bottom: 10,
+                                                  ),
+                                                  decoration:
+                                                      const BoxDecoration(
+                                                    border: Border(
+                                                      bottom: BorderSide(
+                                                        color:
+                                                            Color(0XFFE8E6EA),
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                child: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    children: [
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.topLeft,
-                                                        child: AutoSizeText(
-                                                          acceptedRequests
-                                                                      .requestsMessages[
-                                                                          index]
-                                                                      .requesterId !=
-                                                                  userId
-                                                              ? toBeginningOfSentenceCase(
-                                                                  acceptedRequests
-                                                                      .requestsMessages[
-                                                                          index]
-                                                                      .requesterFirstName)!
-                                                              : toBeginningOfSentenceCase(
-                                                                  acceptedRequests
-                                                                      .requestsMessages[
-                                                                          index]
-                                                                      .receiverFirstName)!,
-                                                          minFontSize: 10,
-                                                          maxFontSize: 12,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
+                                                  child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        const SizedBox(
+                                                            height: 10),
+                                                        Align(
+                                                          alignment:
+                                                              Alignment.topLeft,
+                                                          child: AutoSizeText(
+                                                            acceptedRequests
+                                                                        .requestsMessages[
+                                                                            index]
+                                                                        .requesterId !=
+                                                                    userId
+                                                                ? toBeginningOfSentenceCase(
+                                                                    acceptedRequests
+                                                                        .requestsMessages[
+                                                                            index]
+                                                                        .requesterFirstName)!
+                                                                : toBeginningOfSentenceCase(
+                                                                    acceptedRequests
+                                                                        .requestsMessages[
+                                                                            index]
+                                                                        .receiverFirstName)!,
+                                                            minFontSize: 10,
+                                                            maxFontSize: 12,
+                                                            style:
+                                                                const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width /
-                                                                1.7,
-                                                            child: Align(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .topLeft,
-                                                                child: Row(
-                                                                  children: [
-                                                                    status.status ==
-                                                                            "online"
-                                                                        ? const Icon(
-                                                                            Icons.circle,
-                                                                            color: Color.fromARGB(
-                                                                                255,
-                                                                                0,
-                                                                                207,
-                                                                                62),
-                                                                            size:
-                                                                                10,
-                                                                          )
-                                                                        : const Text(
-                                                                            ""),
-                                                                    const SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                    AutoSizeText(
+                                                        const SizedBox(
+                                                            height: 5),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            SizedBox(
+                                                              width: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width /
+                                                                  1.7,
+                                                              child: Align(
+                                                                  alignment:
+                                                                      Alignment
+                                                                          .topLeft,
+                                                                  child: Row(
+                                                                    children: [
                                                                       status.status ==
                                                                               "online"
-                                                                          ? toBeginningOfSentenceCase(
-                                                                              "en ligne",
-                                                                            )!
-                                                                          : toBeginningOfSentenceCase(
-                                                                              "hors ligne",
-                                                                            )!,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      minFontSize:
-                                                                          10,
-                                                                      maxFontSize:
-                                                                          12,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
+                                                                          ? const Icon(
+                                                                              Icons.circle,
+                                                                              color: Color.fromARGB(255, 0, 207, 62),
+                                                                              size: 10,
+                                                                            )
+                                                                          : const Text(
+                                                                              ""),
+                                                                      const SizedBox(
+                                                                        width:
+                                                                            5,
                                                                       ),
-                                                                    ),
-                                                                  ],
-                                                                )),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 5),
-                                                    ]),
-                                              ) //builddd
-                                            ],
-                                          ),
-                                          Container(
-                                            padding: EdgeInsets.all(16.0),
-                                            child: Row(
-                                              children: [
-                                                // Champ de saisie de texte avec icône à droite
-                                                Expanded(
-                                                  child: TextFormField(
-                                                    controller:
-                                                        _textReqController,
-                                                    decoration:
-                                                        const InputDecoration(
-                                                      border:
-                                                          OutlineInputBorder(
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    15)),
-                                                      ),
-                                                      contentPadding:
-                                                          EdgeInsets.fromLTRB(
-                                                              15, 5, 10, 5),
-                                                      hintText:
-                                                          "Saisissez votre message...",
-                                                      labelStyle: TextStyle(
-                                                          fontSize: 12),
-                                                    ),
-                                                    keyboardType:
-                                                        TextInputType.text,
-                                                  ),
+                                                                      AutoSizeText(
+                                                                        status.status ==
+                                                                                "online"
+                                                                            ? toBeginningOfSentenceCase(
+                                                                                "en ligne",
+                                                                              )!
+                                                                            : toBeginningOfSentenceCase(
+                                                                                "hors ligne",
+                                                                              )!,
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        minFontSize:
+                                                                            10,
+                                                                        maxFontSize:
+                                                                            12,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                        ),
+                                                                      ),
+                                                                    ],
+                                                                  )),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 5),
+                                                      ]),
                                                 ),
-                                                // Icône et bouton d'envoi
-                                                IconButton(
-                                                  icon: Icon(Icons.send),
-                                                  onPressed: () async {
-                                                    await send(
-                                                        null,
-                                                        _textReqController.text,
-                                                        otherUser);
-                                                    _textReqController.clear();
-                                                    _handleSubmitted(
+                                                const SizedBox(height: 25),
+                                                Row(
+                                                  children: [
+                                                    // Champ de saisie de texte avec icône à droite
+                                                    Expanded(
+                                                      child: TextFormField(
+                                                        controller:
+                                                            _textReqController,
+                                                        decoration:
+                                                            const InputDecoration(
+                                                          border:
+                                                              OutlineInputBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            15)),
+                                                          ),
+                                                          contentPadding:
+                                                              EdgeInsets
+                                                                  .fromLTRB(15,
+                                                                      5, 10, 5),
+                                                          hintText: "Message",
+                                                          hintStyle: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                        keyboardType:
+                                                            TextInputType.text,
+                                                      ),
+                                                    ),
+                                                    // Icône et bouton d'envoi
+                                                    IconButton(
+                                                      icon: const Icon(
+                                                          Icons.send),
+                                                      onPressed: () async {
+                                                        await send(
+                                                            null,
+                                                            _textReqController
+                                                                .text,
+                                                            otherUser,
+                                                            acceptedRequests
+                                                                .requestsMessages[
+                                                                    index]
+                                                                .id);
                                                         _textReqController
-                                                            .text);
-                                                  },
-                                                ), //build
-                                              ],
-                                            ),
-                                          ),
-                                        ]),
-                                      );
+                                                            .clear();
+                                                        _handleSubmitted(
+                                                            _textReqController
+                                                                .text);
+                                                      },
+                                                    )
+                                                  ],
+                                                ),
+                                              ])));
                                     });
-                                  },
-                                  context: currentContext!,
-                                );
                               },
                               child: Container(
                                   height: 100,
