@@ -58,23 +58,15 @@ class ImageService {
       final response = await http.Response.fromStream(await request.send());
 
       if (response.statusCode == 200) {
-        print('Response Status Code: ${response.statusCode}');
-        print('Response Body: ${response.body}');
-
         final Map<String, dynamic> decodedResponse = json.decode(response.body);
-
-        print('Decoded Response: $decodedResponse');
 
         return decodedResponse;
       } else if (response.statusCode == 404) {
-        print('Image not found');
         throw Exception('Image not found');
       } else {
-        print('Unexpected error: ${response.statusCode}');
         throw Exception('Failed to update image');
       }
     } catch (error) {
-      print('Error updating image: $error');
       throw Exception('Failed to update image');
     }
   }

@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/services/faq/faqs.service.dart';
@@ -38,7 +37,6 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
   }
 
   Future<Faqs> getAllFrqFaqs() {
-    //getAllFrqFaqs //getFFaqs
     Future<Faqs> getFFaqs() async {
       token = await storage.read(key: "token");
       return FaqsService().getTopFiveFrequentedFaq(token.toString());
@@ -80,10 +78,18 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                 ? const EdgeInsets.fromLTRB(20, 20, 0, 0)
                                 : const EdgeInsets.fromLTRB(20, 30, 0, 0),
                             padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    spreadRadius: 2,
+                                    blurRadius: 5,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
                                 color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(10))),
+                                borderRadius: const BorderRadius.all(
+                                    Radius.circular(10))),
                             child: IconButton(
                                 onPressed: () {
                                   Navigator.pop(context);
@@ -117,11 +123,11 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                     ),
                     // Barre de recherche
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Row(
                         children: [
                           Container(
-                            width: MediaQuery.of(context).size.width / 1.5,
+                            width: MediaQuery.of(context).size.width / 1.35,
                             child: Form(
                               key: _formKeySearchName,
                               child: Column(
@@ -158,7 +164,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF0081CF),
                               padding:
-                                  const EdgeInsets.only(top: 20, bottom: 20),
+                                  const EdgeInsets.only(top: 15, bottom: 15),
                               shape: const RoundedRectangleBorder(
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(15)),
@@ -191,7 +197,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: TextButton(
@@ -206,14 +212,30 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
 
                             FocusScope.of(context).unfocus();
                           },
-                          child: const Text(
+                          child: const AutoSizeText(
                             "Réinitialiser",
-                            style: TextStyle(fontSize: 12),
+                            minFontSize: 10,
+                            maxFontSize: 12,
+                            style: TextStyle(color: Color(0xFF0081CF)),
                           ),
                         ),
                       ),
                     ),
                   ])),
+              const SizedBox(
+                height: 20,
+              ),
+              const Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AutoSizeText(
+                        "Questions fréquentes",
+                        minFontSize: 18,
+                        maxFontSize: 20,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w600),
+                      ))),
               Container(
                 height: 250,
                 child: FutureBuilder<Faqs>(
@@ -244,7 +266,35 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                     left: 10, right: 15, top: 20, bottom: 20),
                                 child: Row(children: [
                                   GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              surfaceTintColor: Colors.white,
+                                              title: Text(
+                                                  toBeginningOfSentenceCase(
+                                                      faq.question)!),
+                                              titleTextStyle: const TextStyle(
+                                                  fontSize: 20,
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontFamily: "Poppins"),
+                                              content: Text(faq.answer),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  child: const Text('Fermer',
+                                                      style: TextStyle(
+                                                          color: Colors.black)),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
                                       child: Container(
                                           alignment: Alignment.center,
                                           width: MediaQuery.of(context)
@@ -277,7 +327,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                             const SizedBox(
                                               height: 25,
                                             ),
-                                            Row(
+                                            const Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment
                                                         .spaceBetween,
@@ -286,7 +336,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                       mainAxisAlignment:
                                                           MainAxisAlignment
                                                               .start,
-                                                      children: const [
+                                                      children: [
                                                         Icon(
                                                           Icons.language,
                                                           size: 20,
@@ -297,7 +347,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                           width: 10,
                                                         ),
                                                       ]),
-                                                  const SizedBox(
+                                                  SizedBox(
                                                     height: 20,
                                                   ),
                                                 ]),
@@ -316,8 +366,8 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                     AutoSizeText(
                                                         toBeginningOfSentenceCase(
                                                             faq.question)!,
-                                                        minFontSize: 16,
-                                                        maxFontSize: 20,
+                                                        minFontSize: 12,
+                                                        maxFontSize: 14,
                                                         softWrap: true,
                                                         style: const TextStyle(
                                                             color: Color(
@@ -340,9 +390,22 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                         builder: (BuildContext
                                                             context) {
                                                           return AlertDialog(
+                                                            surfaceTintColor:
+                                                                Colors.white,
                                                             title: Text(
                                                                 toBeginningOfSentenceCase(
                                                                     faq.question)!),
+                                                            titleTextStyle:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        20,
+                                                                    fontFamily:
+                                                                        "Poppins",
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold),
                                                             content: Text(
                                                                 faq.answer),
                                                             actions: [
@@ -353,20 +416,23 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                                       .pop();
                                                                 },
                                                                 child: const Text(
-                                                                    'Fermer'),
+                                                                    'Fermer',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .black)),
                                                               ),
                                                             ],
                                                           );
                                                         },
                                                       );
                                                     },
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.arrow_forward,
                                                       size: 20,
                                                       color: Color(0xFF0081CF),
                                                     ),
                                                   ),
-                                                  SizedBox(
+                                                  const SizedBox(
                                                     width: 10,
                                                   ),
                                                 ])
@@ -378,7 +444,23 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                           });
                     }),
               ),
-              //allll
+              const SizedBox(
+                height: 40,
+              ),
+              const Padding(
+                  padding: EdgeInsets.only(left: 20),
+                  child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: AutoSizeText(
+                        "Nos articles",
+                        minFontSize: 18,
+                        maxFontSize: 20,
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.w600),
+                      ))),
+              const SizedBox(
+                height: 20,
+              ),
               if (allFaqs?.faqs.isEmpty ?? true) Text('Aucun Faq trouvé'),
               if (!(allFaqs?.faqs.isEmpty ?? true))
                 Container(
@@ -415,38 +497,71 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
               color: const Color.fromARGB(137, 248, 244, 244),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Card(
-                child: ListTile(
-              title: Text(
-                faq.question,
-                style: const TextStyle(fontSize: 16),
-              ),
-              trailing: InkWell(
+            child: GestureDetector(
                 onTap: () {
                   showDialog(
                     context: context,
                     builder: (BuildContext context) {
                       return AlertDialog(
+                        surfaceTintColor: Colors.white,
                         title: Text(toBeginningOfSentenceCase(faq.question)!),
+                        titleTextStyle: const TextStyle(
+                            fontSize: 20,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Poppins"),
                         content: Text(faq.answer),
                         actions: [
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
-                            child: const Text('Fermer'),
+                            child: const Text('Fermer',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                )),
                           ),
                         ],
                       );
                     },
                   );
                 },
-                child: Icon(
-                  Icons.arrow_forward,
-                  size: 20,
-                  color: Color(0xFF0081CF),
-                ),
-              ),
-            ))));
+                child: Card(
+                    child: ListTile(
+                  tileColor: const Color.fromARGB(255, 238, 244, 249),
+                  title: AutoSizeText(
+                    faq.question,
+                    minFontSize: 12,
+                    maxFontSize: 14,
+                    style: const TextStyle(color: Colors.black),
+                  ),
+                  trailing: InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title:
+                                Text(toBeginningOfSentenceCase(faq.question)!),
+                            content: Text(faq.answer),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: const Text('Fermer'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+                    child: Icon(
+                      Icons.arrow_forward,
+                      size: 20,
+                      color: Color(0xFF0081CF),
+                    ),
+                  ),
+                )))));
   }
 }

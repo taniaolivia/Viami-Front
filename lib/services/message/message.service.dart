@@ -21,32 +21,27 @@ class MessageService {
     }
   }
 
-Future<void> sendMessage(String token, int? groupId, String message,
-    String? senderId, String? responderId) async {
+  Future<void> sendMessage(String token, int? groupId, String message,
+      String? senderId, String? responderId) async {
+    final response =
+        await http.post(Uri.parse('${dotenv.env['API_URL']}/sendMessage'),
+            headers: <String, String>{
+              "Content-Type": "application/json",
+              'Authorization': token,
+            },
+            body: jsonEncode(<String, dynamic>{
+              "groupId": groupId,
+              "message": message.isNotEmpty ? message : "",
+              "senderId": senderId,
+              "responderId": responderId,
+            }));
 
-  final response =
-      await http.post(Uri.parse('${dotenv.env['API_URL']}/sendMessage'),
-          headers: <String, String>{
-             "Content-Type": "application/json",
-            'Authorization': token,
-          },
-          body: jsonEncode(<String, dynamic>{
-            "groupId": groupId,
-            "message": message.isNotEmpty ? message : "",
-            "senderId": senderId,
-            "responderId": responderId,
-          }));
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
 
-  if (response.statusCode == 201) {
-    var res = json.decode(response.body);
-
-    print("Réponse du message envoyé :");
-    print(res);
-
-    return res;
-  } else {
-    throw Exception('Failed to load messages');
+      return res;
+    } else {
+      throw Exception('Failed to load messages');
+    }
   }
-}
-
 }
