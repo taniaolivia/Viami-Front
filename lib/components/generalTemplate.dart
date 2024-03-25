@@ -108,7 +108,7 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
               )),
           Positioned(
               top: MediaQuery.of(context).size.height / widget.contentHeight,
-              height: MediaQuery.of(context).size.height,
+              height: MediaQuery.of(context).size.height / 2,
               left: MediaQuery.of(context).size.width / 13,
               right: MediaQuery.of(context).size.width / 13,
               child: widget.content),

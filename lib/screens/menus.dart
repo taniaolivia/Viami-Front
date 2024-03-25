@@ -18,7 +18,7 @@ import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
 import 'messenger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'searchTravel.dart';
+import 'search.dart';
 
 class MenusPage extends StatefulWidget {
   final int? currentIndex;
@@ -237,7 +237,7 @@ class _MenusPageState extends State<MenusPage> {
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            const SearchTravelPage(),
+            const SearchPage(),
             const ExplorePage(),
             const HomePage(),
             const MessengerPage(),

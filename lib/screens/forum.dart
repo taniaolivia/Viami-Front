@@ -3,22 +3,20 @@ import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
-import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/models-api/travel/travels.dart';
 import 'package:viami/screens/travelDetails.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
-class SearchTravelPage extends StatefulWidget {
-  const SearchTravelPage({Key? key}) : super(key: key);
+class ForumPage extends StatefulWidget {
+  const ForumPage({Key? key}) : super(key: key);
 
   @override
-  State<SearchTravelPage> createState() => _SearchTravelPageState();
+  State<ForumPage> createState() => _ForumPageState();
 }
 
-class _SearchTravelPageState extends State<SearchTravelPage> {
+class _ForumPageState extends State<ForumPage> {
   final storage = const FlutterSecureStorage();
   final _formKey = GlobalKey<FormState>();
   TextEditingController dateController = TextEditingController();

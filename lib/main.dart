@@ -11,7 +11,7 @@ import 'package:viami/screens/messenger.dart';
 import 'package:viami/screens/profile.dart';
 import 'package:viami/screens/allRecommendedActivities.dart';
 import 'package:viami/screens/register.dart';
-import 'package:viami/screens/searchTravel.dart';
+import 'package:viami/screens/search.dart';
 import 'package:viami/screens/start.dart';
 import 'package:viami/screens/settings.dart';
 import 'package:viami/screens/notifications.dart';
@@ -28,6 +28,9 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await Future.delayed(const Duration(seconds: 1));
+
   await FirebaseApi().initNotifications();
 
   runApp(const MyApp());
@@ -57,7 +60,7 @@ class MyApp extends StatelessWidget {
           "/login": (context) => const LoginPage(),
           "/profile": (context) => const ProfilePage(),
           "/updatePassword": (context) => const UpdatePassword(),
-          "/search": (context) => const SearchTravelPage(),
+          "/search": (context) => const SearchPage(),
           "/activities/popular": (context) => const AllPopularActivitiesPage(),
           "/activities/recommend": (context) =>
               const AllRecommendedActivitiesPage(),
