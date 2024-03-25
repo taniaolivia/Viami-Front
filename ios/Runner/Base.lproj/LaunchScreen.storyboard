@@ -38,6 +38,7 @@
             <point key="canvasLocation" x="80.152671755725194" y="264.08450704225356"/>
         </scene>
     </scenes>
+    <color key="tintColor" red="0.21960783" green="0.49803921579999999" blue="0.78823530669999997" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
     <resources>
         <image name="anz.png" width="24" height="24"/>
         <systemColor name="systemBlueColor">

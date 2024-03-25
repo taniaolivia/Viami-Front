@@ -118,7 +118,7 @@ flutter:
 # Custom splash screen
 flutter_native_splash:
   image: assets/logo.png
-  color: "#1A7EC1"
+  color: "#0081CF"
   ios: true
   android: true
 
@@ -128,5 +128,5 @@ flutter_icons:
   android: true
   image_path: "assets/startLogo-blue.png"
   remove_alpha_ios: true
-  adaptive_icon_background: "#1A7EC1"
+  adaptive_icon_background: "#0081CF"
   adaptive_icon_foreground: "assets/foreground.png"
