@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "front" "\0"
+            VALUE "CompanyName", "com.application" "\0"
+            VALUE "FileDescription", "viami" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "front" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "front.exe" "\0"
-            VALUE "ProductName", "front" "\0"
+            VALUE "InternalName", "viami" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.application. All rights reserved." "\0"
+            VALUE "OriginalFilename", "viami.exe" "\0"
+            VALUE "ProductName", "viami" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

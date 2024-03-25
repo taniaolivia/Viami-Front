@@ -1,6 +1,6 @@
 {
-    "name": "front",
-    "short_name": "front",
+    "name": "viami",
+    "short_name": "viami",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
