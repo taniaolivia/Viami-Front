@@ -29,8 +29,6 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  await Future.delayed(const Duration(seconds: 1));
-
   await FirebaseApi().initNotifications();
 
   runApp(const MyApp());

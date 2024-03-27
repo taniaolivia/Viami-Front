@@ -46,83 +46,92 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Colors.white,
-        body: GeneralTemplate(
-          image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
-          imageHeight: MediaQuery.of(context).size.width <= 320 ? 3 : 3,
-          content:
-              Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            UnconstrainedBox(
-                child: Container(
-                    padding: const EdgeInsets.all(4.0),
-                    decoration: BoxDecoration(
-                        border: Border.all(width: 1, color: Colors.black),
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              padding:
-                                  const EdgeInsets.fromLTRB(40, 15, 40, 15),
-                              backgroundColor: const Color(0xFF0081CF),
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)))),
-                          child: const AutoSizeText(
-                            "Rejoindre",
-                            maxLines: 1,
-                            minFontSize: 11,
-                            maxFontSize: 13,
-                            overflow: TextOverflow.fade,
-                            style: TextStyle(
-                                fontFamily: "Poppins", color: Colors.white),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              page = "rejoindre";
-                            });
-                          },
+      backgroundColor: Colors.white,
+      body: GeneralTemplate(
+        image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+        imageHeight: MediaQuery.of(context).size.width <= 320 ? 3 : 3,
+        content: SingleChildScrollView(
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          UnconstrainedBox(
+              child: Container(
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.black),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
+                            backgroundColor: page == "rejoindre"
+                                ? const Color(0xFF0081CF)
+                                : Colors.white,
+                            shadowColor: Colors.white,
+                            textStyle:
+                                const TextStyle(fontWeight: FontWeight.bold),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)))),
+                        child: AutoSizeText(
+                          "Rejoindre",
+                          maxLines: 1,
+                          minFontSize: 11,
+                          maxFontSize: 13,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              color: page == "rejoindre"
+                                  ? Colors.white
+                                  : Colors.black),
                         ),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              padding:
-                                  const EdgeInsets.fromLTRB(40, 15, 40, 15),
-                              backgroundColor: Colors.white,
-                              shadowColor: Colors.white,
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                              shape: const RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10)))),
-                          child: const AutoSizeText(
-                            "Forum",
-                            maxLines: 1,
-                            minFontSize: 11,
-                            maxFontSize: 13,
-                            overflow: TextOverflow.fade,
-                            style: TextStyle(
-                                fontFamily: "Poppins", color: Colors.black),
-                          ),
-                          onPressed: () async {
-                            setState(() {
-                              page = "forum";
-                            });
-                          },
+                        onPressed: () async {
+                          setState(() {
+                            page = "rejoindre";
+                          });
+                        },
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
+                            backgroundColor: page != "rejoindre"
+                                ? const Color(0xFF0081CF)
+                                : Colors.white,
+                            shadowColor: Colors.white,
+                            textStyle:
+                                const TextStyle(fontWeight: FontWeight.bold),
+                            shape: const RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(10)))),
+                        child: AutoSizeText(
+                          "Forum",
+                          maxLines: 1,
+                          minFontSize: 11,
+                          maxFontSize: 13,
+                          overflow: TextOverflow.fade,
+                          style: TextStyle(
+                              fontFamily: "Poppins",
+                              color: page != "rejoindre"
+                                  ? Colors.white
+                                  : Colors.black),
                         ),
-                      ],
-                    ))),
-            const SizedBox(height: 40.0),
-            page == "rejoindre" ? const SearchTravelPage() : const ForumPage()
-          ]),
-          contentHeight: MediaQuery.of(context).size.width <= 320 ? 4.2 : 5,
-          containerHeight: MediaQuery.of(context).size.width <= 320 ? 1.7 : 1.3,
-          title: "Recherche",
-          redirect: "/home",
-        ));
+                        onPressed: () async {
+                          setState(() {
+                            page = "forum";
+                          });
+                        },
+                      ),
+                    ],
+                  ))),
+          const SizedBox(height: 50.0),
+          page == "rejoindre" ? const SearchTravelPage() : const ForumPage()
+        ])),
+        contentHeight: MediaQuery.of(context).size.width <= 320 ? 4.2 : 4,
+        containerHeight: MediaQuery.of(context).size.width <= 320 ? 1.7 : 1.25,
+        title: page == "rejoindre" ? "Rejoindre" : "Forum",
+        redirect: "/home",
+      ),
+    );
   }
 }

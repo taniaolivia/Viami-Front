@@ -1,12 +1,13 @@
 import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/intl.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:viami/models-api/forum/forumCities.dart';
 import 'package:viami/models-api/travel/travels.dart';
-import 'package:viami/screens/travelDetails.dart';
+import 'package:viami/services/forum/forumCities.service.dart';
 import 'package:viami/services/travel/travels.service.dart';
 
 class ForumPage extends StatefulWidget {
@@ -18,34 +19,28 @@ class ForumPage extends StatefulWidget {
 
 class _ForumPageState extends State<ForumPage> {
   final storage = const FlutterSecureStorage();
-  final _formKey = GlobalKey<FormState>();
-  TextEditingController dateController = TextEditingController();
   String? token;
-  String? selectedLocation;
-  List locationList = [""];
-  String fillDestination = "";
 
-  Future<Travels> getListTravels() {
-    Future<Travels> getAllTravels() async {
+  Future<ForumCities> getAllForumCities() {
+    Future<ForumCities> getListForumCities() async {
       token = await storage.read(key: "token");
 
-      return TravelsService().getAllTravels(token.toString());
+      return ForumCitiesService().getAllForumCities(token.toString());
     }
 
-    return getAllTravels();
+    return getListForumCities();
   }
 
   @override
   void initState() {
-    fillDestination = "";
-    getListTravels();
+    getAllForumCities();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Travels>(
-        future: getListTravels(),
+    return FutureBuilder<ForumCities>(
+        future: getAllForumCities(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return BackdropFilter(
@@ -66,129 +61,49 @@ class _ForumPageState extends State<ForumPage> {
             return Text('');
           }
 
-          var travel = snapshot.data!;
-
-          for (int i = 0; i < travel.travels.length; i++) {
-            if (!locationList.contains(travel.travels[i].location)) {
-              locationList.add(travel.travels[i].location);
-            }
-          }
+          var cities = snapshot.data!;
 
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Form(
-                  key: _formKey,
-                  child: Column(children: [
-                    TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez choisir votre date de départ';
-                        }
-                        return null;
-                      },
-                      controller: dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Date de départ*',
-                          labelStyle: TextStyle(fontSize: 14),
-                          focusedBorder: UnderlineInputBorder(),
-                          floatingLabelStyle:
-                              TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
-                          icon: Icon(
-                            Icons.calendar_month_outlined,
-                            color: Colors.blue,
-                            size: 30.0,
+              SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: List.generate(
+                      cities.forumCities.length,
+                      (index) {
+                        return Column(children: [
+                          CircleAvatar(
+                            backgroundImage: NetworkImage(
+                                '${dotenv.env['CDN_URL']}/assets/${cities.forumCities[index].image['image']}'),
+                            minRadius: 25,
+                            maxRadius: 30,
                           ),
-                          contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 5)),
-                      onTap: () {
-                        BottomPicker.date(
-                          title: "Choisissez votre date de départ",
-                          titleStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: Colors.blue),
-                          onChange: (index) {
-                            dateController.text =
-                                DateFormat('yyyy-MM-dd').format(index);
-                          },
-                          onSubmit: (index) {
-                            dateController.text =
-                                DateFormat('yyyy-MM-dd').format(index);
-                          },
-                        ).show(context);
+                          const SizedBox(height: 10, width: 80),
+                          AutoSizeText(
+                            cities.forumCities[index].city,
+                            minFontSize: 11,
+                            maxFontSize: 13,
+                          )
+                        ]);
                       },
                     ),
-                    const SizedBox(height: 20),
-                    Row(children: [
-                      const Icon(
-                        Icons.location_on,
-                        color: Colors.blue,
-                        size: 30.0,
-                      ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Expanded(
-                          child: DropdownButtonFormField<String>(
-                              menuMaxHeight: 130,
-                              value: selectedLocation,
-                              hint: const Text("Destination*"),
-                              onChanged: (value) =>
-                                  setState(() => selectedLocation = value),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Veuillez choisir votre destination';
-                                }
-                                return null;
-                              },
-                              items: locationList.map<DropdownMenuItem<String>>(
-                                  (dynamic value) {
-                                return DropdownMenuItem<String>(
-                                  value: value.toString(),
-                                  child: Text(value.toString()),
-                                );
-                              }).toList())),
-                    ])
-                  ])),
-              const SizedBox(height: 40),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.fromLTRB(40, 15, 40, 15),
+                  )),
+              const SizedBox(height: 10),
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                      onPressed: () {}, icon: const Icon(Icons.swap_vert))),
+              const SizedBox(height: 30),
+              Align(
+                  alignment: Alignment.bottomRight,
+                  child: FloatingActionButton(
+                    elevation: 2,
                     backgroundColor: const Color(0xFF0081CF),
-                    textStyle: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)))),
-                child: const AutoSizeText(
-                  "Valider",
-                  maxLines: 1,
-                  minFontSize: 11,
-                  maxFontSize: 13,
-                  overflow: TextOverflow.fade,
-                  style: TextStyle(fontFamily: "Poppins", color: Colors.white),
-                ),
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    var date = dateController.text;
-
-                    var travels = await TravelsService()
-                        .searchTravels(token!, selectedLocation!);
-
-                    if (travels != null) {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => TravelDetailsPage(
-                                  travelId: travels.travels[0].id,
-                                  date: date,
-                                  location: selectedLocation)));
-                    }
-                  }
-                },
-              ),
+                    child: const Icon(Icons.add, color: Colors.white),
+                    onPressed: () async {},
+                  )),
               const SizedBox(height: 10),
             ],
           );

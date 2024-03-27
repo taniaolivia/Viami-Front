@@ -174,7 +174,7 @@ class _RecommendationActivityPageState
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width /
-                                                    1.7,
+                                                    2,
                                                 child: AutoSizeText(
                                                     toBeginningOfSentenceCase(
                                                         activity
