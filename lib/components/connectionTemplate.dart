@@ -54,9 +54,9 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 30, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 50, 0, 30),
                           child: Image.network(
-                            "${dotenv.env['CDN_URL']}/assets/viami.gif",
+                            "${dotenv.env['CDN_URL']}/assets/logo.png",
                             width: MediaQuery.of(context).size.width / 3.5,
                           )),
                     ),
@@ -161,8 +161,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                             child: TextButton(
                                                 child: const Text("Annuler",
                                                     style: TextStyle(
-                                                        color:
-                                                            Color(0xFFD42600))),
+                                                        color: Colors.black)),
                                                 onPressed: () async {
                                                   Navigator.pop(context);
                                                 }))),
@@ -174,8 +173,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                             child: TextButton(
                                                 child: const Text("Valider",
                                                     style: TextStyle(
-                                                        color:
-                                                            Color(0xFF0081CF))),
+                                                        color: Colors.black)),
                                                 onPressed: () async {
                                                   if (_formKey.currentState!
                                                       .validate()) {
@@ -191,6 +189,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                                                       if (user["message"] ==
                                                           "Email sent") {
                                                         Navigator.pop(context);
+                                                        emailController.clear();
 
                                                         showSnackbar(
                                                             context,

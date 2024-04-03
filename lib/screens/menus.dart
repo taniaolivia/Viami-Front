@@ -47,10 +47,6 @@ class _MenusPageState extends State<MenusPage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
-
       return UserService().getUserById(userId.toString(), token.toString());
     }
 
@@ -144,13 +140,12 @@ class _MenusPageState extends State<MenusPage> {
                                   height: MediaQuery.of(context).size.height));
                         } else if (snapshot.hasError) {
                           return Text(
-                            '${snapshot.error}',
+                            '',
                             textAlign: TextAlign.center,
                           );
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
-
                         var location = snapshot.data!;
 
                         return Row(

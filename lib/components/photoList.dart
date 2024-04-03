@@ -27,6 +27,8 @@ class _PhotoListState extends State<PhotoList> {
   int? userImagesLength = 0;
   String status = "add";
   int? clickedImageId;
+  String clickedImage = "";
+
   List<UserImage> userImages = [];
 
   Future<UsersImages> getUserImages() async {
@@ -48,6 +50,12 @@ class _PhotoListState extends State<PhotoList> {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
 
+    var image = await UsersImagesService()
+        .getUserImagesById(userId.toString(), token.toString());
+
+    await storage.write(
+        key: "userImage", value: image.userImages.length.toString());
+
     return UserImageService().addUserImage(userId!, path, token!);
   }
 
@@ -61,7 +69,8 @@ class _PhotoListState extends State<PhotoList> {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
 
-    return UserImageService().deleteUserImage(userId!, clickedImageId!, token!);
+    return UserImageService()
+        .deleteUserImage(userId!, clickedImageId!, token!, clickedImage);
   }
 
   String generateRandomImageName() {
@@ -138,19 +147,32 @@ class _PhotoListState extends State<PhotoList> {
       builder: (context) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
-            child: const Text('Galerie de photos'),
-            onPressed: () {
+            child: const Text('Galerie de photos',
+                style: TextStyle(color: Colors.black)),
+            onPressed: () async {
               Navigator.of(context).pop();
-              getImageFromGallery();
-              getUserImages();
+              await getImageFromGallery();
+              await getUserImages();
+
+              var image = await UsersImagesService()
+                  .getUserImagesById(userId.toString(), token.toString());
+
+              await storage.write(
+                  key: "userImage", value: image.userImages.length.toString());
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Caméra'),
-            onPressed: () {
+            child: const Text('Caméra', style: TextStyle(color: Colors.black)),
+            onPressed: () async {
               Navigator.of(context).pop();
               getImageFromCamera();
               getUserImages();
+
+              var image = await UsersImagesService()
+                  .getUserImagesById(userId.toString(), token.toString());
+
+              await storage.write(
+                  key: "userImage", value: image.userImages.length.toString());
             },
           ),
         ],
@@ -164,27 +186,47 @@ class _PhotoListState extends State<PhotoList> {
       builder: (context) => CupertinoActionSheet(
         actions: [
           CupertinoActionSheetAction(
-            child: const Text('Galerie de photos'),
-            onPressed: () {
+            child: const Text('Galerie de photos',
+                style: TextStyle(color: Colors.black)),
+            onPressed: () async {
               Navigator.of(context).pop();
-              getImageFromGallery();
-              getUserImages();
+              await getImageFromGallery();
+              await getUserImages();
+
+              var image = await UsersImagesService()
+                  .getUserImagesById(userId.toString(), token.toString());
+
+              await storage.write(
+                  key: "userImage", value: image.userImages.length.toString());
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Caméra'),
-            onPressed: () {
+            child: const Text('Caméra', style: TextStyle(color: Colors.black)),
+            onPressed: () async {
               Navigator.of(context).pop();
-              getImageFromCamera();
-              getUserImages();
+              await getImageFromCamera();
+              await getUserImages();
+
+              var image = await UsersImagesService()
+                  .getUserImagesById(userId.toString(), token.toString());
+
+              await storage.write(
+                  key: "userImage", value: image.userImages.length.toString());
             },
           ),
           CupertinoActionSheetAction(
-            child: const Text('Supprimer'),
-            onPressed: () {
+            child:
+                const Text('Supprimer', style: TextStyle(color: Colors.black)),
+            onPressed: () async {
               Navigator.of(context).pop();
-              deleteUserImage();
-              getUserImages();
+              await deleteUserImage();
+              await getUserImages();
+
+              var image = await UsersImagesService()
+                  .getUserImagesById(userId.toString(), token.toString());
+
+              await storage.write(
+                  key: "userImage", value: image.userImages.length.toString());
             },
           ),
         ],
@@ -224,6 +266,7 @@ class _PhotoListState extends State<PhotoList> {
                               status = "add";
                             }
                             clickedImageId = userImages[index].imageId;
+                            clickedImage = userImages[index].image;
                           });
                           await showOptionsImages();
                         },
@@ -255,6 +298,7 @@ class _PhotoListState extends State<PhotoList> {
                                       status = "add";
                                     }
                                     clickedImageId = userImages[index].imageId;
+                                    clickedImage = userImages[index].image;
                                   });
                                   await showOptionsImages();
                                 },

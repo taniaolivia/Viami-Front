@@ -7,6 +7,7 @@ class GeneralTemplate extends StatefulWidget {
   final double imageHeight;
   final double containerHeight;
   final double contentHeight;
+  final double? height;
   final String? title;
   final String? redirect;
 
@@ -17,6 +18,7 @@ class GeneralTemplate extends StatefulWidget {
       required this.content,
       required this.containerHeight,
       required this.contentHeight,
+      this.height,
       this.title,
       this.redirect})
       : super(key: key);
@@ -108,7 +110,9 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
               )),
           Positioned(
               top: MediaQuery.of(context).size.height / widget.contentHeight,
-              height: MediaQuery.of(context).size.height / 2,
+              height: widget.height == null
+                  ? MediaQuery.of(context).size.height / 2
+                  : MediaQuery.of(context).size.height / widget.height!,
               left: MediaQuery.of(context).size.width / 13,
               right: MediaQuery.of(context).size.width / 13,
               child: widget.content),

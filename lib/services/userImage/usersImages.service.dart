@@ -12,7 +12,6 @@ class UsersImagesService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-
       return UsersImages.fromJson(res['data']);
     } else {
       throw Exception('Failed to load user images');

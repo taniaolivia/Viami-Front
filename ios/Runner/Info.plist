@@ -27,13 +27,13 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>To take photos for profile pictures.</string>
+	<string>Pour prendre des photos pour les images de profil.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>To provide location-based services.</string>
+	<string>Pour fournir des services basés sur la localisation.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>To provide location-based services when the app is in use.</string>
+	<string>Pour fournir des services basés sur la localisation lorsque l'application est en cours d'utilisation.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>To access your photo library for uploading images.</string>
+	<string>Pour accéder à votre bibliothèque de photos afin de téléverser des images</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchScreen</key>

@@ -124,7 +124,7 @@ class _PaymentPageState extends State<PaymentPage> {
                           height: 20,
                         ),
                         Container(
-                            width: MediaQuery.of(context).size.width / 1.8,
+                            width: MediaQuery.of(context).size.width / 3,
                             child: Image.network(
                                 "${dotenv.env['CDN_URL']}/assets/logo-blue.png")),
                         const SizedBox(
@@ -304,18 +304,31 @@ class _PaymentPageState extends State<PaymentPage> {
                                           context: context,
                                           builder: (BuildContext context) {
                                             return AlertDialog(
-                                                title:
-                                                    const Text('Information'),
+                                                title: const Text(
+                                                  'Information',
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 20,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                surfaceTintColor: Colors.white,
+                                                backgroundColor: Colors.white,
                                                 content: const Text(
-                                                    "Votre paiement n'a pas été traité avec succès. Veuillez nous contacter si ce problème pérsiste !"),
+                                                  "Votre paiement n'a pas été traité avec succès. Veuillez nous contacter si ce problème pérsiste !",
+                                                  textAlign: TextAlign.justify,
+                                                ),
                                                 actions: <Widget>[
                                                   TextButton(
                                                     onPressed: () async {
                                                       Navigator.pushNamed(
                                                           context, "/home");
                                                     },
-                                                    child:
-                                                        const Text("D'accord"),
+                                                    child: const Text(
+                                                        "D'accord",
+                                                        style: TextStyle(
+                                                            color:
+                                                                Colors.black)),
                                                   ),
                                                 ]);
                                           });

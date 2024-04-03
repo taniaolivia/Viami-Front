@@ -57,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
           backgroundColor: const Color(0xFF0081CF),
           leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, "/home");
               },
               icon: const Icon(
                 Icons.arrow_back_ios,

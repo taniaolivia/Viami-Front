@@ -44,10 +44,6 @@ class _PopularThemePageState extends State<PopularThemePage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
-
       return UserService().getUserById(userId.toString(), token.toString());
     }
 
@@ -86,6 +82,24 @@ class _PopularThemePageState extends State<PopularThemePage> {
       return Icons.fastfood;
     } else if (iconName == 'game') {
       return Icons.sports_esports;
+    } else if (iconName == 'reduce_capacity') {
+      return Icons.reduce_capacity;
+    } else if (iconName == 'food_bank') {
+      return Icons.food_bank;
+    } else if (iconName == 'class_rounded') {
+      return Icons.class_rounded;
+    } else if (iconName == 'directions_boat') {
+      return Icons.directions_boat;
+    } else if (iconName == 'restaurant') {
+      return Icons.restaurant;
+    } else if (iconName == 'local_bar') {
+      return Icons.local_bar;
+    } else if (iconName == 'park') {
+      return Icons.park;
+    } else if (iconName == 'location_city') {
+      return Icons.location_city;
+    } else if (iconName == 'theater_comedy') {
+      return Icons.theater_comedy;
     }
 
     return Icons.beach_access;
@@ -282,6 +296,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 backgroundColor: clicked == "popular"
                                     ? const Color(0xFF0081CF)
                                     : Colors.white,
+                                surfaceTintColor: clicked == "popular"
+                                    ? const Color(0xFF0081CF)
+                                    : Colors.white,
                                 shape: RoundedRectangleBorder(
                                     borderRadius: const BorderRadius.all(
                                         Radius.circular(10)),
@@ -352,10 +369,14 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                           currentIndex == indexTheme
                                       ? const Color(0xFF0081CF)
                                       : Colors.transparent,
-                                  backgroundColor: clicked == "theme" &&
-                                          currentIndex == indexTheme
-                                      ? const Color(0xFF0081CF)
-                                      : Colors.white,
+                                  backgroundColor:
+                                      clicked == "theme" && currentIndex == indexTheme
+                                          ? const Color(0xFF0081CF)
+                                          : Colors.white,
+                                  surfaceTintColor:
+                                      clicked == "theme" && currentIndex == indexTheme
+                                          ? const Color(0xFF0081CF)
+                                          : Colors.white,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10)),

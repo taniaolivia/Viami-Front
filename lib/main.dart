@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: const IntroductionPage(),
+        home: const LoginPage(),
         initialRoute: "/",
         title: 'Viami',
         debugShowCheckedModeBanner: false,

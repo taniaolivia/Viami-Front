@@ -4,7 +4,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/pageTransition.dart';
@@ -27,32 +29,32 @@ class _ExplorePageState extends State<ExplorePage> {
   String message = "";
   String currentLocation = "";
 
+  Future<Activities> getNearActivities() {
+    Future<Activities> getAllNearActivities() async {
+      token = await storage.read(key: "token");
+      String? location = await getMyCurrentPositionLatLon(context);
+
+      return ActivitiesService().getNearActivities(
+          token.toString(), location!.split(", ")[0], location.split(", ")[1]);
+    }
+
+    return getAllNearActivities();
+  }
+
   @override
   void initState() {
-    //getNearActivities();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Future<Activities> getNearActivities() {
-      Future<Activities> getAllNearActivities() async {
-        token = await storage.read(key: "token");
-        String? location = await getMyCurrentPositionLatLon(context);
-
-        return ActivitiesService().getNearActivities(token.toString(),
-            location!.split(", ")[0], location.split(", ")[1]);
-      }
-
-      return getAllNearActivities();
-    }
-
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
         body: GeneralTemplate(
             redirect: "/home",
             image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+            height: 1.0,
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
             containerHeight:
@@ -80,13 +82,13 @@ class _ExplorePageState extends State<ExplorePage> {
 
                     if (snapshot.hasError) {
                       return Text(
-                        '${snapshot.error}',
+                        'Aucune activité proche de vous',
                         textAlign: TextAlign.center,
                       );
                     }
 
                     if (!snapshot.hasData) {
-                      return const Text("");
+                      return const Text("Aucune activité proche de vous");
                     }
 
                     var activity = snapshot.data!;

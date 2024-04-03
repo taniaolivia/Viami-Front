@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -7,11 +5,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:viami/components/locationPermission.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/faq.dart';
 import 'package:viami/screens/popularTheme.dart';
 import 'package:viami/screens/recommendationActivity.dart';
-import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 import 'package:geolocator/geolocator.dart';
@@ -29,36 +27,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   String? token = "";
   String? userId = "";
   bool? tokenExpired;
-
-  Future<void> checkAndRequestLocationPermission() async {
-    PermissionStatus status = await Permission.location.status;
-
-    if (status != PermissionStatus.granted) {
-      status = await Permission.location.request();
-
-      if (status != PermissionStatus.granted) {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text("Accès à la localisation refusé"),
-              content: Text(
-                "Pour utiliser cette fonctionnalité, veuillez autoriser l'accès à votre emplacement dans les paramètres de l'application.",
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: Text("OK"),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ],
-            );
-          },
-        );
-      }
-    }
-  }
 
   Future<Position> _getCurrentLocation() async {
     var locationPermission = await Permission.location.status;
@@ -80,17 +48,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     token = await storage.read(key: "token");
     userId = await storage.read(key: "userId");
 
-    //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-    //tokenExpired = isTokenExpired;
-
     return UserService().getUserById(userId.toString(), token.toString());
   }
 
   @override
   void initState() {
     super.initState();
-    //checkAndRequestLocationPermission();
   }
 
   @override
@@ -189,8 +152,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                         ),
                         const SizedBox(height: 20),
-                        FutureBuilder<Position>(
-                          future: _getCurrentLocation(),
+                        FutureBuilder<String?>(
+                          future: getMyCurrentPositionLatLon(context),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
@@ -198,13 +161,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             }
 
                             if (snapshot.hasError || !snapshot.hasData) {
-                              return const Text(
-                                  'Erreur lors de la récupération de la position',
+                              return Text('${snapshot.error}',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.black));
                             }
 
                             var currentLocation = snapshot.data!;
+
                             return GestureDetector(
                                 onTap: () {
                                   showDialog(
@@ -221,8 +184,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                           child: FlutterMap(
                                             options: MapOptions(
                                               center: LatLng(
-                                                currentLocation.latitude,
-                                                currentLocation.longitude,
+                                                double.parse(currentLocation
+                                                    .split(", ")[0]),
+                                                double.parse(currentLocation
+                                                    .split(", ")[1]),
                                               ),
                                               zoom: 9.6,
                                             ),
@@ -239,8 +204,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                                     width: 40.0,
                                                     height: 40.0,
                                                     point: LatLng(
-                                                      currentLocation.latitude,
-                                                      currentLocation.longitude,
+                                                      double.parse(
+                                                          currentLocation
+                                                              .split(", ")[0]),
+                                                      double.parse(
+                                                          currentLocation
+                                                              .split(", ")[1]),
                                                     ),
                                                     builder: ((context) =>
                                                         Container(
@@ -264,8 +233,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   child: FlutterMap(
                                     options: MapOptions(
                                       center: LatLng(
-                                        currentLocation.latitude,
-                                        currentLocation.longitude,
+                                        double.parse(
+                                            currentLocation.split(", ")[0]),
+                                        double.parse(
+                                            currentLocation.split(", ")[1]),
                                       ),
                                       zoom: 9.6,
                                     ),
@@ -281,8 +252,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                             width: 40.0,
                                             height: 40.0,
                                             point: LatLng(
-                                              currentLocation.latitude,
-                                              currentLocation.longitude,
+                                              double.parse(currentLocation
+                                                  .split(", ")[0]),
+                                              double.parse(currentLocation
+                                                  .split(", ")[1]),
                                             ),
                                             builder: ((context) => Container(
                                                   child: const Icon(

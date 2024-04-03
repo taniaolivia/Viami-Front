@@ -280,7 +280,7 @@ class _MessengerPageState extends State<MessengerPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.fromLTRB(25, 40, 25, 60),
+          padding: const EdgeInsets.fromLTRB(25, 70, 25, 60),
           child: Column(
             children: [
               Row(
@@ -371,14 +371,11 @@ class _MessengerPageState extends State<MessengerPage> {
 
                             var userMessage = await GroupsService()
                                 .getSearchedUsers(token!, userId!, search);
-                            print("ij");
 
                             if (userMessage != null) {
                               setState(() {
                                 discussionMessages = userMessage;
                               });
-
-                              print(discussionMessages);
                             }
 
                             FocusScope.of(context).unfocus();
@@ -1496,7 +1493,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   void _showFiltersBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(

@@ -3,7 +3,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:viami/components/liquidSwipeAnimation.dart';
 import 'package:viami/models/introduction_item.dart';
 import 'package:viami/screens/login.dart';
-import 'package:viami/screens/start.dart';
 
 class IntroductionPage extends StatefulWidget {
   const IntroductionPage({Key? key}) : super(key: key);

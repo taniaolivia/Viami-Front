@@ -1,5 +1,4 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:viami/models-api/image/image.dart';
 
 part 'forumCity.f.dart';
 
