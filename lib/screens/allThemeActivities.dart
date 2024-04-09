@@ -6,13 +6,16 @@ import 'package:intl/intl.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/themeActivity/themeActivities.dart';
+import 'package:viami/screens/activityDetails.dart';
 import 'package:viami/screens/drawer.dart';
 import 'package:viami/screens/travelDetails.dart';
 import 'package:viami/services/themeActivity/themesActivities.service.dart';
 
 class AllThemeActivitiesPage extends StatefulWidget {
   final int themeId;
-  const AllThemeActivitiesPage({Key? key, required this.themeId})
+  final String themeName;
+  const AllThemeActivitiesPage(
+      {Key? key, required this.themeId, required this.themeName})
       : super(key: key);
 
   @override
@@ -43,11 +46,12 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
         drawer: const DrawerPage(),
         body: GeneralTemplate(
             image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+            height: 1.0,
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
             containerHeight:
                 MediaQuery.of(context).size.width <= 320 ? 1.4 : 1.3,
-            title: "Voyages Populaires",
+            title: widget.themeName,
             content: SingleChildScrollView(
                 child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -80,8 +84,9 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                               Navigator.push(
                                 context,
                                 FadePageRoute(
-                                  page: TravelDetailsPage(
-                                      travelId: activity.activities[index].id),
+                                  page: ActivityDetailsPage(
+                                      activityId: activity
+                                          .activities[index].activityId!),
                                 ),
                               );
                             },
@@ -135,7 +140,8 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                                         image: DecorationImage(
                                             fit: BoxFit.cover,
                                             image: NetworkImage(
-                                              "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                              activity
+                                                  .activities[index].imageName,
                                             ))),
                                   ),
                                   const SizedBox(

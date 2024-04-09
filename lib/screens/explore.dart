@@ -158,7 +158,8 @@ class _ExplorePageState extends State<ExplorePage> {
                                         image: DecorationImage(
                                             fit: BoxFit.cover,
                                             image: NetworkImage(
-                                              "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                              activity
+                                                  .activities[index].imageName,
                                             ))),
                                   ),
                                   const SizedBox(

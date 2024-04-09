@@ -12,6 +12,7 @@ class RequestsMessageService {
           'Authorization': token,
         });
 
+    print(response.body);
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
 

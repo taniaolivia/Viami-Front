@@ -964,9 +964,9 @@ class _SearchPageState extends State<SearchPage> {
                           );
                         })
               ])),
-          contentHeight: MediaQuery.of(context).size.width <= 320 ? 4.2 : 4,
+          contentHeight:  4,
           containerHeight:
-              MediaQuery.of(context).size.width <= 320 ? 1.7 : 1.25,
+              1.25,
           height: 1.5,
           title: page == "rejoindre" ? "Rejoindre" : "Forum",
           redirect: "/home",

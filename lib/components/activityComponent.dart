@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -25,10 +26,11 @@ class _ActivityComponentState extends State<ActivityComponent> {
   final storage = const FlutterSecureStorage();
   List schedule = [];
   String? token = "";
-  int? note;
+  String? note;
   String? url = "";
 
   List<String> activityImages = [];
+  VideoPlayerController _videoPlayerController1;
 
   Future<void> getActivityImages() async {
     token = await storage.read(key: "token");
@@ -59,7 +61,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
     setState(() {
       if (activity.note == null) {
-        note = 0;
+        note = "0";
       } else {
         note = activity.note;
       }
@@ -95,67 +97,60 @@ class _ActivityComponentState extends State<ActivityComponent> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
-                        child: PageView.builder(
-                          itemCount: activityImages.length,
-                          controller: PageController(viewportFraction: 1.0),
-                          onPageChanged: (int index) {
-                            setState(() {
-                              selectedImage = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Image.network(
-                                              activityImages[selectedImage]),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Center(
-                                    child: Hero(
-                                        tag: activityImages[selectedImage],
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              bottomLeft: Radius.circular(20),
-                                              bottomRight: Radius.circular(20),
-                                            ),
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                  activityImages[
-                                                      selectedImage]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: List.generate(
-                                                  activityImages.length,
-                                                  (index) =>
-                                                      buildDot(index: index),
-                                                ),
+                        child: activityImages.length != 0
+                            ? CarouselSlider.builder(
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  aspectRatio: 1,
+                                  enlargeCenterPage: true,
+                                  enlargeStrategy:
+                                      CenterPageEnlargeStrategy.zoom,
+                                ),
+                                itemCount: activityImages.length,
+                                itemBuilder: (context, index, i) {
+                                  return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Image.network(
+                                                    activityImages[index]),
                                               ),
-                                            ],
-                                          ),
-                                        ))));
-                          },
-                        ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Hero(
+                                          tag: activityImages[index],
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                .size
+                                                .width,
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                bottomLeft: Radius.circular(20),
+                                                bottomRight:
+                                                    Radius.circular(20),
+                                              ),
+                                              image: DecorationImage(
+                                                image: NetworkImage(
+                                                    activityImages[index]),
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          )));
+                                },
+                              )
+                            : Container(),
                       ),
                     ),
                     Positioned(

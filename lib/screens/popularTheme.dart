@@ -35,8 +35,11 @@ class _PopularThemePageState extends State<PopularThemePage> {
   List themeActivityImage = [];
   List themeActivityName = [];
   List themeActivityLocation = [];
+  List themeActivityId = [];
   int? currentIndex;
   int? clickedThemeId;
+  String? clickedThemeName;
+
   List activities = [];
 
   Future<User> getUser() {
@@ -149,7 +152,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                               ? ActivityDetailsPage(
                                   activityId: activity.activities[index].id)
                               : ActivityDetailsPage(
-                                  activityId: activities[index].id),
+                                  activityId: themeActivityId[index]),
                         ),
                       );
                     },
@@ -162,10 +165,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 fit: BoxFit.cover,
                                 image: clicked == "popular"
                                     ? NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                        activity.activities[index].imageName,
                                       )
                                     : NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/${themeActivityImage[index]}",
+                                        themeActivityImage[index],
                                       ))),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -257,8 +260,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                     Navigator.push(
                       context,
                       FadePageRoute(
-                          page:
-                              AllThemeActivitiesPage(themeId: clickedThemeId!)),
+                          page: AllThemeActivitiesPage(
+                              themeId: clickedThemeId!,
+                              themeName: clickedThemeName!)),
                     );
                   }
                 },
@@ -340,6 +344,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 themeActivityImage = [];
                                 themeActivityName = [];
                                 themeActivityLocation = [];
+                                themeActivityId = [];
 
                                 var themeTravel =
                                     await getFirstFiveThemeActivities(
@@ -353,12 +358,17 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                       .add(themeTravel.activities[index].name);
                                   themeActivityLocation.add(
                                       themeTravel.activities[index].location);
+                                  themeActivityId.add(
+                                      themeTravel.activities[index].activityId);
                                 }).toList();
 
                                 setState(() {
                                   clicked = "theme";
                                   currentIndex = indexTheme;
                                   clickedThemeId = theme.themes[indexTheme].id;
+                                  clickedThemeName =
+                                      theme.themes[indexTheme].theme;
+
                                   activities = themeTravel.activities;
                                 });
                               },

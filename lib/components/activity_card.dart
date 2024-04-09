@@ -44,8 +44,7 @@ class ActivityCard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(20),
                       image: DecorationImage(
                         fit: BoxFit.cover,
-                        image: NetworkImage(
-                            '${dotenv.env['CDN_URL']}/assets/${activity.imageName}'),
+                        image: NetworkImage(activity.imageName),
                       ),
                     ),
                   ),

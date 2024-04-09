@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -69,7 +70,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
     setState(() {
       travelImages = images.travelImages.map((image) {
-        return '${dotenv.env['CDN_URL']}/assets/${image.imageName}';
+        return image.imageName;
       }).toList();
     });
   }
@@ -125,64 +126,50 @@ class _TravelComponentState extends State<TravelComponent> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
-                        child: PageView.builder(
+                        child: CarouselSlider.builder(
+                          options: CarouselOptions(
+                            autoPlay: true,
+                            aspectRatio: 1,
+                            enlargeCenterPage: true,
+                            enlargeStrategy: CenterPageEnlargeStrategy.zoom,
+                          ),
                           itemCount: travelImages.length,
-                          controller: PageController(viewportFraction: 1.0),
-                          onPageChanged: (int index) {
-                            setState(() {
-                              selectedImage = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
+                          itemBuilder: (context, index, i) {
                             return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Image.network(
-                                              travelImages[selectedImage]),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Center(
-                                    child: Hero(
-                                        tag: travelImages[selectedImage],
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              bottomLeft: Radius.circular(20),
-                                              bottomRight: Radius.circular(20),
-                                            ),
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                  travelImages[selectedImage]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: List.generate(
-                                                  travelImages.length,
-                                                  (index) =>
-                                                      buildDot(index: index),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ))));
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child:
+                                            Image.network(travelImages[index]),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Hero(
+                                  tag: travelImages[index],
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height,
+                                    decoration: BoxDecoration(
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(20),
+                                        bottomRight: Radius.circular(20),
+                                      ),
+                                      image: DecorationImage(
+                                        image:
+                                            NetworkImage(travelImages[index]),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  )),
+                            );
                           },
                         ),
                       ),
@@ -208,7 +195,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                         Navigator.push(
                                             context,
                                             FadePageRoute(
-                                                page: MenusPage(
+                                                page: const MenusPage(
                                               currentIndex: 0,
                                             )));
                                       },
