@@ -1,6 +1,8 @@
 import 'dart:ui';
 
+import 'package:appinio_video_player/appinio_video_player.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ import 'package:viami/models-api/activity/activity.dart';
 import 'package:viami/services/activity/activity.service.dart';
 import 'package:viami/services/activityImage/activitiesImages.service.dart';
 import 'package:viami/widgets/expandable_text_widget.dart';
+import 'package:video_player/video_player.dart';
 import '../widgets/icon_and_text_widget.dart';
 
 class ActivityComponent extends StatefulWidget {
@@ -28,9 +31,9 @@ class _ActivityComponentState extends State<ActivityComponent> {
   String? token = "";
   String? note;
   String? url = "";
-
+  late CustomVideoPlayerController _customVideoPlayerController;
   List<String> activityImages = [];
-  VideoPlayerController _videoPlayerController1;
+  String? videoUrl = "";
 
   Future<void> getActivityImages() async {
     token = await storage.read(key: "token");
@@ -40,6 +43,10 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
     setState(() {
       activityImages = images.activityImages.map((image) {
+        if (image.image.split(".")[3] == "mp4") {
+          videoUrl = image.image;
+        }
+
         return image.image;
       }).toList();
     });
@@ -68,12 +75,44 @@ class _ActivityComponentState extends State<ActivityComponent> {
     });
 
     await getActivityImages();
+
+    initializedVideoPlayer();
+  }
+
+  void initializedVideoPlayer() {
+    VideoPlayerController _videoPlayerController;
+    _videoPlayerController =
+        VideoPlayerController.networkUrl(Uri.parse(videoUrl!))
+          ..initialize().then((value) {
+            setState(() {});
+          });
+    _customVideoPlayerController = CustomVideoPlayerController(
+      context: context,
+      videoPlayerController: _videoPlayerController,
+    );
+  }
+
+  void _exitFullScreen() {
+    // Set preferred orientations to portrait mode
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   @override
   void initState() {
     fetchData();
+    getActivityImages();
     super.initState();
+    initializedVideoPlayer();
+    _exitFullScreen();
+  }
+
+  @override
+  void dispose() {
+    _customVideoPlayerController.dispose();
+    super.dispose();
   }
 
   @override
@@ -97,7 +136,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
-                        child: activityImages.length != 0
+                        child: activityImages.isNotEmpty
                             ? CarouselSlider.builder(
                                 options: CarouselOptions(
                                   autoPlay: true,
@@ -118,8 +157,15 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                 onTap: () {
                                                   Navigator.pop(context);
                                                 },
-                                                child: Image.network(
-                                                    activityImages[index]),
+                                                child: activityImages[index]
+                                                            .split(".")[3] ==
+                                                        "jpg"
+                                                    ? Image.network(
+                                                        activityImages[index])
+                                                    : CustomVideoPlayer(
+                                                        customVideoPlayerController:
+                                                            _customVideoPlayerController,
+                                                      ),
                                               ),
                                             );
                                           },
@@ -127,27 +173,36 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                       },
                                       child: Hero(
                                           tag: activityImages[index],
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                .size
-                                                .width,
-                                            height: MediaQuery.of(context)
-                                                .size
-                                                .height,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  const BorderRadius.only(
-                                                bottomLeft: Radius.circular(20),
-                                                bottomRight:
-                                                    Radius.circular(20),
-                                              ),
-                                              image: DecorationImage(
-                                                image: NetworkImage(
-                                                    activityImages[index]),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          )));
+                                          child: activityImages[index]
+                                                      .split(".")[3] ==
+                                                  "jpg"
+                                              ? Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .height,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(20),
+                                                      bottomRight:
+                                                          Radius.circular(20),
+                                                    ),
+                                                    image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          activityImages[
+                                                              index]),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                )
+                                              : CustomVideoPlayer(
+                                                  customVideoPlayerController:
+                                                      _customVideoPlayerController,
+                                                )));
                                 },
                               )
                             : Container(),

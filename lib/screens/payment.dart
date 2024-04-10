@@ -8,6 +8,7 @@ import 'package:viami/models-api/premium-plan/premium_plans.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/services/payment/payment_service.dart';
 import 'package:viami/services/premium-plan/premium_plans_service.dart';
+import 'package:viami/services/user-premium-plan/user_premium_plan_service.dart';
 import 'package:viami/services/user/user.service.dart';
 
 class PaymentPage extends StatefulWidget {
@@ -31,9 +32,6 @@ class _PaymentPageState extends State<PaymentPage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -92,7 +90,7 @@ class _PaymentPageState extends State<PaymentPage> {
 
               return SingleChildScrollView(
                   child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 25, 20, 20),
+                      padding: const EdgeInsets.fromLTRB(20, 55, 20, 20),
                       child: Column(children: [
                         Align(
                             alignment: Alignment.topLeft,
@@ -121,7 +119,7 @@ class _PaymentPageState extends State<PaymentPage> {
                                   )),
                             )),
                         const SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
                         Container(
                             width: MediaQuery.of(context).size.width / 3,
@@ -291,6 +289,12 @@ class _PaymentPageState extends State<PaymentPage> {
                                                     onPressed: () async {
                                                       Navigator.pushNamed(
                                                           context, "/home");
+
+                                                      await UserPremiumPlansService()
+                                                          .addUserPremiumPlan(
+                                                              token.toString(),
+                                                              userId.toString(),
+                                                              1);
                                                     },
                                                     child:
                                                         const Text("D'accord"),

@@ -54,27 +54,23 @@ class IconAndTextWidget extends StatelessWidget {
               children: [
                 Align(
                   alignment: Alignment.topLeft,
-                  child: AutoSizeText(
+                  child: Text(
                     text,
                     style: const TextStyle(
                       color: Color.fromARGB(255, 171, 171, 172),
                       fontWeight: FontWeight.normal,
                       fontFamily: "Poppins",
                     ),
-                    minFontSize: 10,
-                    maxFontSize: 11,
                     textAlign: TextAlign.left,
                   ),
                 ),
-                AutoSizeText(
+                Text(
                   subtext != null ? subtext! : "",
                   style: const TextStyle(
                     color: Color(0xFF0A2753),
                     fontWeight: FontWeight.normal,
                     fontFamily: "Poppins",
                   ),
-                  minFontSize: 8,
-                  maxFontSize: 10,
                   textAlign: TextAlign.left,
                 )
               ]),

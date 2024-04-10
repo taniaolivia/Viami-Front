@@ -90,8 +90,6 @@ class UserService {
         },
         body: jsonEncode(<String, dynamic>{"description": description}));
 
-    print(response.body);
-
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
       return res;
@@ -171,6 +169,24 @@ class UserService {
         });
 
     if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+      return res;
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
+  Future<Map<String, dynamic>> updateUserPlanById(
+      String id, String plan, String token) async {
+    final response = await http.patch(
+        Uri.parse('${dotenv.env['API_URL']}/users/$id/plan'),
+        headers: <String, String>{
+          "Content-Type": "application/json",
+          'Authorization': token
+        },
+        body: jsonEncode(<String, dynamic>{"plan": plan}));
+
+    if (response.statusCode == 201) {
       var res = json.decode(response.body);
       return res;
     } else {

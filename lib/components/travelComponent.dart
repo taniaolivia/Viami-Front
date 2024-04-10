@@ -47,7 +47,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
   String? token = "";
   String? userId = "";
-  String? nbParticipant;
+  String? nbParticipant = "0";
 
   List<String> travelImages = [];
 
@@ -92,8 +92,9 @@ class _TravelComponentState extends State<TravelComponent> {
 
   @override
   void initState() {
-    super.initState();
     fetchData();
+
+    super.initState();
   }
 
   @override
@@ -126,52 +127,59 @@ class _TravelComponentState extends State<TravelComponent> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
-                        child: CarouselSlider.builder(
-                          options: CarouselOptions(
-                            autoPlay: true,
-                            aspectRatio: 1,
-                            enlargeCenterPage: true,
-                            enlargeStrategy: CenterPageEnlargeStrategy.zoom,
-                          ),
-                          itemCount: travelImages.length,
-                          itemBuilder: (context, index, i) {
-                            return GestureDetector(
-                              onTap: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return Dialog(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
+                        child: travelImages.length != 0
+                            ? CarouselSlider.builder(
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  aspectRatio: 1,
+                                  enlargeCenterPage: true,
+                                  enlargeStrategy:
+                                      CenterPageEnlargeStrategy.zoom,
+                                ),
+                                itemCount: travelImages.length,
+                                itemBuilder: (context, index, i) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Image.network(
+                                                  travelImages[index]),
+                                            ),
+                                          );
                                         },
-                                        child:
-                                            Image.network(travelImages[index]),
-                                      ),
-                                    );
-                                  },
-                                );
-                              },
-                              child: Hero(
-                                  tag: travelImages[index],
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height,
-                                    decoration: BoxDecoration(
-                                      borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20),
-                                      ),
-                                      image: DecorationImage(
-                                        image:
-                                            NetworkImage(travelImages[index]),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  )),
-                            );
-                          },
-                        ),
+                                      );
+                                    },
+                                    child: Hero(
+                                        tag: travelImages[index],
+                                        child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                              bottomLeft: Radius.circular(20),
+                                              bottomRight: Radius.circular(20),
+                                            ),
+                                            image: DecorationImage(
+                                              image: NetworkImage(
+                                                  travelImages[index]),
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        )),
+                                  );
+                                },
+                              )
+                            : Container(),
                       ),
                     ),
                     Positioned(
@@ -276,17 +284,11 @@ class _TravelComponentState extends State<TravelComponent> {
                               const SizedBox(
                                 height: 15,
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconAndTextWidget(
-                                    icon: Icons.person,
-                                    text: nbParticipant!,
-                                    color: Colors.black,
-                                    iconColor: Colors.blue,
-                                  ),
-                                ],
+                              IconAndTextWidget(
+                                icon: Icons.person,
+                                text: nbParticipant!,
+                                color: Colors.black,
+                                iconColor: Colors.blue,
                               ),
                               const SizedBox(
                                 height: 20,

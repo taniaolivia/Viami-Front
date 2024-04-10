@@ -433,6 +433,8 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                                         _handleSubmitted(
                                                             _textReqController
                                                                 .text);
+
+                                                        Navigator.pop(context);
                                                       },
                                                     )
                                                   ],
