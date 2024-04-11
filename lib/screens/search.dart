@@ -451,8 +451,8 @@ class _SearchPageState extends State<SearchPage> {
                                 }
 
                                 if (snapshot.hasError) {
-                                  return Text(
-                                    '${snapshot.error}',
+                                  return const Text(
+                                    '',
                                     textAlign: TextAlign.center,
                                   );
                                 }
@@ -1019,160 +1019,167 @@ class _SearchPageState extends State<SearchPage> {
           title: page == "rejoindre" ? "Rejoindre" : "Forum",
           redirect: "/home",
         ),
-        floatingActionButton: Container(
-            height: 50.0,
-            width: 50.00,
-            margin: const EdgeInsets.fromLTRB(0, 0, 20, 70),
-            child: FloatingActionButton(
-                elevation: 5,
-                backgroundColor: Colors.white,
-                child: const Icon(Icons.add, color: Colors.blue),
-                onPressed: () async {
-                  userImage = await storage.read(key: "userImage");
+        floatingActionButton: page != "rejoindre"
+            ? Container(
+                height: 50.0,
+                width: 50.00,
+                margin: const EdgeInsets.fromLTRB(0, 0, 20, 70),
+                child: FloatingActionButton(
+                    elevation: 5,
+                    backgroundColor: Colors.white,
+                    child: const Icon(Icons.add, color: Colors.blue),
+                    onPressed: () async {
+                      userImage = await storage.read(key: "userImage");
 
-                  var plan = await UserPremiumPlansService()
-                      .getUserPremiumPlan(token.toString(), userId.toString());
+                      var plan = await UserPremiumPlansService()
+                          .getUserPremiumPlan(
+                              token.toString(), userId.toString());
 
-                  if (plan != null) {
-                    var tokenExpired = AuthService().isTokenExpired(plan.token);
+                      if (plan != null) {
+                        var tokenExpired =
+                            AuthService().isTokenExpired(plan.token);
 
-                    if (tokenExpired) {
-                      await UserService().updateUserPlanById(
-                          userId.toString(), "free", token.toString());
-                      setState(() {
-                        showPremium = true;
-                      });
-                    } else {
-                      setState(() {
-                        showPremium = false;
-                      });
-                    }
-                  } else {
-                    setState(() {
-                      showPremium = true;
-                    });
-                  }
-                  if (showPremium != null && showPremium! == false) {
-                    if (userImage != "0") {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Ajouter un post"),
-                            alignment: Alignment.center,
-                            surfaceTintColor: Colors.white,
-                            titleTextStyle: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontFamily: "Poppins",
-                                fontWeight: FontWeight.bold),
-                            titlePadding:
-                                const EdgeInsets.only(left: 25, top: 30),
-                            backgroundColor: Colors.white,
-                            content: Form(
-                                key: _formKey,
-                                child: Expanded(
-                                    child: TextFormField(
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Veuillez remplir un commentaire';
-                                    }
-                                    return null;
-                                  },
-                                  controller: messageController,
-                                  decoration: const InputDecoration(
-                                    border: OutlineInputBorder(),
-                                    contentPadding:
-                                        EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                    labelText: 'Message',
-                                    labelStyle: TextStyle(fontSize: 12),
-                                    focusedBorder: OutlineInputBorder(),
-                                    floatingLabelStyle: TextStyle(
-                                        color: Color.fromARGB(255, 81, 81, 81)),
-                                  ),
-                                  maxLength: 200,
-                                ))),
-                            actions: [
-                              Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        messageController.clear();
-
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text('Annuler',
-                                          style:
-                                              TextStyle(color: Colors.black)),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        if (_formKey.currentState!.validate()) {
-                                          await ForumService().addPostForum(
-                                              token.toString(),
-                                              messageController.text,
-                                              userId.toString());
-
-                                          setState(() {
-                                            switchTo = "newest";
-                                          });
-
-                                          posts = await getAllNewestForumPosts()
-                                              as Forum;
-
-                                          Navigator.of(context).pop();
+                        if (tokenExpired) {
+                          await UserService().updateUserPlanById(
+                              userId.toString(), "free", token.toString());
+                          setState(() {
+                            showPremium = true;
+                          });
+                        } else {
+                          setState(() {
+                            showPremium = false;
+                          });
+                        }
+                      } else {
+                        setState(() {
+                          showPremium = true;
+                        });
+                      }
+                      if (showPremium != null && showPremium! == false) {
+                        if (userImage != "0") {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Ajouter un post"),
+                                alignment: Alignment.center,
+                                surfaceTintColor: Colors.white,
+                                titleTextStyle: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.bold),
+                                titlePadding:
+                                    const EdgeInsets.only(left: 25, top: 30),
+                                backgroundColor: Colors.white,
+                                content: Form(
+                                    key: _formKey,
+                                    child: Expanded(
+                                        child: TextFormField(
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Veuillez remplir un commentaire';
                                         }
+                                        return null;
                                       },
-                                      child: const Text('Envoyer',
-                                          style:
-                                              TextStyle(color: Colors.black)),
-                                    ),
-                                  ])
-                            ],
-                          );
-                        },
-                      ).then((e) {
-                        messageController.clear();
-                      });
-                    } else {
-                      showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Text("Information"),
-                            alignment: Alignment.center,
-                            surfaceTintColor: Colors.white,
-                            titleTextStyle: const TextStyle(
-                                fontSize: 20,
-                                color: Colors.black,
-                                fontFamily: "Poppins",
-                                fontWeight: FontWeight.bold),
-                            titlePadding:
-                                const EdgeInsets.only(left: 25, top: 30),
-                            backgroundColor: Colors.white,
-                            content: const Text(
-                                "Veuillez ajouter une photo dans votre profil pour pouvoir poster !"),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  messageController.clear();
+                                      controller: messageController,
+                                      decoration: const InputDecoration(
+                                        border: OutlineInputBorder(),
+                                        contentPadding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        labelText: 'Message',
+                                        labelStyle: TextStyle(fontSize: 12),
+                                        focusedBorder: OutlineInputBorder(),
+                                        floatingLabelStyle: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 81, 81, 81)),
+                                      ),
+                                      maxLength: 200,
+                                    ))),
+                                actions: [
+                                  Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        TextButton(
+                                          onPressed: () {
+                                            messageController.clear();
 
-                                  Navigator.of(context).pop();
-                                },
-                                child: const Text('Fermer',
-                                    style: TextStyle(color: Colors.black)),
-                              ),
-                            ],
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: const Text('Annuler',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            if (_formKey.currentState!
+                                                .validate()) {
+                                              await ForumService().addPostForum(
+                                                  token.toString(),
+                                                  messageController.text,
+                                                  userId.toString());
+
+                                              setState(() {
+                                                switchTo = "newest";
+                                              });
+
+                                              posts =
+                                                  await getAllNewestForumPosts()
+                                                      as Forum;
+
+                                              Navigator.of(context).pop();
+                                            }
+                                          },
+                                          child: const Text('Envoyer',
+                                              style: TextStyle(
+                                                  color: Colors.black)),
+                                        ),
+                                      ])
+                                ],
+                              );
+                            },
+                          ).then((e) {
+                            messageController.clear();
+                          });
+                        } else {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: true,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text("Information"),
+                                alignment: Alignment.center,
+                                surfaceTintColor: Colors.white,
+                                titleTextStyle: const TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black,
+                                    fontFamily: "Poppins",
+                                    fontWeight: FontWeight.bold),
+                                titlePadding:
+                                    const EdgeInsets.only(left: 25, top: 30),
+                                backgroundColor: Colors.white,
+                                content: const Text(
+                                    "Veuillez ajouter une photo dans votre profil pour pouvoir poster !"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      messageController.clear();
+
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Fermer',
+                                        style: TextStyle(color: Colors.black)),
+                                  ),
+                                ],
+                              );
+                            },
                           );
-                        },
-                      );
-                    }
-                  } else {}
-                })),
+                        }
+                      } else {}
+                    }))
+            : Container(),
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat);
   }
 }

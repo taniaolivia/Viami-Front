@@ -99,19 +99,19 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                 }
 
                 if (snapshot.hasError) {
-                  return Text(
-                    '${snapshot.error}',
+                  return const Text(
+                    '',
                     textAlign: TextAlign.center,
                   );
                 }
 
                 if (!snapshot.hasData) {
-                  return Text('');
+                  return const Text('');
                 }
                 var user = snapshot.data![0] as User;
                 var images = snapshot.data![1] as UsersImages;
 
-                return Container(
+                return SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height,
                     child: SingleChildScrollView(
@@ -132,7 +132,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                           MediaQuery.of(context).size.height,
                                       decoration: BoxDecoration(
                                         image: DecorationImage(
-                                          image: images.userImages.length != 0
+                                          image: images.userImages.isNotEmpty
                                               ? NetworkImage(
                                                   images.userImages[0].image)
                                               : NetworkImage(
@@ -148,7 +148,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                           },
                           child: Center(
                               child: Hero(
-                                  tag: images.userImages.length != 0
+                                  tag: images.userImages.isNotEmpty
                                       ? images.userImages[0].image
                                       : "${dotenv.env['CDN_URL']}/assets/noprofile.png",
                                   child: Container(
@@ -164,7 +164,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                               bottomRight: Radius.circular(30)),
                                           color: const Color.fromRGBO(
                                               0, 0, 0, 0.1),
-                                          image: images.userImages.length != 0
+                                          image: images.userImages.isNotEmpty
                                               ? DecorationImage(
                                                   image: NetworkImage(images
                                                       .userImages[0].image),
@@ -178,33 +178,35 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                   fit: BoxFit.contain,
                                                   alignment: Alignment.center)),
                                       child: Column(children: [
-                                        Align(
-                                            alignment: Alignment.topLeft,
-                                            child: Container(
-                                                width: 50,
-                                                height: 50,
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        5, 2, 0, 0),
-                                                decoration: const BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.all(
-                                                            Radius.circular(
-                                                                10))),
-                                                child: IconButton(
-                                                    onPressed: () {
-                                                      Navigator.pushNamed(
-                                                          context, "/home");
-                                                    },
-                                                    icon: const Icon(
-                                                      Icons.arrow_back_ios,
-                                                      color: Color.fromRGBO(
-                                                          0, 0, 0, 0.4),
-                                                      size: 20,
-                                                    )))),
+                                        Padding(
+                                            padding: const EdgeInsets.fromLTRB(
+                                                5, 35, 0, 0),
+                                            child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: Container(
+                                                    width: 50,
+                                                    height: 50,
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(5, 0, 0, 0),
+                                                    decoration: const BoxDecoration(
+                                                        color: Colors.white,
+                                                        borderRadius:
+                                                            BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10))),
+                                                    child: IconButton(
+                                                        onPressed: () {
+                                                          Navigator.pushNamed(
+                                                              context, "/home");
+                                                        },
+                                                        icon: const Icon(
+                                                          Icons.arrow_back_ios,
+                                                          color: Color.fromRGBO(
+                                                              0, 0, 0, 0.4),
+                                                          size: 20,
+                                                        ))))),
                                         widget.showButton == false
-                                            ? Container(
+                                            ? SizedBox(
                                                 height: MediaQuery.of(context)
                                                         .size
                                                         .height /
@@ -267,8 +269,8 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                         fontWeight: FontWeight.w600),
                                   )),
                               const SizedBox(height: 10),
-                              images.userImages.length == 0
-                                  ? Container(
+                              images.userImages.isEmpty
+                                  ? SizedBox(
                                       width: MediaQuery.of(context).size.width,
                                       height: 20,
                                       child: const AutoSizeText(
@@ -279,7 +281,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                       ))
                                   : Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: List.generate(
                                           images.userImages.length, (index) {
                                         return GestureDetector(
@@ -294,8 +296,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                         Navigator.pop(context);
                                                       },
                                                       child: images.userImages
-                                                                  .length !=
-                                                              0
+                                                              .isNotEmpty
                                                           ? Image.network(images
                                                               .userImages[index]
                                                               .image)
@@ -308,7 +309,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                             },
                                             child: Center(
                                                 child: Hero(
-                                                    tag: images.userImages.length != 0
+                                                    tag: images.userImages.isNotEmpty
                                                         ? images
                                                             .userImages[index]
                                                             .image
@@ -359,8 +360,10 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                 ConnectionState.waiting) {
                                               return Text("");
                                             } else if (snapshot.hasError) {
-                                              return Text(
-                                                  'Erreur : ${snapshot.error}');
+                                              return const Text(
+                                                '',
+                                                textAlign: TextAlign.center,
+                                              );
                                             } else {
                                               bool hasLeftComment =
                                                   snapshot.data ?? false;

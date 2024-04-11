@@ -52,7 +52,7 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
                   child: Row(
                     children: [
                       Text(
-                        hiddenText ? "Show more" : "Show less",
+                        hiddenText ? "Voir plus" : "Voir moins",
                         style: const TextStyle(color: Colors.blue),
                       ),
                       Icon(

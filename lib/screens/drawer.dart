@@ -32,10 +32,6 @@ class _DrawerPageState extends State<DrawerPage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
-
       return UserService().getUserById(userId.toString(), token.toString());
     }
 
@@ -44,21 +40,6 @@ class _DrawerPageState extends State<DrawerPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (tokenExpired == true) {
-      /*WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialogMessage(
-            context,
-            "Connectez-vous",
-            const Text("Veuillez vous reconnecter !"),
-            TextButton(
-              child: const Text("Se connecter"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-            null);
-      });*/
-    }
     return ZoomDrawer(
         style: DrawerStyle.Style1,
         borderRadius: 40,
@@ -83,7 +64,7 @@ class _DrawerPageState extends State<DrawerPage> {
   Widget getScreen() {
     switch (currentItem) {
       case MenuItems.notification:
-        return NotificationsPage();
+        return const NotificationsPage();
       case MenuItems.settings:
         return const SettingsPage();
       default:

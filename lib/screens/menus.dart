@@ -104,22 +104,6 @@ class _MenusPageState extends State<MenusPage> {
       ),
     ];
 
-    if (tokenExpired == true) {
-      /*WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialogMessage(
-            context,
-            "Connectez-vous",
-            const Text("Veuillez vous reconnecter !"),
-            TextButton(
-              child: const Text("Se connecter"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-            null);
-      });*/
-    }
-
     return Scaffold(
       extendBody: true,
       appBar: _currentIndex == 2
@@ -139,7 +123,7 @@ class _MenusPageState extends State<MenusPage> {
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height));
                         } else if (snapshot.hasError) {
-                          return Text(
+                          return const Text(
                             '',
                             textAlign: TextAlign.center,
                           );
@@ -185,8 +169,8 @@ class _MenusPageState extends State<MenusPage> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {

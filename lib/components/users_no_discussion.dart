@@ -155,8 +155,8 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
               ),
             );
           } else if (snapshot.hasError) {
-            return Text(
-              '${snapshot.error}',
+            return const Text(
+              '',
               textAlign: TextAlign.center,
             );
           } else if (!snapshot.hasData) {
@@ -198,8 +198,8 @@ class _UsersNoDiscussionPageState extends State<UsersNoDiscussionPage> {
                                     width: MediaQuery.of(context).size.width,
                                     height: 100));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {

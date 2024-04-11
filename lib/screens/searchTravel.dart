@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:bottom_picker/bottom_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
@@ -42,6 +41,23 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
     super.initState();
   }
 
+  Future<void> showDatePickerDialog(BuildContext context) async {
+    final selectedDate = await showDatePicker(
+      context: context,
+      locale: const Locale('fr', 'FR'),
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      helpText: "Sélectionner votre date de départ",
+    );
+
+    if (selectedDate != null) {
+      dateController.text = DateFormat('yyyy-MM-dd').format(selectedDate);
+    } else {
+      dateController.text = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Travels>(
@@ -56,8 +72,8 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
           }
 
           if (snapshot.hasError) {
-            return Text(
-              '${snapshot.error}',
+            return const Text(
+              '',
               textAlign: TextAlign.center,
             );
           }
@@ -81,45 +97,36 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                   key: _formKey,
                   child: Column(children: [
                     TextFormField(
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Veuillez choisir votre date de départ';
-                        }
-                        return null;
-                      },
-                      controller: dateController,
-                      readOnly: true,
-                      decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelText: 'Date de départ*',
-                          labelStyle: TextStyle(fontSize: 14),
-                          focusedBorder: UnderlineInputBorder(),
-                          floatingLabelStyle:
-                              TextStyle(color: Color.fromARGB(255, 81, 81, 81)),
-                          icon: Icon(
-                            Icons.calendar_month_outlined,
-                            color: Colors.blue,
-                            size: 30.0,
-                          ),
-                          contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 5)),
-                      onTap: () {
-                        BottomPicker.date(
-                          title: "Choisissez votre date de départ",
-                          titleStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 13,
-                              color: Colors.blue),
-                          onChange: (index) {
-                            dateController.text =
-                                DateFormat('yyyy-MM-dd').format(index);
-                          },
-                          onSubmit: (index) {
-                            dateController.text =
-                                DateFormat('yyyy-MM-dd').format(index);
-                          },
-                        ).show(context);
-                      },
-                    ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez choisir votre date de départ';
+                          }
+                          return null;
+                        },
+                        controller: dateController,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            labelText: 'Date de départ*',
+                            labelStyle: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 81, 81, 81)),
+                            hintText: 'Date de départ*',
+                            hintStyle: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: Color.fromARGB(255, 81, 81, 81)),
+                            focusedBorder: UnderlineInputBorder(),
+                            floatingLabelStyle: TextStyle(
+                                color: Color.fromARGB(255, 81, 81, 81)),
+                            icon: Icon(
+                              Icons.calendar_month_outlined,
+                              color: Colors.blue,
+                              size: 30.0,
+                            ),
+                            contentPadding: EdgeInsets.fromLTRB(0, 5, 0, 5)),
+                        onTap: () => showDatePickerDialog(context)),
                     const SizedBox(height: 20),
                     Row(children: [
                       const Icon(
@@ -132,13 +139,31 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                       ),
                       Expanded(
                           child: DropdownButtonFormField<String>(
-                              menuMaxHeight: 130,
+                              dropdownColor: Colors.white,
+                              decoration: const InputDecoration(
+                                labelText: "Destination*",
+                                hintText: "Destination*",
+                                hintStyle: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 81, 81, 81)),
+                                labelStyle: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                    color: Color.fromARGB(255, 81, 81, 81)),
+                              ),
+                              menuMaxHeight: 300,
                               value: selectedLocation,
-                              hint: const Text("Destination*"),
-                              onChanged: (value) =>
-                                  setState(() => selectedLocation = value),
+                              onChanged: (value) => setState(() => {
+                                    if (selectedLocation != null)
+                                      {selectedLocation = value}
+                                    else
+                                      {selectedLocation = ""}
+                                  }),
                               validator: (value) {
-                                if (value == null || value.isEmpty) {
+                                if (value == null ||
+                                    value.isEmpty ||
+                                    value == "") {
                                   return 'Veuillez choisir votre destination';
                                 }
                                 return null;

@@ -64,8 +64,8 @@ class _AllThemeActivitiesPageState extends State<AllThemeActivitiesPage> {
                     }
 
                     if (snapshot.hasError) {
-                      return Text(
-                        '${snapshot.error}',
+                      return const Text(
+                        '',
                         textAlign: TextAlign.center,
                       );
                     }

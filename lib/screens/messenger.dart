@@ -550,7 +550,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                           sigmaX: 5, sigmaY: 5)),
                                 );
                               } else if (snapshot.hasError) {
-                                return Text('${snapshot.error}');
+                                return const Text(
+                                  '',
+                                  textAlign: TextAlign.center,
+                                );
                               } else if (!snapshot.hasData) {
                                 return const Text('');
                               }
@@ -626,8 +629,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   left: 20),
                                               height: MediaQuery.of(context)
                                                       .size
-                                                      .height -
-                                                  30,
+                                                      .height /
+                                                  1.3,
                                               decoration: const BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
@@ -1566,35 +1569,35 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                 sigmaY: 5)),
                                                   );
                                                 } else if (snapshot.hasError) {
-                                                  return Text(
-                                                      '${snapshot.error}');
+                                                  return const Text(
+                                                    '',
+                                                    textAlign: TextAlign.center,
+                                                  );
                                                 } else if (!snapshot.hasData) {
                                                   return const Text('');
                                                 }
 
                                                 var image = snapshot.data!;
 
-                                                var avatar =
-                                                    image.userImages.length != 0
-                                                        ? CircleAvatar(
-                                                            backgroundImage:
-                                                                NetworkImage(
-                                                                    "${image.userImages[0].image}"),
-                                                            maxRadius: 25,
-                                                          )
-                                                        : CircleAvatar(
-                                                            backgroundColor:
-                                                                const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    220,
-                                                                    234,
-                                                                    250),
-                                                            foregroundImage:
-                                                                NetworkImage(
-                                                                    "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                            maxRadius: 25,
-                                                          );
+                                                var avatar = image
+                                                        .userImages.isNotEmpty
+                                                    ? CircleAvatar(
+                                                        backgroundImage:
+                                                            NetworkImage(image
+                                                                .userImages[0]
+                                                                .image),
+                                                        maxRadius: 25,
+                                                      )
+                                                    : CircleAvatar(
+                                                        backgroundColor:
+                                                            const Color
+                                                                .fromARGB(255,
+                                                                220, 234, 250),
+                                                        foregroundImage:
+                                                            NetworkImage(
+                                                                "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                        maxRadius: 25,
+                                                      );
 
                                                 if (userIndex < 2) {
                                                   if (users.length == 1) {
@@ -1699,7 +1702,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Container(
+                                                SizedBox(
                                                     width:
                                                         MediaQuery.of(context)
                                                                 .size

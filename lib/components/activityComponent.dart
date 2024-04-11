@@ -32,6 +32,8 @@ class _ActivityComponentState extends State<ActivityComponent> {
   String? note;
   String? url = "";
   late CustomVideoPlayerController _customVideoPlayerController;
+  late VideoPlayerController _videoPlayerController;
+
   List<String> activityImages = [];
   String? videoUrl = "";
 
@@ -45,6 +47,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
       activityImages = images.activityImages.map((image) {
         if (image.image.split(".")[3] == "mp4") {
           videoUrl = image.image;
+          initializedVideoPlayer(videoUrl!);
         }
 
         return image.image;
@@ -76,16 +79,14 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
     await getActivityImages();
 
-    initializedVideoPlayer();
+    //initializedVideoPlayer();
   }
 
-  void initializedVideoPlayer() {
-    VideoPlayerController _videoPlayerController;
-    _videoPlayerController =
-        VideoPlayerController.networkUrl(Uri.parse(videoUrl!))
-          ..initialize().then((value) {
-            setState(() {});
-          });
+  void initializedVideoPlayer(String url) {
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url))
+      ..initialize().then((value) {
+        setState(() {});
+      });
     _customVideoPlayerController = CustomVideoPlayerController(
       context: context,
       videoPlayerController: _videoPlayerController,
@@ -105,13 +106,15 @@ class _ActivityComponentState extends State<ActivityComponent> {
     fetchData();
     getActivityImages();
     super.initState();
-    initializedVideoPlayer();
+
     _exitFullScreen();
   }
 
   @override
   void dispose() {
     _customVideoPlayerController.dispose();
+    _videoPlayerController.dispose();
+
     super.dispose();
   }
 
@@ -254,8 +257,8 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {
@@ -800,45 +803,32 @@ class _ActivityComponentState extends State<ActivityComponent> {
             ),
           ),
         ),
-        floatingActionButton: Expanded(
-            child: Container(
-                height: 50.0,
-                width: 250.00,
-                child: FloatingActionButton(
-                    backgroundColor: const Color(0xFF0081CF),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    onPressed: () {
-                      if (url != "") {
-                        launchUrl(Uri.parse(url!));
-                      }
-                    },
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                          "Découvrir",
-                          minFontSize: 11,
-                          maxFontSize: 13,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )))),
+        floatingActionButton: Container(
+            height: 50.0,
+            width: 250.00,
+            child: FloatingActionButton(
+                backgroundColor: const Color(0xFF0081CF),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                onPressed: () {
+                  if (url != "") {
+                    launchUrl(Uri.parse(url!));
+                  }
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      "Découvrir",
+                      minFontSize: 11,
+                      maxFontSize: 13,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ))),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
-  }
-
-  Widget buildDot({required int index}) {
-    return Container(
-      margin: const EdgeInsets.only(right: 5),
-      height: 8,
-      width: 8,
-      decoration: BoxDecoration(
-        color: selectedImage == index ? Colors.blue : Colors.grey,
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
   }
 }

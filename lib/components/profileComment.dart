@@ -75,8 +75,8 @@ class _ProfileCommentState extends State<ProfileComment> {
                 }
 
                 if (snapshot.hasError) {
-                  return Text(
-                    '${snapshot.error}',
+                  return const Text(
+                    '',
                     textAlign: TextAlign.center,
                   );
                 }
@@ -116,8 +116,8 @@ class _ProfileCommentState extends State<ProfileComment> {
                                       }
 
                                       if (snapshot.hasError) {
-                                        return Text(
-                                          '${snapshot.error}',
+                                        return const Text(
+                                          '',
                                           textAlign: TextAlign.center,
                                         );
                                       }

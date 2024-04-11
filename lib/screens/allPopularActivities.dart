@@ -59,8 +59,8 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                     }
 
                     if (snapshot.hasError) {
-                      return Text(
-                        '${snapshot.error}',
+                      return const Text(
+                        '',
                         textAlign: TextAlign.center,
                       );
                     }

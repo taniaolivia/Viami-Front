@@ -75,8 +75,8 @@ class _RecommendationActivityPageState
             }
 
             if (snapshot.hasError) {
-              return Text(
-                '${snapshot.error}',
+              return const Text(
+                '',
                 textAlign: TextAlign.center,
               );
             }

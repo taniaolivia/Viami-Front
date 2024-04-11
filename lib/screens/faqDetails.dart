@@ -248,7 +248,10 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                 width: MediaQuery.of(context).size.width,
                                 height: MediaQuery.of(context).size.height));
                       } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
+                        return const Text(
+                          '',
+                          textAlign: TextAlign.center,
+                        );
                       } else if (!snapshot.hasData) {
                         return const Text('');
                       }

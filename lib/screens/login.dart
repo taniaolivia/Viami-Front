@@ -140,7 +140,6 @@ class _LoginPageState extends State<LoginPage> {
 
                           var storage = const FlutterSecureStorage();
 
-                          print(user);
                           if (user != null) {
                             if (user["message"] == "User not found") {
                               showSnackbar(

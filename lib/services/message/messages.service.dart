@@ -47,7 +47,6 @@ class MessagesService {
 
     if (response.statusCode == 200) {
       var res = json.decode(response.body);
-      print(res["data"].length);
       return res["data"].length;
     } else {
       throw Exception('Failed to load messages');

@@ -111,6 +111,7 @@ class _TravelComponentState extends State<TravelComponent> {
     });
 
     return Scaffold(
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -233,8 +234,8 @@ class _TravelComponentState extends State<TravelComponent> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {
@@ -331,8 +332,10 @@ class _TravelComponentState extends State<TravelComponent> {
                                                       .size
                                                       .height));
                                         } else if (snapshot.hasError) {
-                                          return Text(
-                                              'Error: ${snapshot.error}');
+                                          return const Text(
+                                            '',
+                                            textAlign: TextAlign.center,
+                                          );
                                         } else if (!snapshot.hasData) {
                                           return const Text('');
                                         }
@@ -369,55 +372,44 @@ class _TravelComponentState extends State<TravelComponent> {
             ),
           ),
         ),
-        floatingActionButton: Expanded(
-            child: Container(
-                height: 50.0,
-                width: 250.00,
-                child: FloatingActionButton(
-                    backgroundColor: const Color(0xFF0081CF),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    onPressed: () async {
-                      await UsersDateLocationService().joinTravel(
-                          token!, userId!, widget.location!, widget.date!);
+        floatingActionButton: Container(
+            height: 50.0,
+            width: 250.00,
+            child: FloatingActionButton(
+                backgroundColor: const Color(0xFF0081CF),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                onPressed: () async {
+                  await UsersDateLocationService().joinTravel(
+                      token!, userId!, widget.location!, widget.date!);
 
-                      Navigator.push(
-                          context,
-                          FadePageRoute(
-                              page: ListTravelersPage(
-                            travelId: widget.travelId,
-                            location: widget.location,
-                            date: widget.date,
-                            users: widget.users!,
-                            connectedUserPlan: widget.connectedUserPlan,
-                          )));
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                          "$nbParticipant personnes intéressés",
-                          minFontSize: 11,
-                          maxFontSize: 13,
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )))),
+                  Navigator.push(
+                      context,
+                      FadePageRoute(
+                          page: ListTravelersPage(
+                        travelId: widget.travelId,
+                        location: widget.location,
+                        date: widget.date,
+                        users: widget.users!,
+                        connectedUserPlan: widget.connectedUserPlan,
+                      )));
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      nbParticipant == "0"
+                          ? "$nbParticipant personne intéressée"
+                          : "$nbParticipant personnes intéressées",
+                      minFontSize: 11,
+                      maxFontSize: 13,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ))),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
-  }
-
-  Widget buildDot({required int index}) {
-    return Container(
-      margin: const EdgeInsets.only(right: 5),
-      height: 8,
-      width: 8,
-      decoration: BoxDecoration(
-        color: selectedImage == index ? Colors.blue : Colors.grey,
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
   }
 }

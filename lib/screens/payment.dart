@@ -69,8 +69,8 @@ class _PaymentPageState extends State<PaymentPage> {
               }
 
               if (snapshot.hasError) {
-                return Text(
-                  '${snapshot.error}',
+                return const Text(
+                  '',
                   textAlign: TextAlign.center,
                 );
               }

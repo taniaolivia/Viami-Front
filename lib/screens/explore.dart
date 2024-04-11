@@ -4,9 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:viami/components/generalTemplate.dart';
 import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/pageTransition.dart';
@@ -82,7 +80,7 @@ class _ExplorePageState extends State<ExplorePage> {
 
                     if (snapshot.hasError) {
                       return Text(
-                        'Aucune activité proche de vous',
+                        '${snapshot.error}',
                         textAlign: TextAlign.center,
                       );
                     }

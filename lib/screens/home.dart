@@ -94,8 +94,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 }
 
                 if (snapshot.hasError) {
-                  return Text(
-                    '${snapshot.error}',
+                  return const Text(
+                    '',
                     textAlign: TextAlign.center,
                   );
                 }
@@ -161,7 +161,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             }
 
                             if (snapshot.hasError || !snapshot.hasData) {
-                              return Text('${snapshot.error}',
+                              return Text('',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(color: Colors.black));
                             }

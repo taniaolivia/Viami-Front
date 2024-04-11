@@ -18,6 +18,7 @@ import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/updatePassword.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +45,12 @@ class MyApp extends StatelessWidget {
         initialRoute: "/",
         title: 'Viami',
         debugShowCheckedModeBanner: false,
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [Locale('en'), Locale('fr')],
         theme: ThemeData(
             primarySwatch: Colors.blue,
             snackBarTheme: const SnackBarThemeData(
