@@ -8,7 +8,7 @@ Future<void> showAlertDialog(BuildContext context, String title, String content,
     builder: (BuildContext context) {
       return AlertDialog(
         title: Text(title),
-        backgroundColor: const Color(0xFFF5C7BD),
+        backgroundColor: const Color(0xFFFFFFFF),
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[

@@ -51,7 +51,7 @@ class _ExplorePageState extends State<ExplorePage> {
         drawer: const DrawerPage(),
         body: GeneralTemplate(
             redirect: "/home",
-            image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+            image: "${dotenv.env['CDN_URL']}/assets/proches.jpg",
             height: 1.0,
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,

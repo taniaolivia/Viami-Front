@@ -62,13 +62,11 @@ class MenuWidget extends StatelessWidget {
                               NetworkImage(images.userImages[0].image),
                           radius: 40.0,
                         )
-                      : CircleAvatar(
+                      : const CircleAvatar(
                           radius: 40.0,
                           child: Icon(
                             Icons.person,
-                            size: MediaQuery.of(context).size.width <= 320
-                                ? 50
-                                : 70,
+                            size: 30,
                           ))));
         });
   }

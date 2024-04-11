@@ -48,7 +48,7 @@ class _AllRecommendedActivitiesPageState
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
         body: GeneralTemplate(
-            image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+            image: "${dotenv.env['CDN_URL']}/assets/recommend.jpg",
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: 5,
             containerHeight: 1.25,

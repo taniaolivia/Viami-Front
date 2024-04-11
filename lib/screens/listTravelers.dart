@@ -4,11 +4,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:viami/components/alertMessage.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/menus.dart';
+import 'package:viami/screens/messenger.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/screens/travelDetails.dart';
+import 'package:viami/services/requestMessage/request_message_service.dart';
+import 'package:viami/services/requestMessage/requests_messages_service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 
@@ -216,7 +221,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height /
-                                                  3,
+                                                  4,
                                               decoration: BoxDecoration(
                                                 borderRadius:
                                                     const BorderRadius.all(
@@ -238,8 +243,8 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                         image: NetworkImage(
                                                             "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
                                                         fit: BoxFit.contain,
-                                                        alignment:
-                                                            Alignment.center),
+                                                        alignment: Alignment
+                                                            .bottomCenter),
                                               ),
                                               child: Column(
                                                 mainAxisAlignment:
@@ -285,7 +290,87 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                                       width: double.infinity,
                                                       height: 40,
                                                       child: ElevatedButton(
-                                                          onPressed: () {},
+                                                          onPressed: () async {
+                                                            var requestCount = await RequestsMessageService()
+                                                                .getAllRequestsMessagesByUser(
+                                                                    token
+                                                                        .toString(),
+                                                                    users![index]
+                                                                        .userId);
+
+                                                            if (requestCount
+                                                                    .requestsMessages
+                                                                    .length ==
+                                                                0) {
+                                                              await RequestMessageService().sendRequest(
+                                                                  token
+                                                                      .toString(),
+                                                                  userId
+                                                                      .toString(),
+                                                                  users![index]
+                                                                      .userId,
+                                                                  "Viami",
+                                                                  "Vous avez une nouvelle demande de message de ${toBeginningOfSentenceCase(users![index].firstName)}!",
+                                                                  users![index]
+                                                                      .fcmToken);
+
+                                                              showAlertDialog(
+                                                                  context,
+                                                                  "Information",
+                                                                  "Votre demande a été envoyée, veuillez patienter jusqu'à ce que l'utilisateur accepte votre demande. Il est également possible que l'utilisateur ne soit pas en mesure d'accepter votre demande. Dans ce cas, vous pouvez renvoyer une demande.",
+                                                                  "OK");
+                                                            } else {
+                                                              if (requestCount
+                                                                      .requestsMessages[
+                                                                          requestCount.requestsMessages.length -
+                                                                              1]
+                                                                      .accept ==
+                                                                  null) {
+                                                                showAlertDialog(
+                                                                    context,
+                                                                    "Information",
+                                                                    "Votre demande n'a pas encore répondu, veuillez patienter jusqu'à ce que l'utilisateur accepte votre demande.",
+                                                                    "OK");
+                                                              } else if (requestCount
+                                                                      .requestsMessages[
+                                                                          requestCount.requestsMessages.length -
+                                                                              1]
+                                                                      .accept ==
+                                                                  0) {
+                                                                await RequestMessageService().sendRequest(
+                                                                    token
+                                                                        .toString(),
+                                                                    userId
+                                                                        .toString(),
+                                                                    users![index]
+                                                                        .userId,
+                                                                    "Viami",
+                                                                    "Vous avez une nouvelle demande de message ${toBeginningOfSentenceCase(users![index].firstName)}!",
+                                                                    users![index]
+                                                                        .fcmToken);
+
+                                                                showAlertDialog(
+                                                                    context,
+                                                                    "Information",
+                                                                    "Votre demande a été envoyée, veuillez patienter jusqu'à ce que l'utilisateur accepte votre demande. Il est également possible que l'utilisateur ne soit pas en mesure d'accepter votre demande. Dans ce cas, vous pouvez renvoyer une demande.",
+                                                                    "OK");
+                                                              } else if (requestCount
+                                                                      .requestsMessages[
+                                                                          requestCount.requestsMessages.length -
+                                                                              1]
+                                                                      .accept ==
+                                                                  1) {
+                                                                Navigator.push(
+                                                                    context,
+                                                                    FadePageRoute(
+                                                                        page:
+                                                                            const MenusPage(
+                                                                      currentIndex:
+                                                                          3,
+                                                                    )));
+                                                              }
+                                                            }
+                                                          },
                                                           style: ElevatedButton.styleFrom(
                                                               backgroundColor:
                                                                   const Color
@@ -388,7 +473,7 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                         borderRadius: BorderRadius.all(
                                             Radius.circular(30)))),
                                 child: const AutoSizeText(
-                                  "Passer au Premium",
+                                  "Passer au premium",
                                   maxLines: 1,
                                   minFontSize: 11,
                                   maxFontSize: 13,

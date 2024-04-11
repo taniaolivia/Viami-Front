@@ -19,20 +19,20 @@ class _IntroductionPageState extends State<IntroductionPage> {
     List<IntroductionItem> data = [
       IntroductionItem(
           "${dotenv.env['CDN_URL']}/assets/viami-world.gif",
-          "Tu ne veux pas voyager seul ?",
+          "Vous ne voulez pas voyager seul ?",
           "Par obligation ou par choix",
           0.3,
           const Color(0xFF0081CF)),
       IntroductionItem(
           "${dotenv.env['CDN_URL']}/assets/viami-world.gif",
-          "Rencontre des voyageurs seuls",
-          "Discute et apprends à les connaître",
+          "Rencontrez des voyageurs seuls",
+          "Discutez et apprends à les connaître",
           0.6,
           const Color(0xFF0081CF)),
       IntroductionItem(
           "${dotenv.env['CDN_URL']}/assets/viami-world.gif",
-          "Voyage avec de nouveaux amis",
-          "Part découvrir le monde avec tes nouveaux amis",
+          "Voyagez avec de nouveaux amis",
+          "Partez découvrir le monde avec vos nouveaux amis",
           1.0,
           const Color(0xFF0081CF)),
       IntroductionItem("", "", "", 1.0, const Color(0xFF0081CF))

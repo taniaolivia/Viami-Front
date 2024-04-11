@@ -351,7 +351,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                 height: 20,
                               ),
                               const AutoSizeText(
-                                "Passez à Viami Premium pour voir tous les voyageurs et commencer à leur parler",
+                                "Passez à Viami Premium pour continuer de parler !",
                                 minFontSize: 11,
                                 maxFontSize: 13,
                                 textAlign: TextAlign.center,
@@ -391,7 +391,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                           borderRadius: BorderRadius.all(
                                               Radius.circular(30)))),
                                   child: const AutoSizeText(
-                                    "Passer au Premium",
+                                    "Passer au premium",
                                     maxLines: 1,
                                     minFontSize: 11,
                                     maxFontSize: 13,

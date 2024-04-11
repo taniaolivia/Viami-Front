@@ -47,7 +47,7 @@ class IconAndTextWidget extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 15),
           Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,15 +64,17 @@ class IconAndTextWidget extends StatelessWidget {
                     textAlign: TextAlign.left,
                   ),
                 ),
-                Text(
-                  subtext != null ? subtext! : "",
-                  style: const TextStyle(
-                    color: Color(0xFF0A2753),
-                    fontWeight: FontWeight.normal,
-                    fontFamily: "Poppins",
-                  ),
-                  textAlign: TextAlign.left,
-                )
+                subtext != null
+                    ? Text(
+                        subtext != null ? subtext! : "",
+                        style: const TextStyle(
+                          color: Color(0xFF0A2753),
+                          fontWeight: FontWeight.normal,
+                          fontFamily: "Poppins",
+                        ),
+                        textAlign: TextAlign.left,
+                      )
+                    : Container()
               ]),
         ],
       ),

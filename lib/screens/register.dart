@@ -205,11 +205,24 @@ class _RegisterPageState extends State<RegisterPage> {
                               )),
                           onTap: () {
                             BottomPicker.date(
+                              titlePadding: const EdgeInsets.only(top: 20),
                               title: "Définissez votre date de naissance",
                               titleStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 13,
-                                  color: Colors.blue),
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                  color: Color(0xFF0081CF)),
+                              buttonStyle: const BoxDecoration(
+                                  color: Color(0xFF0081CF),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  )),
+                              buttonContent: const Text(
+                                "Valider",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600),
+                              ),
                               onChange: (index) {
                                 birthdayController.text =
                                     DateFormat('yyyy-MM-dd').format(index);

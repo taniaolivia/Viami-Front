@@ -154,12 +154,8 @@ class _SearchTravelPageState extends State<SearchTravelPage> {
                               ),
                               menuMaxHeight: 300,
                               value: selectedLocation,
-                              onChanged: (value) => setState(() => {
-                                    if (selectedLocation != null)
-                                      {selectedLocation = value}
-                                    else
-                                      {selectedLocation = ""}
-                                  }),
+                              onChanged: (value) =>
+                                  setState(() => selectedLocation = value),
                               validator: (value) {
                                 if (value == null ||
                                     value.isEmpty ||

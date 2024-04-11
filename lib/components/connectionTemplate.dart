@@ -57,7 +57,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                           padding: const EdgeInsets.fromLTRB(20, 65, 0, 30),
                           child: Image.network(
                             "${dotenv.env['CDN_URL']}/assets/logo.png",
-                            width: MediaQuery.of(context).size.width / 3.5,
+                            width: MediaQuery.of(context).size.width / 4.0,
                           )),
                     ),
                     Align(
