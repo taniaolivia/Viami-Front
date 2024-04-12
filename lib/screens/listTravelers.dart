@@ -9,7 +9,6 @@ import 'package:viami/components/pageTransition.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
 import 'package:viami/screens/menus.dart';
-import 'package:viami/screens/messenger.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/screens/travelDetails.dart';
 import 'package:viami/services/requestMessage/request_message_service.dart';
@@ -399,93 +398,6 @@ class _ListTravelersPageState extends State<ListTravelersPage> {
                                 });
                           }).toList())
                 ]))),
-        widget.connectedUserPlan == 'premium'
-            ? BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                    padding: const EdgeInsets.fromLTRB(30, 160, 30, 160),
-                    color: Colors.transparent,
-                    child: Container(
-                        height: 80,
-                        decoration: const BoxDecoration(
-                            color: Color.fromARGB(155, 0, 128, 207),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(20))),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const AutoSizeText(
-                              "Voir qui est déjà intéressé par ce voyage",
-                              minFontSize: 16,
-                              maxFontSize: 17,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 20.0,
-                                      spreadRadius: 5.0,
-                                      offset: Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            const AutoSizeText(
-                              "Passez à Viami Premium pour voir tous les voyageurs et commencer à leur parler",
-                              minFontSize: 11,
-                              maxFontSize: 13,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                  shadows: [
-                                    BoxShadow(
-                                      color: Colors.black,
-                                      blurRadius: 20.0,
-                                      spreadRadius: 5.0,
-                                      offset: Offset(
-                                        0.0,
-                                        0.0,
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                            const SizedBox(
-                              height: 30,
-                            ),
-                            ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        40, 15, 40, 15),
-                                    backgroundColor: Colors.white,
-                                    textStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    shape: const RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(30)))),
-                                child: const AutoSizeText(
-                                  "Passer au premium",
-                                  maxLines: 1,
-                                  minFontSize: 11,
-                                  maxFontSize: 13,
-                                  overflow: TextOverflow.fade,
-                                  style: TextStyle(
-                                      fontFamily: "Poppins",
-                                      color: Color(0xFF0081CF)),
-                                ))
-                          ],
-                        ))),
-              )
-            : Container(),
       ]),
     );
   }

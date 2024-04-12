@@ -122,7 +122,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                       height: 25,
                     ),
                     // Barre de recherche
-                    Padding(
+                    /* Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 15.0),
                       child: Row(
                         children: [
@@ -220,7 +220,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                           ),
                         ),
                       ),
-                    ),
+                    ),*/
                   ])),
               const SizedBox(
                 height: 20,
@@ -276,14 +276,19 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                             return AlertDialog(
                                               surfaceTintColor: Colors.white,
                                               title: Text(
-                                                  toBeginningOfSentenceCase(
-                                                      faq.question)!),
+                                                toBeginningOfSentenceCase(
+                                                    faq.question)!,
+                                              ),
                                               titleTextStyle: const TextStyle(
-                                                  fontSize: 20,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.bold,
-                                                  fontFamily: "Poppins"),
-                                              content: Text(faq.answer),
+                                                fontSize: 18,
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.w700,
+                                                fontFamily: "Poppins",
+                                              ),
+                                              content: Text(
+                                                faq.answer,
+                                                textAlign: TextAlign.justify,
+                                              ),
                                               actions: [
                                                 TextButton(
                                                   onPressed: () {
@@ -328,7 +333,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                               ]),
                                           child: Column(children: [
                                             const SizedBox(
-                                              height: 25,
+                                              height: 15,
                                             ),
                                             const Row(
                                                 mainAxisAlignment:
@@ -342,7 +347,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                       children: [
                                                         Icon(
                                                           Icons.language,
-                                                          size: 20,
+                                                          size: 30,
                                                           color:
                                                               Color(0xFF0081CF),
                                                         ),
@@ -366,15 +371,23 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.start,
                                                   children: [
-                                                    AutoSizeText(
-                                                        toBeginningOfSentenceCase(
-                                                            faq.question)!,
-                                                        minFontSize: 12,
-                                                        maxFontSize: 14,
-                                                        softWrap: true,
-                                                        style: const TextStyle(
-                                                            color: Color(
-                                                                0xFF0A2753))),
+                                                    Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width /
+                                                            1.9,
+                                                        child: AutoSizeText(
+                                                            toBeginningOfSentenceCase(
+                                                                faq.question)!,
+                                                            minFontSize: 12,
+                                                            maxFontSize: 14,
+                                                            softWrap: true,
+                                                            textAlign: TextAlign
+                                                                .center,
+                                                            style: const TextStyle(
+                                                                color: Color(
+                                                                    0xFF0A2753)))),
                                                   ],
                                                 ),
                                               ],
@@ -455,7 +468,7 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
                   child: Align(
                       alignment: Alignment.centerLeft,
                       child: AutoSizeText(
-                        "Nos articles",
+                        "Toutes les questions",
                         minFontSize: 18,
                         maxFontSize: 20,
                         style: TextStyle(
@@ -464,19 +477,14 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
               const SizedBox(
                 height: 20,
               ),
-              if (allFaqs?.faqs.isEmpty ?? true) Text('Aucun Faq trouvé'),
+              if (allFaqs?.faqs.isEmpty ?? true) Text('Aucun FAQ trouvé'),
               if (!(allFaqs?.faqs.isEmpty ?? true))
-                Container(
-                    height: MediaQuery.of(context).size.height / 2,
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children:
-                            List.generate(allFaqs?.faqs.length ?? 0, (index) {
-                          var allFaq = allFaqs?.faqs[index];
-                          return item(allFaq!, index);
-                        }),
-                      ),
-                    )),
+                Column(
+                  children: List.generate(allFaqs?.faqs.length ?? 0, (index) {
+                    var allFaq = allFaqs?.faqs[index];
+                    return item(allFaq!, index);
+                  }),
+                ),
             ],
           ),
         )));
@@ -485,86 +493,97 @@ class _FaqDetailsPageState extends State<FaqDetailsPage> {
   Widget item(Faq faq, int index) {
     return GestureDetector(
         onTap: () {},
-        child: AnimatedContainer(
-            height: 65,
-            curve: Curves.easeInOut,
-            duration: Duration(milliseconds: 300 + (index * 100)),
-            transform: Matrix4.translationValues(
-                startAnimation ? 0 : MediaQuery.of(context).size.width, 0, 0),
-            width: MediaQuery.of(context).size.width,
-            margin: const EdgeInsets.all(5),
-            padding: EdgeInsets.symmetric(
-              horizontal: MediaQuery.of(context).size.width / 40,
-            ),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(137, 248, 244, 244),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: GestureDetector(
-                onTap: () {
-                  showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        surfaceTintColor: Colors.white,
-                        title: Text(toBeginningOfSentenceCase(faq.question)!),
-                        titleTextStyle: const TextStyle(
-                            fontSize: 20,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontFamily: "Poppins"),
-                        content: Text(faq.answer),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                            child: const Text('Fermer',
-                                style: TextStyle(
-                                  color: Colors.black,
-                                )),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-                child: Card(
-                    child: ListTile(
-                  tileColor: const Color.fromARGB(255, 238, 244, 249),
-                  title: AutoSizeText(
-                    faq.question,
-                    minFontSize: 12,
-                    maxFontSize: 14,
-                    style: const TextStyle(color: Colors.black),
-                  ),
-                  trailing: InkWell(
+        child: UnconstrainedBox(
+            child: AnimatedContainer(
+                //height: 80,
+                curve: Curves.easeInOut,
+                duration: Duration(milliseconds: 300 + (index * 100)),
+                transform: Matrix4.translationValues(
+                    startAnimation ? 0 : MediaQuery.of(context).size.width,
+                    0,
+                    0),
+                width: MediaQuery.of(context).size.width / 1.05,
+                margin: const EdgeInsets.all(5),
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 40,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(137, 248, 244, 244),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: GestureDetector(
                     onTap: () {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
+                            surfaceTintColor: Colors.white,
                             title:
                                 Text(toBeginningOfSentenceCase(faq.question)!),
+                            titleTextStyle: const TextStyle(
+                                fontSize: 20,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: "Poppins"),
                             content: Text(faq.answer),
                             actions: [
                               TextButton(
                                 onPressed: () {
                                   Navigator.of(context).pop();
                                 },
-                                child: const Text('Fermer'),
+                                child: const Text('Fermer',
+                                    style: TextStyle(
+                                      color: Colors.black,
+                                    )),
                               ),
                             ],
                           );
                         },
                       );
                     },
-                    child: Icon(
-                      Icons.arrow_forward,
-                      size: 20,
-                      color: Color(0xFF0081CF),
-                    ),
-                  ),
-                )))));
+                    child: Card(
+                        child: ListTile(
+                      tileColor: const Color.fromARGB(255, 238, 244, 249),
+                      title: AutoSizeText(
+                        faq.question,
+                        minFontSize: 12,
+                        maxFontSize: 14,
+                        style: const TextStyle(color: Colors.black),
+                      ),
+                      trailing: InkWell(
+                        onTap: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  toBeginningOfSentenceCase(faq.question)!,
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 18),
+                                ),
+                                content: Text(
+                                  faq.answer,
+                                  textAlign: TextAlign.justify,
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: const Text('Fermer'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: Icon(
+                          Icons.arrow_forward,
+                          size: 20,
+                          color: Color(0xFF0081CF),
+                        ),
+                      ),
+                    ))))));
   }
 }
