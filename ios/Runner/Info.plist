@@ -66,5 +66,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPrivacy</key>
+    <dict>
+        <key>NSPrivacyAccessedAPITypes</key>
+        <array>
+            <dict>
+                <key>API</key>
+                <string>UserDefaults</string>
+                <key>Reason</key>
+                <string>Used to store user preferences locally on the device.</string>
+            </dict>
+        </array>
+    </dict>
 </dict>
 </plist>
