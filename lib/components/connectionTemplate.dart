@@ -63,7 +63,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                     Align(
                       alignment: Alignment.topLeft,
                       child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: AutoSizeText(
                             widget.title,
                             style: const TextStyle(
