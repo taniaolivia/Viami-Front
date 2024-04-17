@@ -82,7 +82,7 @@ class _ConnectionTemplateState extends State<ConnectionTemplate> {
                               MediaQuery.of(context).size.height < 600
                                   ? 10.0
                                   : 20.0,
-                              0,
+                              20,
                               0),
                           child: AutoSizeText(
                             widget.subtitle,

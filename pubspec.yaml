@@ -55,7 +55,7 @@ dependencies:
   video_player: ^2.8.5
   chewie: ^1.7.5
   appinio_video_player: ^1.2.2
-  in_app_purchase: ^3.0.2
+  purchases_flutter: ^6.26.0
 
 dev_dependencies:
   flutter_test:

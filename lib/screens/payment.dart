@@ -1,11 +1,20 @@
 import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:viami/components/native_dialog.dart';
+import 'package:viami/components/singletons_data.dart';
+import 'package:viami/constant.dart';
 import 'package:viami/models-api/premium-plan/premium_plans.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/models/styles.dart';
+import 'package:viami/screens/paywall.dart';
 import 'package:viami/services/payment/payment_service.dart';
 import 'package:viami/services/premium-plan/premium_plans_service.dart';
 import 'package:viami/services/user-premium-plan/user_premium_plan_service.dart';
@@ -27,6 +36,7 @@ class _PaymentPageState extends State<PaymentPage> {
   int priceInt = 399;
   String planName = "1 semaine";
   List description = [];
+  bool _isLoading = false;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
@@ -43,6 +53,65 @@ class _PaymentPageState extends State<PaymentPage> {
     token = await storage.read(key: "token");
 
     return PremiumPlansService().getAllPremiumPlans(token.toString());
+  }
+
+  void pay() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+
+    if (customerInfo.entitlements.all[entitlementID] != null &&
+        customerInfo.entitlements.all[entitlementID]?.isActive == true) {
+      await showDialog(
+          context: context,
+          builder: (BuildContext context) => ShowDialogToDismiss(
+              title: "Vous êtes déjà abonné",
+              content:
+                  "Votre abonnement à Premium 1 semaine sera renouvelé automatiquement. Pour consulter les options de l'abonnement ou le résilier, veuillez consulter les paramètres dans votre portable.",
+              buttonText: 'OK'));
+
+      setState(() {
+        _isLoading = false;
+      });
+    } else {
+      Offerings? offerings;
+      try {
+        offerings = await Purchases.getOfferings();
+      } on PlatformException catch (e) {
+        await showDialog(
+            context: context,
+            builder: (BuildContext context) => ShowDialogToDismiss(
+                title: "Erreur",
+                content: e.message ?? "Erreur pendant le paiement",
+                buttonText: 'OK'));
+      }
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (offerings == null || offerings.current == null) {
+      } else {
+        try {
+          CustomerInfo customerInfo = await Purchases.purchasePackage(
+              offerings!.current!.availablePackages[0]);
+          EntitlementInfo? entitlement =
+              customerInfo.entitlements.all[entitlementID];
+          appData.entitlementIsActive = entitlement?.isActive ?? false;
+
+          await UserPremiumPlansService()
+              .addUserPremiumPlan(token.toString(), userId.toString(), 1);
+          Navigator.pushNamed(context, "/home");
+        } catch (e) {
+          print(e);
+        }
+
+        setState(() {});
+        Navigator.pop(context);
+      }
+    }
   }
 
   @override
@@ -225,112 +294,88 @@ class _PaymentPageState extends State<PaymentPage> {
                             height: 25,
                           ),
                         ]),
+                        Container(
+                            width: MediaQuery.of(context).size.width / 1.1,
+                            child: Column(children: [
+                              const Divider(
+                                height: 20,
+                                thickness: 1,
+                                indent: 0,
+                                endIndent: 0,
+                                color: Colors.grey,
+                              ),
+                              AutoSizeText.rich(
+                                TextSpan(
+                                  text:
+                                      "En appuyant sur continuer, votre achat sera facturé, votre abonnement sera automatiquement renouvelé pour le même prix et la même durée jusqu'à ce que vous l'annulez dans les paramètres de l'App store ou le Play store. Vous acceptez également nos ",
+                                  style: const TextStyle(
+                                    fontFamily: "Poppins",
+                                    color: Color(0xFF0A2753),
+                                  ),
+                                  children: [
+                                    TextSpan(
+                                      text: "Conditions d'utilisation",
+                                      style: const TextStyle(
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          await launchUrl(Uri.parse(
+                                              'https://www.apple.com/legal/internet-services/itunes/dev/stdeula/'));
+                                        },
+                                    ),
+                                    const TextSpan(
+                                      text: " et notre ",
+                                    ),
+                                    TextSpan(
+                                      text: "Politique de confidentialité.",
+                                      style: const TextStyle(
+                                        decoration: TextDecoration.underline,
+                                      ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = () async {
+                                          await launchUrl(Uri.parse(
+                                              'https://viami-api.onrender.com/politique-de-confidentialite'));
+                                        },
+                                    ),
+                                  ],
+                                ),
+                                minFontSize: 8,
+                                maxFontSize: 10,
+                                overflow: TextOverflow.visible,
+                                softWrap: true,
+                                textAlign: TextAlign.justify,
+                              ),
+                              const SizedBox(
+                                height: 30,
+                              ),
+                              Container(
+                                  width: 250,
+                                  height: 50,
+                                  child: FloatingActionButton(
+                                    backgroundColor: const Color(0xFF0081CF),
+                                    shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(20))),
+                                    child: AutoSizeText(
+                                      "Continuer - $priceText€ total",
+                                      maxLines: 1,
+                                      minFontSize: 17,
+                                      maxFontSize: 20,
+                                      overflow: TextOverflow.fade,
+                                      style: const TextStyle(
+                                          fontFamily: "Poppins",
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                    onPressed: () {
+                                      pay();
+                                    },
+                                  ))
+                            ]))
                       ])
                     ])));
           }),
-      floatingActionButton: Container(
-          height: 150.0,
-          width: MediaQuery.of(context).size.width / 1.1,
-          child: Column(children: [
-            const Divider(
-              height: 20,
-              thickness: 1,
-              indent: 0,
-              endIndent: 0,
-              color: Colors.grey,
-            ),
-            const AutoSizeText(
-              "En appuyant sur continuer, votre achat sera facturé, votre abonnement sera automatiquement renouvelé pour le même pris et la même durée jusqu'à ce que vous l'annulez dans les paramètres de l'App store ou le Play store. Vous acceptez également nos Conditions d'utilisation.",
-              minFontSize: 6,
-              maxFontSize: 8,
-              overflow: TextOverflow.visible,
-              softWrap: true,
-              textAlign: TextAlign.justify,
-              style: TextStyle(fontFamily: "Poppins", color: Color(0xFF0A2753)),
-            ),
-            const SizedBox(
-              height: 20,
-            ),
-            Container(
-                width: 250,
-                height: 50,
-                child: FloatingActionButton(
-                  backgroundColor: const Color(0xFF0081CF),
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(20))),
-                  child: AutoSizeText(
-                    "Continuer - $priceText€ total",
-                    maxLines: 1,
-                    minFontSize: 17,
-                    maxFontSize: 20,
-                    overflow: TextOverflow.fade,
-                    style: const TextStyle(
-                        fontFamily: "Poppins",
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600),
-                  ),
-                  onPressed: () async {
-                    await PaymentService().stripePaymentCheckout(
-                        {"name": "Premium 1 semaine", "price": priceInt},
-                        50,
-                        context,
-                        mounted, onSuccess: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                                title: const Text('Information'),
-                                content: const Text(
-                                    "Votre paiement a été traité avec succès. Vous pouvez commencer de profiter l'abonnement premium"),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.pushNamed(context, "/home");
-
-                                      await UserPremiumPlansService()
-                                          .addUserPremiumPlan(token.toString(),
-                                              userId.toString(), 1);
-                                    },
-                                    child: const Text("D'accord"),
-                                  ),
-                                ]);
-                          });
-                    }, onCancel: () {
-                      print("Cancel");
-                    }, onError: (e) {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                                title: const Text(
-                                  'Information',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                surfaceTintColor: Colors.white,
-                                backgroundColor: Colors.white,
-                                content: const Text(
-                                  "Votre paiement n'a pas été traité avec succès. Veuillez nous contacter si ce problème pérsiste !",
-                                  textAlign: TextAlign.justify,
-                                ),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () async {
-                                      Navigator.pushNamed(context, "/home");
-                                    },
-                                    child: const Text("D'accord",
-                                        style: TextStyle(color: Colors.black)),
-                                  ),
-                                ]);
-                          });
-                      print("Error: " + e.toString());
-                    });
-                  },
-                ))
-          ])),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
     );
   }
 }

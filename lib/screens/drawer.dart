@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/screens/mention.dart';
 import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/menus.dart';
 import 'package:viami/screens/settings.dart';
@@ -67,6 +68,8 @@ class _DrawerPageState extends State<DrawerPage> {
         return const NotificationsPage();
       case MenuItems.settings:
         return const SettingsPage();
+      case MenuItems.mentionLegal:
+        return const MentionPage();
       default:
         return const MenusPage();
     }

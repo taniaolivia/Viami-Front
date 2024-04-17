@@ -50,9 +50,15 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
                     Align(
                         alignment: Alignment.topLeft,
                         child: Container(
-                            width: 50,
-                            height: 50,
-                            margin: const EdgeInsets.fromLTRB(20, 60, 0, 0),
+                            width: MediaQuery.of(context).size.width <= 450
+                                ? 40
+                                : 50,
+                            height: MediaQuery.of(context).size.width <= 450
+                                ? 40
+                                : 50,
+                            margin: MediaQuery.of(context).size.width <= 450
+                                ? const EdgeInsets.fromLTRB(20, 40, 0, 0)
+                                : const EdgeInsets.fromLTRB(20, 60, 0, 0),
                             padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
                             decoration: const BoxDecoration(
                                 color: Colors.white,
@@ -71,7 +77,7 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
                                   size: 20,
                                 )))),
                     AutoSizeText(
-                      widget.title!.toUpperCase(),
+                      widget.title.toString().toUpperCase(),
                       minFontSize: 23,
                       maxFontSize: 25,
                       style: const TextStyle(

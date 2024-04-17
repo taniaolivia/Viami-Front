@@ -526,8 +526,9 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                 content: SingleChildScrollView(
                                                   child: ListBody(
                                                     children: <Widget>[
-                                                      Text(activity
-                                                          .accessibility!)
+                                                      Text(
+                                                        activity.accessibility!,
+                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -608,7 +609,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width /
-                                                            3,
+                                                            3.5,
                                                     child: AutoSizeText(
                                                       activity.accessibility !=
                                                               ""

@@ -179,21 +179,33 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                   alignment: Alignment.center)),
                                       child: Column(children: [
                                         Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                5, 35, 0, 0),
+                                            padding: MediaQuery.of(context).size.width <= 450
+                                                ? const EdgeInsets.fromLTRB(
+                                                    5, 15, 0, 0)
+                                                : const EdgeInsets.fromLTRB(
+                                                    5, 35, 0, 0),
                                             child: Align(
                                                 alignment: Alignment.topLeft,
                                                 child: Container(
-                                                    width: 50,
-                                                    height: 50,
-                                                    padding: const EdgeInsets
-                                                        .fromLTRB(5, 0, 0, 0),
+                                                    width: MediaQuery.of(context)
+                                                                .size
+                                                                .width <=
+                                                            450
+                                                        ? 40
+                                                        : 50,
+                                                    height: MediaQuery.of(context)
+                                                                .size
+                                                                .width <=
+                                                            450
+                                                        ? 40
+                                                        : 50,
+                                                    padding:
+                                                        const EdgeInsets.fromLTRB(
+                                                            5, 0, 0, 0),
                                                     decoration: const BoxDecoration(
                                                         color: Colors.white,
-                                                        borderRadius:
-                                                            BorderRadius.all(
-                                                                Radius.circular(
-                                                                    10))),
+                                                        borderRadius: BorderRadius.all(
+                                                            Radius.circular(10))),
                                                     child: IconButton(
                                                         onPressed: () {
                                                           Navigator.pushNamed(
@@ -281,7 +293,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                       ))
                                   : Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.start,
                                       children: List.generate(
                                           images.userImages.length, (index) {
                                         return GestureDetector(
@@ -307,44 +319,44 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                 },
                                               );
                                             },
-                                            child: Center(
-                                                child: Hero(
-                                                    tag: images.userImages.isNotEmpty
-                                                        ? images
-                                                            .userImages[index]
-                                                            .image
-                                                        : "${dotenv.env['CDN_URL']}/assets/noprofile.png",
-                                                    child: Container(
-                                                        width: MediaQuery.of(context)
-                                                                .size
-                                                                .width /
-                                                            4,
-                                                        height: 150,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                                borderRadius:
-                                                                    const BorderRadius.all(
-                                                                        Radius.circular(
-                                                                            10)),
-                                                                color: const Color.fromRGBO(
-                                                                    0, 0, 0, 0.1),
-                                                                image: images
-                                                                            .userImages
-                                                                            .length !=
-                                                                        0
-                                                                    ? DecorationImage(
-                                                                        image: NetworkImage(images
-                                                                            .userImages[index]
-                                                                            .image),
-                                                                        fit: BoxFit
-                                                                            .cover,
-                                                                      )
-                                                                    : DecorationImage(
-                                                                        colorFilter:
-                                                                            const ColorFilter.linearToSrgbGamma(),
-                                                                        image: NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                                        fit: BoxFit.contain,
-                                                                        alignment: Alignment.center))))));
+                                            child: Hero(
+                                                tag: images.userImages.isNotEmpty
+                                                    ? images
+                                                        .userImages[index].image
+                                                    : "${dotenv.env['CDN_URL']}/assets/noprofile.png",
+                                                child: Container(
+                                                    margin: const EdgeInsets.only(
+                                                        right: 10),
+                                                    width: MediaQuery.of(context)
+                                                            .size
+                                                            .width /
+                                                        4,
+                                                    height: 150,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            const BorderRadius.all(
+                                                                Radius.circular(
+                                                                    10)),
+                                                        color:
+                                                            const Color.fromRGBO(
+                                                                0, 0, 0, 0.1),
+                                                        image: images.userImages
+                                                                    .length !=
+                                                                0
+                                                            ? DecorationImage(
+                                                                image: NetworkImage(images
+                                                                    .userImages[
+                                                                        index]
+                                                                    .image),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              )
+                                                            : DecorationImage(
+                                                                colorFilter:
+                                                                    const ColorFilter.linearToSrgbGamma(),
+                                                                image: NetworkImage("${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                fit: BoxFit.contain,
+                                                                alignment: Alignment.center)))));
                                       })),
                               const SizedBox(height: 100),
                               Container(

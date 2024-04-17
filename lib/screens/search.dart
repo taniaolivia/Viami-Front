@@ -652,13 +652,16 @@ class _SearchPageState extends State<SearchPage> {
                                                                                                   ),
                                                                                                 ]))));
                                                                                   })
-                                                                              : Padding(padding: const EdgeInsets.fromLTRB(0, 40, 0, 0), child: const Text("Devenez le premier à postqer !"))),
+                                                                              : Padding(padding: const EdgeInsets.fromLTRB(0, 40, 0, 0), child: const Text("Devenez le premier à poster !"))),
                                                                       const SizedBox(
                                                                         height:
                                                                             10,
                                                                       ),
                                                                       Row(
                                                                           children: [
+                                                                            const SizedBox(
+                                                                              width: 15,
+                                                                            ),
                                                                             Form(
                                                                                 key: _formKey,
                                                                                 child: Expanded(
@@ -700,6 +703,9 @@ class _SearchPageState extends State<SearchPage> {
                                                                                   shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10))),
                                                                                 ),
                                                                                 child: const Icon(Icons.send, color: Colors.white)),
+                                                                            const SizedBox(
+                                                                              width: 15,
+                                                                            ),
                                                                           ])
                                                                     ]));
                                                           },
@@ -1206,8 +1212,7 @@ class _SearchPageState extends State<SearchPage> {
                                 backgroundColor: Colors.white,
                                 content: Form(
                                     key: _formKey,
-                                    child: Expanded(
-                                        child: TextFormField(
+                                    child: TextFormField(
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Veuillez remplir un commentaire';
@@ -1227,7 +1232,8 @@ class _SearchPageState extends State<SearchPage> {
                                                 255, 81, 81, 81)),
                                       ),
                                       maxLength: 200,
-                                    ))),
+                                    ))
+                                ,
                                 actions: [
                                   Row(
                                       mainAxisAlignment:
