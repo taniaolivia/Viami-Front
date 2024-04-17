@@ -27,32 +27,32 @@ class _ExplorePageState extends State<ExplorePage> {
   String message = "";
   String currentLocation = "";
 
+  Future<Activities> getNearActivities() {
+    Future<Activities> getAllNearActivities() async {
+      token = await storage.read(key: "token");
+      String? location = await getMyCurrentPositionLatLon(context);
+
+      return ActivitiesService().getNearActivities(
+          token.toString(), location!.split(", ")[0], location.split(", ")[1]);
+    }
+
+    return getAllNearActivities();
+  }
+
   @override
   void initState() {
-    //getNearActivities();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    Future<Activities> getNearActivities() {
-      Future<Activities> getAllNearActivities() async {
-        token = await storage.read(key: "token");
-        String? location = await getMyCurrentPositionLatLon(context);
-
-        return ActivitiesService().getNearActivities(token.toString(),
-            location!.split(", ")[0], location.split(", ")[1]);
-      }
-
-      return getAllNearActivities();
-    }
-
     return Scaffold(
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
         body: GeneralTemplate(
             redirect: "/home",
-            image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+            image: "${dotenv.env['CDN_URL']}/assets/proches.jpg",
+            height: 1.0,
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
             containerHeight:
@@ -86,7 +86,7 @@ class _ExplorePageState extends State<ExplorePage> {
                     }
 
                     if (!snapshot.hasData) {
-                      return const Text("");
+                      return const Text("Aucune activité proche de vous");
                     }
 
                     var activity = snapshot.data!;
@@ -156,7 +156,8 @@ class _ExplorePageState extends State<ExplorePage> {
                                         image: DecorationImage(
                                             fit: BoxFit.cover,
                                             image: NetworkImage(
-                                              "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                              activity
+                                                  .activities[index].imageName,
                                             ))),
                                   ),
                                   const SizedBox(

@@ -78,8 +78,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
               }
 
               if (snapshot.hasError) {
-                return Text(
-                  '${snapshot.error}',
+                return const Text(
+                  '',
                   textAlign: TextAlign.center,
                 );
               }

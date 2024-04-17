@@ -3,8 +3,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/connectionTemplate.dart';
 import 'package:viami/components/snackBar.dart';
+import 'package:viami/services/user-premium-plan/user_premium_plan_service.dart';
 import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
+import 'package:viami/services/userImage/usersImages.service.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -30,9 +32,8 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: ConnectionTemplate(
-            title: "Re-Bienvenue",
-            subtitle:
-                "Continuez à planifier votre voyage avec de nouvelles personnes",
+            title: "Bienvenue",
+            subtitle: "Connectez-vous pour commencer votre voyage",
             form: Container(
               padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
               child: Form(
@@ -153,6 +154,13 @@ class _LoginPageState extends State<LoginPage> {
                                   "Mot de passe est incorrect. Veuillez remplir le bon mot de passe !",
                                   "D'accord",
                                   "");
+                            } else if (user["message"] ==
+                                "Please verify your email !") {
+                              showSnackbar(
+                                  context,
+                                  "Votre adresse e-mail n'est pas encore vérifié. Un mail a été envoyé sur votre mail ! Vérifiez vos spams si vous ne trouvez pas le mail!",
+                                  "D'accord",
+                                  "");
                             } else {
                               await storage.write(
                                   key: "userId", value: user["user"]["id"]);
@@ -164,6 +172,14 @@ class _LoginPageState extends State<LoginPage> {
 
                               await UserService().setFcmToken(
                                   user["user"]["id"], fcmToken!, user['token']);
+
+                              var image = await UsersImagesService()
+                                  .getUserImagesById(
+                                      user["user"]["id"], user['token']);
+
+                              await storage.write(
+                                  key: "userImage",
+                                  value: image.userImages.length.toString());
 
                               Navigator.pushNamed(context, "/home");
                             }

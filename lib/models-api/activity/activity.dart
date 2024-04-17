@@ -33,7 +33,7 @@ class Activity {
   final int isRecommended;
   final int? nbParticipant;
   final String? description;
-  final int? note;
+  final String? note;
   final String? url;
   final String? telephone;
   final String? address;

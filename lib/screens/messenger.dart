@@ -11,9 +11,12 @@ import 'package:viami/models-api/messenger/group_data.dart';
 import 'package:viami/models-api/messenger/messages.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/payment.dart';
 import 'package:viami/screens/showProfile.dart';
 import 'package:viami/services/message/message.service.dart';
 import 'package:viami/services/message/messages.service.dart';
+import 'package:viami/services/user-premium-plan/user_premium_plan_service.dart';
+import 'package:viami/services/user/auth.service.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/user/users.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
@@ -54,6 +57,7 @@ class _MessengerPageState extends State<MessengerPage> {
   Messages? discussion;
 
   int? userCount;
+  int userMessagesCount = 0;
 
   Color groupButtonColor = Colors.white;
   Color groupTextColor = Colors.black;
@@ -67,6 +71,7 @@ class _MessengerPageState extends State<MessengerPage> {
   String filterSeulGroup = "all";
   String? selectedLocation;
   List locationList = [""];
+  bool showPremium = false;
 
   Future<Travels> getListTravels() {
     Future<Travels> getAllTravels() async {
@@ -81,6 +86,12 @@ class _MessengerPageState extends State<MessengerPage> {
   Future<void> fetchData() async {
     await updateLocationList();
     await getDiscussionsByFilter();
+    var messageCount = await MessagesService()
+        .getAllMessagesByUserId(token.toString(), userId.toString());
+
+    setState(() {
+      userMessagesCount = messageCount;
+    });
   }
 
   Future<Groups> getAllDiscussionsForUser() async {
@@ -280,7 +291,7 @@ class _MessengerPageState extends State<MessengerPage> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.fromLTRB(25, 40, 25, 60),
+          padding: const EdgeInsets.fromLTRB(25, 70, 25, 60),
           child: Column(
             children: [
               Row(
@@ -371,14 +382,11 @@ class _MessengerPageState extends State<MessengerPage> {
 
                             var userMessage = await GroupsService()
                                 .getSearchedUsers(token!, userId!, search);
-                            print("ij");
 
                             if (userMessage != null) {
                               setState(() {
                                 discussionMessages = userMessage;
                               });
-
-                              print(discussionMessages);
                             }
 
                             FocusScope.of(context).unfocus();
@@ -425,7 +433,10 @@ class _MessengerPageState extends State<MessengerPage> {
                                 filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5)),
                           );
                         } else if (snapshot.hasError) {
-                          return Text('${snapshot.error}');
+                          return const Text(
+                            '',
+                            textAlign: TextAlign.center,
+                          );
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
@@ -465,6 +476,33 @@ class _MessengerPageState extends State<MessengerPage> {
                               clearFilters();
                             });
 
+                            var plan = await UserPremiumPlansService()
+                                .getUserPremiumPlan(
+                                    token.toString(), userId.toString());
+
+                            if (plan != null) {
+                              var tokenExpired =
+                                  AuthService().isTokenExpired(plan.token);
+
+                              if (tokenExpired) {
+                                await UserService().updateUserPlanById(
+                                    userId.toString(),
+                                    "free",
+                                    token.toString());
+                                setState(() {
+                                  showPremium = true;
+                                });
+                              } else {
+                                setState(() {
+                                  showPremium = false;
+                                });
+                              }
+                            } else {
+                              setState(() {
+                                showPremium = true;
+                              });
+                            }
+
                             BuildContext currentContext = context;
                             showModalBottomSheet(
                               backgroundColor:
@@ -495,8 +533,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                         padding: const EdgeInsets.only(
                                             top: 10, bottom: 10, left: 20),
                                         height:
-                                            MediaQuery.of(context).size.height -
-                                                30,
+                                            MediaQuery.of(context).size.height /
+                                                1.3,
                                         decoration: const BoxDecoration(
                                           color: Colors.white,
                                           borderRadius: BorderRadius.vertical(
@@ -746,60 +784,64 @@ class _MessengerPageState extends State<MessengerPage> {
                                                     ],
                                                   ),
                                                 ),
-                                                Builder(builder:
-                                                    (BuildContext context) {
-                                                  return PopupMenuButton<
-                                                      String>(
-                                                    child: Container(
-                                                      height: 10,
-                                                      width: 50,
-                                                      child: const Icon(
-                                                        Icons.more_vert,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ),
-                                                    onSelected: (value) {
-                                                      if (value ==
-                                                          'ajouterVoyageur') {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            var groupeIdPass =
-                                                                discussionMessages!
-                                                                    .groups[
-                                                                        index]
-                                                                    .lastMessage
-                                                                    .groupId;
-
-                                                            return MyCustomDialog(
-                                                              groupId:
-                                                                  groupeIdPass,
-                                                            );
-                                                          },
-                                                        );
-                                                      }
-                                                    },
-                                                    itemBuilder: (BuildContext
-                                                            context) =>
-                                                        <PopupMenuEntry<
-                                                            String>>[
-                                                      const PopupMenuItem<
-                                                          String>(
-                                                        value:
-                                                            'ajouterVoyageur',
-                                                        child: ListTile(
-                                                          leading: Icon(
+                                                !showPremium
+                                                    ? Builder(builder:
+                                                        (BuildContext context) {
+                                                        return PopupMenuButton<
+                                                            String>(
+                                                          child: Container(
+                                                            height: 10,
+                                                            width: 50,
+                                                            child: const Icon(
+                                                              Icons.more_vert,
                                                               color:
                                                                   Colors.black,
-                                                              Icons.person_add),
-                                                          title: Text(
-                                                              'Ajouter un voyageur'),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );
-                                                })
+                                                            ),
+                                                          ),
+                                                          onSelected:
+                                                              (value) async {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                var groupeIdPass =
+                                                                    discussionMessages!
+                                                                        .groups[
+                                                                            index]
+                                                                        .lastMessage
+                                                                        .groupId;
+
+                                                                return MyCustomDialog(
+                                                                  groupId:
+                                                                      groupeIdPass,
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          itemBuilder:
+                                                              (BuildContext
+                                                                      context) =>
+                                                                  <PopupMenuEntry<
+                                                                      String>>[
+                                                            const PopupMenuItem<
+                                                                String>(
+                                                              value:
+                                                                  'ajouterVoyageur',
+                                                              child: ListTile(
+                                                                leading: Icon(
+                                                                    color: Colors
+                                                                        .black,
+                                                                    Icons
+                                                                        .person_add),
+                                                                title: Text(
+                                                                    'Ajouter un voyageur'),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        );
+                                                      })
+                                                    : Container()
                                                 ////
                                               ],
                                             ),
@@ -842,12 +884,14 @@ class _MessengerPageState extends State<MessengerPage> {
                                                   String formattedDate;
 
                                                   if (isToday) {
-                                                    formattedDate =
-                                                        DateFormat.jm().format(
+                                                    formattedDate = DateFormat(
+                                                            'HH:mm', "fr_FR")
+                                                        .format(
                                                             messageDateTime);
                                                   } else {
                                                     formattedDate = DateFormat(
-                                                            'd MMM y, hh:mm')
+                                                            'dd/MM/y, HH:mm',
+                                                            "fr_FR")
                                                         .format(
                                                             messageDateTime);
                                                   }
@@ -1179,8 +1223,8 @@ class _MessengerPageState extends State<MessengerPage> {
                                                         ),
                                                         // Icône et bouton d'envoi
                                                         IconButton(
-                                                          icon:
-                                                              Icon(Icons.send),
+                                                          icon: const Icon(
+                                                              Icons.send),
                                                           onPressed: () async {
                                                             int count =
                                                                 await GroupsService()
@@ -1202,43 +1246,164 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                     : message
                                                                         .responderId;
 
-                                                            if (userCount ==
-                                                                2) {
-                                                              if (discussion
-                                                                      ?.messages
-                                                                      .length ==
-                                                                  0) {
-                                                                await send(
-                                                                    null,
-                                                                    _textController
-                                                                        .text,
-                                                                    otherUser);
+                                                            if (showPremium) {
+                                                              userMessagesCount =
+                                                                  await MessagesService()
+                                                                      .getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                              if (userCount ==
+                                                                  2) {
+                                                                if (discussion
+                                                                        ?.messages
+                                                                        .length ==
+                                                                    0) {
+                                                                  await send(
+                                                                      null,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                } else {
+                                                                  await send(
+                                                                      message
+                                                                          .groupId,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                }
                                                               } else {
-                                                                await send(
-                                                                    message
-                                                                        .groupId,
-                                                                    _textController
-                                                                        .text,
-                                                                    otherUser);
+                                                                if (discussion
+                                                                        ?.messages
+                                                                        .length ==
+                                                                    0) {
+                                                                  await send(
+                                                                      null,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                } else {
+                                                                  await send(
+                                                                      message
+                                                                          .groupId,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                }
+                                                              }
+                                                            } else if (userMessagesCount <
+                                                                    5 &&
+                                                                !showPremium) {
+                                                              userMessagesCount =
+                                                                  await MessagesService()
+                                                                      .getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                              if (userCount ==
+                                                                  2) {
+                                                                if (discussion
+                                                                        ?.messages
+                                                                        .length ==
+                                                                    0) {
+                                                                  await send(
+                                                                      null,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                } else {
+                                                                  await send(
+                                                                      message
+                                                                          .groupId,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                }
+                                                              } else {
+                                                                if (discussion
+                                                                        ?.messages
+                                                                        .length ==
+                                                                    0) {
+                                                                  await send(
+                                                                      null,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                } else {
+                                                                  await send(
+                                                                      message
+                                                                          .groupId,
+                                                                      _textController
+                                                                          .text,
+                                                                      otherUser);
+                                                                  userMessagesCount =
+                                                                      await MessagesService().getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                                }
                                                               }
                                                             } else {
-                                                              if (discussion
-                                                                      ?.messages
-                                                                      .length ==
-                                                                  0) {
-                                                                await send(
-                                                                    null,
-                                                                    _textController
-                                                                        .text,
-                                                                    otherUser);
-                                                              } else {
-                                                                await send(
-                                                                    message
-                                                                        .groupId,
-                                                                    _textController
-                                                                        .text,
-                                                                    otherUser);
-                                                              }
+                                                              Navigator.pop(
+                                                                  context);
+                                                              setState(() {
+                                                                showPremium =
+                                                                    true;
+                                                              });
+                                                              userMessagesCount =
+                                                                  await MessagesService()
+                                                                      .getAllMessagesByUserId(
+                                                                          token
+                                                                              .toString(),
+                                                                          userId
+                                                                              .toString());
+                                                              _textController
+                                                                  .clear();
                                                             }
 
                                                             var newDisc =
@@ -1291,6 +1456,7 @@ class _MessengerPageState extends State<MessengerPage> {
                               },
                               context: currentContext!,
                             );
+                            print(showPremium);
 
                             if (!discussionMessages!.groups[index].usersRead!
                                 .contains(userId)) {
@@ -1326,31 +1492,32 @@ class _MessengerPageState extends State<MessengerPage> {
                                                       sigmaX: 5, sigmaY: 5)),
                                             );
                                           } else if (snapshot.hasError) {
-                                            return Text('${snapshot.error}');
+                                            return const Text(
+                                              '',
+                                              textAlign: TextAlign.center,
+                                            );
                                           } else if (!snapshot.hasData) {
                                             return const Text('');
                                           }
 
                                           var image = snapshot.data!;
 
-                                          var avatar =
-                                              image.userImages.length != 0
-                                                  ? CircleAvatar(
-                                                      backgroundImage: NetworkImage(
-                                                          "${image.userImages[0].image}"),
-                                                      maxRadius: 25,
-                                                    )
-                                                  : CircleAvatar(
-                                                      backgroundColor:
-                                                          const Color.fromARGB(
-                                                              255,
-                                                              220,
-                                                              234,
-                                                              250),
-                                                      foregroundImage: NetworkImage(
-                                                          "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                      maxRadius: 25,
-                                                    );
+                                          var avatar = image
+                                                  .userImages.isNotEmpty
+                                              ? CircleAvatar(
+                                                  backgroundImage: NetworkImage(
+                                                      image
+                                                          .userImages[0].image),
+                                                  maxRadius: 25,
+                                                )
+                                              : CircleAvatar(
+                                                  backgroundColor:
+                                                      const Color.fromARGB(
+                                                          255, 220, 234, 250),
+                                                  foregroundImage: NetworkImage(
+                                                      "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                  maxRadius: 25,
+                                                );
 
                                           if (userIndex < 2) {
                                             if (users.length == 1) {
@@ -1446,7 +1613,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Container(
+                                          SizedBox(
                                               width: MediaQuery.of(context)
                                                       .size
                                                       .width /
@@ -1496,7 +1663,7 @@ class _MessengerPageState extends State<MessengerPage> {
 
   void _showFiltersBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(
@@ -1753,29 +1920,27 @@ class _MessengerPageState extends State<MessengerPage> {
                           const SizedBox(
                             width: 20,
                           ),
-                          Expanded(
-                              child: DropdownButtonFormField<String>(
-                                  menuMaxHeight: 130,
-                                  value: selectedLocation,
-                                  hint: const Text("Destination*"),
-                                  onChanged: (value) => setState(() {
-                                        selectedLocation = value;
-                                        filterSeulGroup = "location";
-                                      }),
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Veuillez choisir votre destination';
-                                    }
-                                    return null;
-                                  },
-                                  items: locationList
-                                      .map<DropdownMenuItem<String>>(
-                                          (dynamic value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value.toString(),
-                                      child: Text(value.toString()),
-                                    );
-                                  }).toList())),
+                          DropdownButtonFormField<String>(
+                              menuMaxHeight: 130,
+                              value: selectedLocation,
+                              hint: const Text("Destination*"),
+                              onChanged: (value) => setState(() {
+                                    selectedLocation = value;
+                                    filterSeulGroup = "location";
+                                  }),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Veuillez choisir votre destination';
+                                }
+                                return null;
+                              },
+                              items: locationList.map<DropdownMenuItem<String>>(
+                                  (dynamic value) {
+                                return DropdownMenuItem<String>(
+                                  value: value.toString(),
+                                  child: Text(value.toString()),
+                                );
+                              }).toList()),
                         ]),
                         const SizedBox(height: 50),
                         ElevatedButton(

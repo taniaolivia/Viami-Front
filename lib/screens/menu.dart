@@ -134,8 +134,8 @@ class MenuPage extends StatelessWidget {
                     ),
                   );
                 } else if (snapshot.hasError) {
-                  return Text(
-                    '${snapshot.error}',
+                  return const Text(
+                    '',
                     textAlign: TextAlign.center,
                   );
                 } else if (!snapshot.hasData) {

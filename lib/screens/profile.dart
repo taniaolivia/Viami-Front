@@ -24,9 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -36,28 +33,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (tokenExpired == true) {
-      /*WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialogMessage(
-            context,
-            "Connectez-vous",
-            const Text("Veuillez vous reconnecter !"),
-            TextButton(
-              child: const Text("Se connecter"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-            null);
-      });*/
-    }
-
     return Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF0081CF),
           leading: IconButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pushNamed(context, "/home");
               },
               icon: const Icon(
                 Icons.arrow_back_ios,
@@ -75,8 +56,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
 
                   if (snapshot.hasError) {
-                    return Text(
-                      '${snapshot.error}',
+                    return const Text(
+                      '',
                       textAlign: TextAlign.center,
                     );
                   }

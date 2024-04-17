@@ -70,21 +70,6 @@ class _SettingsPage extends State<SettingsPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget.tokenExpired == true) {
-      /*WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialogMessage(
-            context,
-            "Connectez-vous",
-            const Text("Veuillez vous reconnecter !"),
-            TextButton(
-              child: const Text("Se connecter"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-            null);
-      });*/
-    }
     return Scaffold(
         appBar: AppBar(
           title: const AutoSizeText(
@@ -114,8 +99,8 @@ class _SettingsPage extends State<SettingsPage> {
             }
 
             if (snapshot.hasError) {
-              return Text(
-                '${snapshot.error}',
+              return const Text(
+                '',
                 textAlign: TextAlign.center,
               );
             }
@@ -166,32 +151,59 @@ class _SettingsPage extends State<SettingsPage> {
             showDialog(
                 context: context,
                 builder: (context) => AlertDialog(
+                      surfaceTintColor: Colors.white,
                       actions: [
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text('Non')),
-                        ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green),
-                            onPressed: () async {
-                              bool logoutSuccess = await UserService()
-                                  .deleteUserById(userId!, token);
+                        Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  child: const Text(
+                                    'Non',
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                              TextButton(
+                                  onPressed: () async {
+                                    bool logoutSuccess = await UserService()
+                                        .deleteUserById(userId!, token);
 
-                              if (logoutSuccess) {
-                                Navigator.pushNamed(context, '/login');
-                              }
-                            },
-                            child: const Text(
-                              'Oui',
-                            )),
+                                    if (logoutSuccess) {
+                                      Navigator.pushNamed(context, '/login');
+                                    }
+                                  },
+                                  child: const Text(
+                                    'Oui',
+                                    style: TextStyle(
+                                        color: Colors.blue,
+                                        fontWeight: FontWeight.w600),
+                                  )),
+                            ])
                       ],
-                      title: const Text("Suppression du compte"),
-                      content: const Text(
-                          "Êtes-vous sûr de vouloir supprimer votre compte ?"),
+                      title: const Text(
+                        "Suppression du compte",
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w600),
+                      ),
+                      content: const Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                                "Êtes-vous sûr de vouloir supprimer votre compte ?"),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Text(
+                              "Attention : La suppression de votre compte entraînera la perte définitive de toutes vos données, y compris les éléments achetés, la progression du jeu, les messages, les commentaires et tout autre contenu que vous avez créé ou enregistré. Cette action est irréversible. Veuillez réfléchir attentivement avant de continuer.",
+                              textAlign: TextAlign.justify,
+                              style: TextStyle(
+                                  fontSize: 10,
+                                  color: Color.fromARGB(255, 226, 1, 1)),
+                            )
+                          ]),
                     ));
           }
           if (index == 1) {
@@ -214,8 +226,13 @@ class _SettingsPage extends State<SettingsPage> {
               borderRadius: BorderRadius.circular(10),
             ),
             child: Card(
-                surfaceTintColor: const Color.fromARGB(255, 35, 143, 231),
+                surfaceTintColor: Colors.white,
                 child: ListTile(
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(
+                        color: Color.fromARGB(255, 55, 55, 55), width: 1),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
                   title: Text(
                     " ${items[index]}",
                     style: const TextStyle(fontSize: 16),

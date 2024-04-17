@@ -2,15 +2,17 @@ name: viami
 description: Viami
 publish_to: 'none' 
 
-version: 1.0.8
+version: 1.0.14
 
 environment:
-  sdk: '>=2.19.6 <3.0.0'
+  sdk: '>=3.1.0 <4.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
-    
+  flutter_localizations:
+    sdk: flutter  
+
   cupertino_icons: ^1.0.2
   curved_navigation_bar : ^1.0.1
   flutter_zoom_drawer: ^2.1.1
@@ -41,7 +43,7 @@ dependencies:
   flutter_map: ^4.0.0
   latlong2: ^0.8.2
   permission_handler: ^11.1.0
-  firebase_core: ^2.24.0
+  firebase_core: ^2.27.0
   firebase_messaging: ^14.7.6
   firebase_analytics: ^10.7.2
   url_launcher: ^6.0.6
@@ -49,6 +51,11 @@ dependencies:
   stripe_checkout: ^1.0.0
   flutter_native_splash: ^2.3.8
   socket_io_client: ^2.0.3+1
+  date_format: ^2.0.0
+  video_player: ^2.8.5
+  chewie: ^1.7.5
+  appinio_video_player: ^1.2.2
+  purchases_flutter: ^6.26.0
 
 dev_dependencies:
   flutter_test:
@@ -117,10 +124,14 @@ flutter:
 
 # Custom splash screen
 flutter_native_splash:
-  image: assets/logo.png
   color: "#0081CF"
-  ios: true
+  image: assets/startLogo-white.png
   android: true
+  ios: true
+  android_12:
+    image: assets/startLogo-white.png
+    color: "#0081CF"
+    icon_background_color: "#0081CF"
 
 # Custom icon launcher
 flutter_icons:
@@ -128,5 +139,5 @@ flutter_icons:
   android: true
   image_path: "assets/startLogo-blue.png"
   remove_alpha_ios: true
-  adaptive_icon_background: "#0081CF"
-  adaptive_icon_foreground: "assets/foreground.png"
+  adaptive_icon_background: "#ffffff"
+  adaptive_icon_foreground: "assets/startLogo-blue.png"

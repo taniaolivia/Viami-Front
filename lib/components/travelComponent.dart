@@ -1,9 +1,9 @@
 import 'dart:ui';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/pageTransition.dart';
 import 'package:viami/screens/listTravelers.dart';
@@ -46,7 +46,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
   String? token = "";
   String? userId = "";
-  String? nbParticipant;
+  String? nbParticipant = "0";
 
   List<String> travelImages = [];
 
@@ -69,7 +69,7 @@ class _TravelComponentState extends State<TravelComponent> {
 
     setState(() {
       travelImages = images.travelImages.map((image) {
-        return '${dotenv.env['CDN_URL']}/assets/${image.imageName}';
+        return image.imageName;
       }).toList();
     });
   }
@@ -91,8 +91,9 @@ class _TravelComponentState extends State<TravelComponent> {
 
   @override
   void initState() {
-    super.initState();
     fetchData();
+
+    super.initState();
   }
 
   @override
@@ -109,6 +110,7 @@ class _TravelComponentState extends State<TravelComponent> {
     });
 
     return Scaffold(
+        backgroundColor: Colors.white,
         body: SafeArea(
           child: SingleChildScrollView(
             child: Column(
@@ -125,36 +127,42 @@ class _TravelComponentState extends State<TravelComponent> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
-                        child: PageView.builder(
-                          itemCount: travelImages.length,
-                          controller: PageController(viewportFraction: 1.0),
-                          onPageChanged: (int index) {
-                            setState(() {
-                              selectedImage = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Image.network(
-                                              travelImages[selectedImage]),
-                                        ),
+                        child: travelImages.length != 0
+                            ? CarouselSlider.builder(
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  aspectRatio: 1,
+                                  enlargeCenterPage: true,
+                                  enlargeStrategy:
+                                      CenterPageEnlargeStrategy.zoom,
+                                ),
+                                itemCount: travelImages.length,
+                                itemBuilder: (context, index, i) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            child: GestureDetector(
+                                              onTap: () {
+                                                Navigator.pop(context);
+                                              },
+                                              child: Image.network(
+                                                  travelImages[index]),
+                                            ),
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                                child: Center(
                                     child: Hero(
-                                        tag: travelImages[selectedImage],
+                                        tag: travelImages[index],
                                         child: Container(
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height,
                                           decoration: BoxDecoration(
                                             borderRadius:
                                                 const BorderRadius.only(
@@ -163,28 +171,15 @@ class _TravelComponentState extends State<TravelComponent> {
                                             ),
                                             image: DecorationImage(
                                               image: NetworkImage(
-                                                  travelImages[selectedImage]),
+                                                  travelImages[index]),
                                               fit: BoxFit.cover,
                                             ),
                                           ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: List.generate(
-                                                  travelImages.length,
-                                                  (index) =>
-                                                      buildDot(index: index),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ))));
-                          },
-                        ),
+                                        )),
+                                  );
+                                },
+                              )
+                            : Container(),
                       ),
                     ),
                     Positioned(
@@ -208,7 +203,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                         Navigator.push(
                                             context,
                                             FadePageRoute(
-                                                page: MenusPage(
+                                                page: const MenusPage(
                                               currentIndex: 0,
                                             )));
                                       },
@@ -238,8 +233,8 @@ class _TravelComponentState extends State<TravelComponent> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {
@@ -278,31 +273,30 @@ class _TravelComponentState extends State<TravelComponent> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  IconAndTextWidget(
-                                    icon: Icons.location_on,
-                                    text: travel.location,
-                                    color: Colors.black,
-                                    iconColor: const Color(0xFF0081CF),
-                                  )
+                                  Row(children: [
+                                    const Icon(Icons.location_on,
+                                        color: Color(0xFF0081CF)),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    Text(travel.location,
+                                        style: const TextStyle(
+                                            color: Colors.black))
+                                  ])
                                 ],
                               ),
                               const SizedBox(
-                                height: 15,
+                                height: 25,
                               ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  IconAndTextWidget(
-                                    icon: Icons.person,
-                                    text: nbParticipant!,
-                                    color: Colors.black,
-                                    iconColor: Colors.blue,
-                                  ),
-                                ],
+                              IconAndTextWidget(
+                                icon: Icons.person,
+                                text: "Participants",
+                                subtext: nbParticipant!,
+                                color: Colors.black,
+                                iconColor: Colors.blue,
                               ),
                               const SizedBox(
-                                height: 20,
+                                height: 30,
                               ),
                               ExpandableTextWidget(
                                 text: travel.description,
@@ -342,8 +336,10 @@ class _TravelComponentState extends State<TravelComponent> {
                                                       .size
                                                       .height));
                                         } else if (snapshot.hasError) {
-                                          return Text(
-                                              'Error: ${snapshot.error}');
+                                          return const Text(
+                                            '',
+                                            textAlign: TextAlign.center,
+                                          );
                                         } else if (!snapshot.hasData) {
                                           return const Text('');
                                         }
@@ -371,7 +367,7 @@ class _TravelComponentState extends State<TravelComponent> {
                                             });
                                       })),
                               const SizedBox(
-                                height: 70,
+                                height: 120,
                               ),
                             ],
                           );
@@ -380,55 +376,79 @@ class _TravelComponentState extends State<TravelComponent> {
             ),
           ),
         ),
-        floatingActionButton: Expanded(
-            child: Container(
-                height: 50.0,
-                width: 250.00,
-                child: FloatingActionButton(
-                    backgroundColor: const Color(0xFF0081CF),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    onPressed: () async {
-                      await UsersDateLocationService().joinTravel(
-                          token!, userId!, widget.location!, widget.date!);
+        floatingActionButton: Container(
+            height: 50.0,
+            width: 250.00,
+            child: FloatingActionButton(
+                backgroundColor: const Color(0xFF0081CF),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                onPressed: () async {
+                  var userImage = await storage.read(key: "userImage");
 
-                      Navigator.push(
-                          context,
-                          FadePageRoute(
-                              page: ListTravelersPage(
-                            travelId: widget.travelId,
-                            location: widget.location,
-                            date: widget.date,
-                            users: widget.users!,
-                            connectedUserPlan: widget.connectedUserPlan,
-                          )));
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                          "$nbParticipant personnes intéressés",
-                          minFontSize: 11,
-                          maxFontSize: 13,
-                          style: const TextStyle(
-                              color: Colors.white,
+                  if (userImage == 0) {
+                    showDialog(
+                      context: context,
+                      barrierDismissible: true,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: const Text("Information"),
+                          alignment: Alignment.center,
+                          surfaceTintColor: Colors.white,
+                          titleTextStyle: const TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
                               fontFamily: "Poppins",
                               fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )))),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
-  }
+                          titlePadding:
+                              const EdgeInsets.only(left: 25, top: 30),
+                          backgroundColor: Colors.white,
+                          content: const Text(
+                              "Veuillez ajouter une photo dans votre profil pour pouvoir poster !"),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: const Text('Fermer',
+                                  style: TextStyle(color: Colors.black)),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  } else {
+                    await UsersDateLocationService().joinTravel(
+                        token!, userId!, widget.location!, widget.date!);
 
-  Widget buildDot({required int index}) {
-    return Container(
-      margin: const EdgeInsets.only(right: 5),
-      height: 8,
-      width: 8,
-      decoration: BoxDecoration(
-        color: selectedImage == index ? Colors.blue : Colors.grey,
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
+                    Navigator.push(
+                        context,
+                        FadePageRoute(
+                            page: ListTravelersPage(
+                          travelId: widget.travelId,
+                          location: widget.location,
+                          date: widget.date,
+                          users: widget.users!,
+                          connectedUserPlan: widget.connectedUserPlan,
+                        )));
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      nbParticipant == "0"
+                          ? "$nbParticipant personne intéressée"
+                          : "$nbParticipant personnes intéressées",
+                      minFontSize: 11,
+                      maxFontSize: 13,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ))),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

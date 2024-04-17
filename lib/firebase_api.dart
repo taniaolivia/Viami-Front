@@ -11,9 +11,19 @@ class FirebaseApi {
   var storage = const FlutterSecureStorage();
 
   Future<void> initNotifications() async {
-    await _firebaseMessaging.requestPermission();
-    final fcmToken = await _firebaseMessaging.getToken();
-    await storage.write(key: "fcmToken", value: fcmToken);
-    FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+    try {
+      await _firebaseMessaging.requestPermission();
+
+      final apnsToken = await _firebaseMessaging.getAPNSToken();
+      await storage.write(key: "apnsToken", value: apnsToken);
+
+      final fcmToken = await _firebaseMessaging.getToken();
+      await storage.write(key: "fcmToken", value: fcmToken);
+
+      FirebaseMessaging.onBackgroundMessage(handleBackgroundMessage);
+    } catch (e) {
+      print("Error initializing notifications: $e");
+      // Handle error gracefully, such as displaying an error message to the user
+    }
   }
 }

@@ -1,5 +1,8 @@
 import 'dart:ui';
 
+import 'package:appinio_video_player/appinio_video_player.dart';
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -9,6 +12,7 @@ import 'package:viami/models-api/activity/activity.dart';
 import 'package:viami/services/activity/activity.service.dart';
 import 'package:viami/services/activityImage/activitiesImages.service.dart';
 import 'package:viami/widgets/expandable_text_widget.dart';
+import 'package:video_player/video_player.dart';
 import '../widgets/icon_and_text_widget.dart';
 
 class ActivityComponent extends StatefulWidget {
@@ -25,10 +29,13 @@ class _ActivityComponentState extends State<ActivityComponent> {
   final storage = const FlutterSecureStorage();
   List schedule = [];
   String? token = "";
-  int? note;
+  String? note;
   String? url = "";
+  late CustomVideoPlayerController _customVideoPlayerController;
+  late VideoPlayerController _videoPlayerController;
 
   List<String> activityImages = [];
+  String? videoUrl = "";
 
   Future<void> getActivityImages() async {
     token = await storage.read(key: "token");
@@ -38,6 +45,11 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
     setState(() {
       activityImages = images.activityImages.map((image) {
+        if (image.image.split(".")[3] == "mp4") {
+          videoUrl = image.image;
+          initializedVideoPlayer(videoUrl!);
+        }
+
         return image.image;
       }).toList();
     });
@@ -59,19 +71,51 @@ class _ActivityComponentState extends State<ActivityComponent> {
 
     setState(() {
       if (activity.note == null) {
-        note = 0;
+        note = "0";
       } else {
         note = activity.note;
       }
     });
 
     await getActivityImages();
+
+    //initializedVideoPlayer();
+  }
+
+  void initializedVideoPlayer(String url) {
+    _videoPlayerController = VideoPlayerController.networkUrl(Uri.parse(url))
+      ..initialize().then((value) {
+        setState(() {});
+      });
+    _customVideoPlayerController = CustomVideoPlayerController(
+      context: context,
+      videoPlayerController: _videoPlayerController,
+    );
+  }
+
+  void _exitFullScreen() {
+    // Set preferred orientations to portrait mode
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
   }
 
   @override
   void initState() {
     fetchData();
+    getActivityImages();
     super.initState();
+
+    _exitFullScreen();
+  }
+
+  @override
+  void dispose() {
+    _customVideoPlayerController.dispose();
+    _videoPlayerController.dispose();
+
+    super.dispose();
   }
 
   @override
@@ -95,67 +139,76 @@ class _ActivityComponentState extends State<ActivityComponent> {
                             bottomRight: Radius.circular(20),
                           ),
                         ),
-                        child: PageView.builder(
-                          itemCount: activityImages.length,
-                          controller: PageController(viewportFraction: 1.0),
-                          onPageChanged: (int index) {
-                            setState(() {
-                              selectedImage = index;
-                            });
-                          },
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                                onTap: () {
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return Dialog(
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.pop(context);
-                                          },
-                                          child: Image.network(
-                                              activityImages[selectedImage]),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                child: Center(
-                                    child: Hero(
-                                        tag: activityImages[selectedImage],
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              bottomLeft: Radius.circular(20),
-                                              bottomRight: Radius.circular(20),
-                                            ),
-                                            image: DecorationImage(
-                                              image: NetworkImage(
-                                                  activityImages[
-                                                      selectedImage]),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: List.generate(
-                                                  activityImages.length,
-                                                  (index) =>
-                                                      buildDot(index: index),
-                                                ),
+                        child: activityImages.isNotEmpty
+                            ? CarouselSlider.builder(
+                                options: CarouselOptions(
+                                  autoPlay: true,
+                                  aspectRatio: 1,
+                                  enlargeCenterPage: true,
+                                  enlargeStrategy:
+                                      CenterPageEnlargeStrategy.zoom,
+                                ),
+                                itemCount: activityImages.length,
+                                itemBuilder: (context, index, i) {
+                                  return GestureDetector(
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return Dialog(
+                                              child: GestureDetector(
+                                                onTap: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: activityImages[index]
+                                                            .split(".")[3] ==
+                                                        "jpg"
+                                                    ? Image.network(
+                                                        activityImages[index])
+                                                    : CustomVideoPlayer(
+                                                        customVideoPlayerController:
+                                                            _customVideoPlayerController,
+                                                      ),
                                               ),
-                                            ],
-                                          ),
-                                        ))));
-                          },
-                        ),
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Hero(
+                                          tag: activityImages[index],
+                                          child: activityImages[index]
+                                                      .split(".")[3] ==
+                                                  "jpg"
+                                              ? Container(
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .height,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        const BorderRadius.only(
+                                                      bottomLeft:
+                                                          Radius.circular(20),
+                                                      bottomRight:
+                                                          Radius.circular(20),
+                                                    ),
+                                                    image: DecorationImage(
+                                                      image: NetworkImage(
+                                                          activityImages[
+                                                              index]),
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                )
+                                              : CustomVideoPlayer(
+                                                  customVideoPlayerController:
+                                                      _customVideoPlayerController,
+                                                )));
+                                },
+                              )
+                            : Container(),
                       ),
                     ),
                     Positioned(
@@ -204,8 +257,8 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {
@@ -473,8 +526,9 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                 content: SingleChildScrollView(
                                                   child: ListBody(
                                                     children: <Widget>[
-                                                      Text(activity
-                                                          .accessibility!)
+                                                      Text(
+                                                        activity.accessibility!,
+                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -555,7 +609,7 @@ class _ActivityComponentState extends State<ActivityComponent> {
                                                         MediaQuery.of(context)
                                                                 .size
                                                                 .width /
-                                                            3,
+                                                            3.5,
                                                     child: AutoSizeText(
                                                       activity.accessibility !=
                                                               ""
@@ -750,45 +804,32 @@ class _ActivityComponentState extends State<ActivityComponent> {
             ),
           ),
         ),
-        floatingActionButton: Expanded(
-            child: Container(
-                height: 50.0,
-                width: 250.00,
-                child: FloatingActionButton(
-                    backgroundColor: const Color(0xFF0081CF),
-                    shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    onPressed: () {
-                      if (url != "") {
-                        launchUrl(Uri.parse(url!));
-                      }
-                    },
-                    child: const Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        AutoSizeText(
-                          "Découvrir",
-                          minFontSize: 11,
-                          maxFontSize: 13,
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontFamily: "Poppins",
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    )))),
+        floatingActionButton: Container(
+            height: 50.0,
+            width: 250.00,
+            child: FloatingActionButton(
+                backgroundColor: const Color(0xFF0081CF),
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(20))),
+                onPressed: () {
+                  if (url != "") {
+                    launchUrl(Uri.parse(url!));
+                  }
+                },
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    AutoSizeText(
+                      "Découvrir",
+                      minFontSize: 11,
+                      maxFontSize: 13,
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: "Poppins",
+                          fontWeight: FontWeight.bold),
+                    )
+                  ],
+                ))),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
-  }
-
-  Widget buildDot({required int index}) {
-    return Container(
-      margin: const EdgeInsets.only(right: 5),
-      height: 8,
-      width: 8,
-      decoration: BoxDecoration(
-        color: selectedImage == index ? Colors.blue : Colors.grey,
-        borderRadius: BorderRadius.circular(20),
-      ),
-    );
   }
 }

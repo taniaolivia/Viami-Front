@@ -105,8 +105,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
                       }
 
                       if (snapshot.hasError) {
-                        return Text(
-                          '${snapshot.error}',
+                        return const Text(
+                          '',
                           textAlign: TextAlign.center,
                         );
                       }
@@ -167,8 +167,8 @@ class _LanguageComponentState extends State<LanguageComponent> {
                         ),
                       );
                     } else if (snapshot.hasError) {
-                      return Text(
-                        '${snapshot.error}',
+                      return const Text(
+                        '',
                         textAlign: TextAlign.center,
                       );
                     } else if (!snapshot.hasData) {

@@ -105,8 +105,8 @@ class _InterestComponentState extends State<InterestComponent> {
                           }
 
                           if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           }
@@ -167,8 +167,8 @@ class _InterestComponentState extends State<InterestComponent> {
                       }
 
                       if (snapshot.hasError) {
-                        return Text(
-                          '${snapshot.error}',
+                        return const Text(
+                          '',
                           textAlign: TextAlign.center,
                         );
                       }

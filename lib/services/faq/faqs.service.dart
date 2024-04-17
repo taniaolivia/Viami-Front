@@ -39,7 +39,7 @@ class FaqsService {
     }
   }
 
-  Future<Faqs> searchFaqByKeyword(String token, String keyword) async {
+  /*Future<Faqs> searchFaqByKeyword(String token, String keyword) async {
     final response = await http.get(
       Uri.parse('${dotenv.env['API_URL']}/faq/search/$keyword'),
       headers: <String, String>{
@@ -54,5 +54,5 @@ class FaqsService {
     } else {
       throw Exception('Failed to load faqs');
     }
-  }
+  }*/
 }

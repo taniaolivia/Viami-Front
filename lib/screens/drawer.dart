@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:viami/models-api/user/user.dart';
+import 'package:viami/screens/mention.dart';
 import 'package:viami/screens/notifications.dart';
 import 'package:viami/screens/menus.dart';
 import 'package:viami/screens/settings.dart';
@@ -32,10 +33,6 @@ class _DrawerPageState extends State<DrawerPage> {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
 
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
-
       return UserService().getUserById(userId.toString(), token.toString());
     }
 
@@ -44,21 +41,6 @@ class _DrawerPageState extends State<DrawerPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (tokenExpired == true) {
-      /*WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialogMessage(
-            context,
-            "Connectez-vous",
-            const Text("Veuillez vous reconnecter !"),
-            TextButton(
-              child: const Text("Se connecter"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-            null);
-      });*/
-    }
     return ZoomDrawer(
         style: DrawerStyle.Style1,
         borderRadius: 40,
@@ -83,9 +65,11 @@ class _DrawerPageState extends State<DrawerPage> {
   Widget getScreen() {
     switch (currentItem) {
       case MenuItems.notification:
-        return NotificationsPage();
+        return const NotificationsPage();
       case MenuItems.settings:
         return const SettingsPage();
+      case MenuItems.mentionLegal:
+        return const MentionPage();
       default:
         return const MenusPage();
     }

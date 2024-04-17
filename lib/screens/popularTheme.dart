@@ -35,18 +35,17 @@ class _PopularThemePageState extends State<PopularThemePage> {
   List themeActivityImage = [];
   List themeActivityName = [];
   List themeActivityLocation = [];
+  List themeActivityId = [];
   int? currentIndex;
   int? clickedThemeId;
+  String? clickedThemeName;
+
   List activities = [];
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -86,6 +85,24 @@ class _PopularThemePageState extends State<PopularThemePage> {
       return Icons.fastfood;
     } else if (iconName == 'game') {
       return Icons.sports_esports;
+    } else if (iconName == 'reduce_capacity') {
+      return Icons.reduce_capacity;
+    } else if (iconName == 'food_bank') {
+      return Icons.food_bank;
+    } else if (iconName == 'class_rounded') {
+      return Icons.class_rounded;
+    } else if (iconName == 'directions_boat') {
+      return Icons.directions_boat;
+    } else if (iconName == 'restaurant') {
+      return Icons.restaurant;
+    } else if (iconName == 'local_bar') {
+      return Icons.local_bar;
+    } else if (iconName == 'park') {
+      return Icons.park;
+    } else if (iconName == 'location_city') {
+      return Icons.location_city;
+    } else if (iconName == 'theater_comedy') {
+      return Icons.theater_comedy;
     }
 
     return Icons.beach_access;
@@ -110,8 +127,8 @@ class _PopularThemePageState extends State<PopularThemePage> {
           }
 
           if (snapshot.hasError) {
-            return Text(
-              '${snapshot.error}',
+            return const Text(
+              '',
               textAlign: TextAlign.center,
             );
           }
@@ -135,7 +152,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                               ? ActivityDetailsPage(
                                   activityId: activity.activities[index].id)
                               : ActivityDetailsPage(
-                                  activityId: activities[index].id),
+                                  activityId: themeActivityId[index]),
                         ),
                       );
                     },
@@ -148,10 +165,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 fit: BoxFit.cover,
                                 image: clicked == "popular"
                                     ? NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                        activity.activities[index].imageName,
                                       )
                                     : NetworkImage(
-                                        "${dotenv.env['CDN_URL']}/assets/${themeActivityImage[index]}",
+                                        themeActivityImage[index],
                                       ))),
                         child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -243,8 +260,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                     Navigator.push(
                       context,
                       FadePageRoute(
-                          page:
-                              AllThemeActivitiesPage(themeId: clickedThemeId!)),
+                          page: AllThemeActivitiesPage(
+                              themeId: clickedThemeId!,
+                              themeName: clickedThemeName!)),
                     );
                   }
                 },
@@ -280,6 +298,9 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                     : Colors.transparent,
                                 padding: const EdgeInsets.all(8),
                                 backgroundColor: clicked == "popular"
+                                    ? const Color(0xFF0081CF)
+                                    : Colors.white,
+                                surfaceTintColor: clicked == "popular"
                                     ? const Color(0xFF0081CF)
                                     : Colors.white,
                                 shape: RoundedRectangleBorder(
@@ -323,6 +344,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                 themeActivityImage = [];
                                 themeActivityName = [];
                                 themeActivityLocation = [];
+                                themeActivityId = [];
 
                                 var themeTravel =
                                     await getFirstFiveThemeActivities(
@@ -336,12 +358,17 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                       .add(themeTravel.activities[index].name);
                                   themeActivityLocation.add(
                                       themeTravel.activities[index].location);
+                                  themeActivityId.add(
+                                      themeTravel.activities[index].activityId);
                                 }).toList();
 
                                 setState(() {
                                   clicked = "theme";
                                   currentIndex = indexTheme;
                                   clickedThemeId = theme.themes[indexTheme].id;
+                                  clickedThemeName =
+                                      theme.themes[indexTheme].theme;
+
                                   activities = themeTravel.activities;
                                 });
                               },
@@ -352,10 +379,14 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                           currentIndex == indexTheme
                                       ? const Color(0xFF0081CF)
                                       : Colors.transparent,
-                                  backgroundColor: clicked == "theme" &&
-                                          currentIndex == indexTheme
-                                      ? const Color(0xFF0081CF)
-                                      : Colors.white,
+                                  backgroundColor:
+                                      clicked == "theme" && currentIndex == indexTheme
+                                          ? const Color(0xFF0081CF)
+                                          : Colors.white,
+                                  surfaceTintColor:
+                                      clicked == "theme" && currentIndex == indexTheme
+                                          ? const Color(0xFF0081CF)
+                                          : Colors.white,
                                   shape: RoundedRectangleBorder(
                                       borderRadius: const BorderRadius.all(
                                           Radius.circular(10)),

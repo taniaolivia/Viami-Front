@@ -123,8 +123,8 @@ class _InterestListState extends State<InterestList> {
                             ),
                           );
                         } else if (snapshot.hasError) {
-                          return Text(
-                            '${snapshot.error}',
+                          return const Text(
+                            '',
                             textAlign: TextAlign.center,
                           );
                         } else if (!snapshot.hasData) {
@@ -208,10 +208,10 @@ class _InterestListState extends State<InterestList> {
                                             BorderRadius.circular(10.0),
                                         image: DecorationImage(
                                             fit: BoxFit.cover,
-                                            colorFilter: isCheckedList[index]
+                                            colorFilter: !isCheckedList[index]
                                                 ? ColorFilter.mode(
                                                     const Color(0xFFFFDAA2)
-                                                        .withOpacity(0.5),
+                                                        .withOpacity(0.3),
                                                     BlendMode.dstATop)
                                                 : null,
                                             image: NetworkImage(
@@ -224,7 +224,8 @@ class _InterestListState extends State<InterestList> {
                                             decoration: BoxDecoration(
                                               color:
                                                   isCheckedList[index] == true
-                                                      ? const Color(0xFFFFDAA2)
+                                                      ? const Color.fromARGB(
+                                                          255, 254, 204, 128)
                                                       : Colors.white,
                                               borderRadius:
                                                   BorderRadius.circular(50.0),

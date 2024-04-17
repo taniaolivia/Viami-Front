@@ -40,12 +40,13 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
         backgroundColor: Colors.white,
         drawer: const DrawerPage(),
         body: GeneralTemplate(
-            image: "${dotenv.env['CDN_URL']}/assets/travels.jpg",
+            image: "${dotenv.env['CDN_URL']}/assets/popular.jpg",
+            height: 1.0,
             imageHeight: MediaQuery.of(context).size.width <= 320 ? 2.5 : 3.5,
             contentHeight: MediaQuery.of(context).size.width <= 320 ? 3.5 : 4.3,
             containerHeight:
                 MediaQuery.of(context).size.width <= 320 ? 1.4 : 1.3,
-            title: "Voyages Populaires",
+            title: "Activités Populaires",
             content: SingleChildScrollView(
                 child: Padding(
               padding: EdgeInsets.fromLTRB(
@@ -58,8 +59,8 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                     }
 
                     if (snapshot.hasError) {
-                      return Text(
-                        '${snapshot.error}',
+                      return const Text(
+                        '',
                         textAlign: TextAlign.center,
                       );
                     }
@@ -133,7 +134,8 @@ class _AllPopularActivitiesPageState extends State<AllPopularActivitiesPage> {
                                         image: DecorationImage(
                                             fit: BoxFit.cover,
                                             image: NetworkImage(
-                                              "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                              activity
+                                                  .activities[index].imageName,
                                             ))),
                                   ),
                                   const SizedBox(

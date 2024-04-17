@@ -18,7 +18,7 @@ import 'package:viami/widgets/menu_widget.dart';
 import 'drawer.dart';
 import 'messenger.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'searchTravel.dart';
+import 'search.dart';
 
 class MenusPage extends StatefulWidget {
   final int? currentIndex;
@@ -46,10 +46,6 @@ class _MenusPageState extends State<MenusPage> {
     Future<User> getConnectedUser() async {
       token = await storage.read(key: "token");
       userId = await storage.read(key: "userId");
-
-      //bool isTokenExpired = AuthService().isTokenExpired(token!);
-
-      //tokenExpired = isTokenExpired;
 
       return UserService().getUserById(userId.toString(), token.toString());
     }
@@ -108,22 +104,6 @@ class _MenusPageState extends State<MenusPage> {
       ),
     ];
 
-    if (tokenExpired == true) {
-      /*WidgetsBinding.instance.addPostFrameCallback((_) {
-        showDialogMessage(
-            context,
-            "Connectez-vous",
-            const Text("Veuillez vous reconnecter !"),
-            TextButton(
-              child: const Text("Se connecter"),
-              onPressed: () {
-                Navigator.pushNamed(context, "/login");
-              },
-            ),
-            null);
-      });*/
-    }
-
     return Scaffold(
       extendBody: true,
       appBar: _currentIndex == 2
@@ -143,14 +123,13 @@ class _MenusPageState extends State<MenusPage> {
                                   width: MediaQuery.of(context).size.width,
                                   height: MediaQuery.of(context).size.height));
                         } else if (snapshot.hasError) {
-                          return Text(
-                            '${snapshot.error}',
+                          return const Text(
+                            '',
                             textAlign: TextAlign.center,
                           );
                         } else if (!snapshot.hasData) {
                           return const Text('');
                         }
-
                         var location = snapshot.data!;
 
                         return Row(
@@ -190,8 +169,8 @@ class _MenusPageState extends State<MenusPage> {
                                     height:
                                         MediaQuery.of(context).size.height));
                           } else if (snapshot.hasError) {
-                            return Text(
-                              '${snapshot.error}',
+                            return const Text(
+                              '',
                               textAlign: TextAlign.center,
                             );
                           } else if (!snapshot.hasData) {
@@ -237,7 +216,7 @@ class _MenusPageState extends State<MenusPage> {
           controller: _pageController,
           physics: const NeverScrollableScrollPhysics(),
           children: [
-            const SearchTravelPage(),
+            const SearchPage(),
             const ExplorePage(),
             const HomePage(),
             const MessengerPage(),

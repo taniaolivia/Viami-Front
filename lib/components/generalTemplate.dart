@@ -7,6 +7,7 @@ class GeneralTemplate extends StatefulWidget {
   final double imageHeight;
   final double containerHeight;
   final double contentHeight;
+  final double? height;
   final String? title;
   final String? redirect;
 
@@ -17,6 +18,7 @@ class GeneralTemplate extends StatefulWidget {
       required this.content,
       required this.containerHeight,
       required this.contentHeight,
+      this.height,
       this.title,
       this.redirect})
       : super(key: key);
@@ -48,11 +50,15 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
                     Align(
                         alignment: Alignment.topLeft,
                         child: Container(
-                            width: 50,
-                            height: 50,
-                            margin: MediaQuery.of(context).size.width <= 320
-                                ? const EdgeInsets.fromLTRB(20, 20, 0, 0)
-                                : const EdgeInsets.fromLTRB(20, 30, 0, 0),
+                            width: MediaQuery.of(context).size.width <= 450
+                                ? 40
+                                : 50,
+                            height: MediaQuery.of(context).size.width <= 450
+                                ? 40
+                                : 50,
+                            margin: MediaQuery.of(context).size.width <= 450
+                                ? const EdgeInsets.fromLTRB(20, 40, 0, 0)
+                                : const EdgeInsets.fromLTRB(20, 60, 0, 0),
                             padding: const EdgeInsets.fromLTRB(5, 2, 0, 0),
                             decoration: const BoxDecoration(
                                 color: Colors.white,
@@ -71,7 +77,7 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
                                   size: 20,
                                 )))),
                     AutoSizeText(
-                      widget.title!.toUpperCase(),
+                      widget.title.toString().toUpperCase(),
                       minFontSize: 23,
                       maxFontSize: 25,
                       style: const TextStyle(
@@ -108,7 +114,9 @@ class _GeneralTemplateState extends State<GeneralTemplate> {
               )),
           Positioned(
               top: MediaQuery.of(context).size.height / widget.contentHeight,
-              height: MediaQuery.of(context).size.height,
+              height: widget.height == null
+                  ? MediaQuery.of(context).size.height / 2
+                  : MediaQuery.of(context).size.height / widget.height!,
               left: MediaQuery.of(context).size.width / 13,
               right: MediaQuery.of(context).size.width / 13,
               child: widget.content),

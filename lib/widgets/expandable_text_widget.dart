@@ -39,10 +39,14 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
     }
     return Container(
       child: secondHalf.isEmpty
-          ? Text(firstHalf)
+          ? Text(
+              firstHalf,
+              textAlign: TextAlign.justify,
+            )
           : Column(
               children: [
-                Text(hiddenText ? "$firstHalf...." : firstHalf + secondHalf),
+                Text(hiddenText ? "$firstHalf...." : firstHalf + secondHalf,
+                    textAlign: TextAlign.justify),
                 InkWell(
                   onTap: () {
                     setState(() {
@@ -52,7 +56,7 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
                   child: Row(
                     children: [
                       Text(
-                        hiddenText ? "Show more" : "Show less",
+                        hiddenText ? "Voir plus" : "Voir moins",
                         style: const TextStyle(color: Colors.blue),
                       ),
                       Icon(

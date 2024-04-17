@@ -1,6 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:viami/components/pageTransition.dart';
@@ -76,8 +75,8 @@ class _RecommendationActivityPageState
             }
 
             if (snapshot.hasError) {
-              return Text(
-                '${snapshot.error}',
+              return const Text(
+                '',
                 textAlign: TextAlign.center,
               );
             }
@@ -160,7 +159,8 @@ class _RecommendationActivityPageState
                                             image: DecorationImage(
                                                 fit: BoxFit.cover,
                                                 image: NetworkImage(
-                                                  "${dotenv.env['CDN_URL']}/assets/${activity.activities[index].imageName}",
+                                                  activity.activities[index]
+                                                      .imageName,
                                                 ))),
                                       ),
                                       const SizedBox(
@@ -174,7 +174,7 @@ class _RecommendationActivityPageState
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width /
-                                                    1.7,
+                                                    2,
                                                 child: AutoSizeText(
                                                     toBeginningOfSentenceCase(
                                                         activity

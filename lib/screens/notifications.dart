@@ -132,8 +132,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           ),
                         );
                       } else if (snapshot.hasError) {
-                        return Text(
-                          '${snapshot.error}',
+                        return const Text(
+                          '',
                           textAlign: TextAlign.center,
                         );
                       } else if (!snapshot.hasData) {
@@ -161,8 +161,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                             .size
                                             .height));
                               } else if (snapshot.hasError) {
-                                return Text(
-                                  '${snapshot.error}',
+                                return const Text(
+                                  '',
                                   textAlign: TextAlign.center,
                                 );
                               } else if (!snapshot.hasData) {

@@ -179,7 +179,10 @@ class _MyCustomDialogState extends State<MyCustomDialog> {
                                   ConnectionState.waiting) {
                                 return Container();
                               } else if (snapshot.hasError) {
-                                return Text('Error: ${snapshot.error}');
+                                return const Text(
+                                  '',
+                                  textAlign: TextAlign.center,
+                                );
                               } else if (!snapshot.hasData) {
                                 return const Text('');
                               }
