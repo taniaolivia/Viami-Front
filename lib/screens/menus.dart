@@ -224,6 +224,7 @@ class _MenusPageState extends State<MenusPage> {
               showButton: true,
               userId: userId!,
               showComment: false,
+              showMessage: false,
             ),
           ]),
       drawer: const DrawerPage(),

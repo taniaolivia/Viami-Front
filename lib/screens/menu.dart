@@ -163,6 +163,7 @@ class MenuPage extends StatelessWidget {
                                           showButton: true,
                                           userId: userId!,
                                           showComment: false,
+                                          showMessage: false,
                                         )));
                                   },
                                   child: Container(
