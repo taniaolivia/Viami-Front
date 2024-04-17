@@ -80,6 +80,21 @@ class UserService {
     }
   }
 
+  Future<User> getUserByFcmToken(String fcmToken, String token) async {
+    final response = await http.get(
+      Uri.parse('${dotenv.env['API_URL']}/users/userFcmToken/$fcmToken'),
+      headers: <String, String>{'Authorization': token},
+    );
+
+    if (response.statusCode == 200) {
+      var res = json.decode(response.body);
+
+      return User.fromJson(res['user']);
+    } else {
+      throw Exception('Failed to load user');
+    }
+  }
+
   Future<Map<String, dynamic>> updateUserDescriptionById(
       String id, String description, String token) async {
     final response = await http.patch(

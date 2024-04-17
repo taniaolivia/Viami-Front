@@ -64,7 +64,9 @@ class _RecommendationActivityPageState
                   "Voir tout",
                   minFontSize: 14,
                   maxFontSize: 16,
-                  style: TextStyle(color: Color(0xFF0A2753)),
+                  style: TextStyle(
+                      color: Color(0xFF0A2753),
+                      decoration: TextDecoration.underline),
                 ))
           ])),
       FutureBuilder<Activities>(
