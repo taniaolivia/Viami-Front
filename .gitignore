@@ -1,0 +1,10 @@
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool
+build
+pubspec.lock
+.vscode
+.idea
+.env
+.DS_Store
+viami.keystore

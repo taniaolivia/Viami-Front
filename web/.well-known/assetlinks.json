@@ -1,0 +1,434 @@
+{
+  "statements": [
+      {
+        "relation": ["delegate_permission/common.handle_all_urls"],
+        "target": {
+          "namespace": "android_app",
+          "package_name": "com.application.viami",
+          "sha256_cert_fingerprints":
+            ["5D:F9:34:C6:EF:B5:4E:1F:11:2C:F0:8F:C1:C3:37:25:40:30:F3:0D:7D:83:46:45:DF:AC:89:AF:AB:8B:97:92"]
+        }
+      },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.orca",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.orca",
+          "certificate": {
+            "sha256Fingerprint": "5F:5D:D6:08:A0:FA:C5:32:D3:6E:E1:54:E3:65:A1:6F:E1:F5:D2:D8:14:92:AB:6B:14:4A:6B:8B:02:07:CB:47"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "web": {
+          "site": "https://www.facebook.com."
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "web": {
+          "site": "https://m.facebook.com."
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.katana",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.wakizashi",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.wakizashi",
+          "certificate": {
+            "sha256Fingerprint": "5F:5D:D6:08:A0:FA:C5:32:D3:6E:E1:54:E3:65:A1:6F:E1:F5:D2:D8:14:92:AB:6B:14:4A:6B:8B:02:07:CB:47"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.appmanager",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.appmanager",
+          "certificate": {
+            "sha256Fingerprint": "B9:21:09:B5:90:95:95:5C:CA:AF:5E:CB:CF:0F:15:3E:C9:64:0A:46:58:C1:01:66:7A:D9:6B:7E:49:9A:40:92"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.appmanager.dev",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.appmanager.dev",
+          "certificate": {
+            "sha256Fingerprint": "B9:21:09:B5:90:95:95:5C:CA:AF:5E:CB:CF:0F:15:3E:C9:64:0A:46:58:C1:01:66:7A:D9:6B:7E:49:9A:40:92"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.analytics",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://facebook.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.lite",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://instagram.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.instagram.android",
+          "certificate": {
+            "sha256Fingerprint": "5F:3E:50:F4:35:58:3C:9A:E6:26:30:2A:71:F7:34:00:44:08:7A:7E:2C:60:AD:AC:FC:25:42:05:A9:93:E3:05"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://instagram.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.instagram.lite",
+          "certificate": {
+            "sha256Fingerprint": "5F:3E:50:F4:35:58:3C:9A:E6:26:30:2A:71:F7:34:00:44:08:7A:7E:2C:60:AD:AC:FC:25:42:05:A9:93:E3:05"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://instagram.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.appmanager",
+          "certificate": {
+            "sha256Fingerprint": "E3:F9:E1:E0:CF:99:D0:E5:6A:05:5B:A6:5E:24:1B:33:99:F7:CE:A5:24:32:6B:0C:DD:6E:C1:32:7E:D0:FD:C1"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://instagram.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.facebook.appmanager",
+          "certificate": {
+            "sha256Fingerprint": "B9:21:09:B5:90:95:95:5C:CA:AF:5E:CB:CF:0F:15:3E:C9:64:0A:46:58:C1:01:66:7A:D9:6B:7E:49:9A:40:92"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://tiktok.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.zhiliaoapp.musically",
+          "certificate": {
+            "sha256Fingerprint": "90:41:80:3E:91:BC:B8:14:B4:B4:39:9F:B5:C8:5A:91:64:0B:75:5E:5E:8B:A7:68:13:81:4B:F4:CF:2A:B5:BA"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://tiktok.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.zhiliaoapp.musically",
+          "certificate": {
+            "sha256Fingerprint": "D7:81:1E:C4:16:6F:EA:6C:C7:20:BA:66:69:9D:C8:4B:58:4A:C9:E6:98:66:13:A7:6D:4E:43:D8:CB:E3:2B:27"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://tiktok.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.ss.android.ugc.trill",
+          "certificate": {
+            "sha256Fingerprint": "D7:81:1E:C4:16:6F:EA:6C:C7:20:BA:66:69:9D:C8:4B:58:4A:C9:E6:98:66:13:A7:6D:4E:43:D8:CB:E3:2B:27"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://tiktok.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "web": {
+          "site": "https://tiktok.com."
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://tiktok.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "web": {
+          "site": "https://www.tiktok.com."
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://youtube.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.google.android.youtube",
+          "certificate": {
+            "sha256Fingerprint": "3D:7A:12:23:01:9A:A3:9D:9E:A0:E3:43:6A:B7:C0:89:6B:FB:4F:B6:79:F4:DE:5F:E7:C2:3F:32:6C:8F:99:4A"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://youtube.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.google.android.youtube",
+          "certificate": {
+            "sha256Fingerprint": "7F:D2:CE:A3:0C:3A:60:22:EB:29:41:9C:E8:F6:F9:2C:E8:A4:BD:35:B0:CC:87:9E:D3:CC:A6:CB:F5:E9:99:2D"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://youtube.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.google.android.youtube.tv",
+          "certificate": {
+            "sha256Fingerprint": "21:19:9D:11:2C:EC:E4:28:C8:2C:B0:DF:22:1D:A2:4F:F8:67:4C:7A:98:2A:83:A1:7A:97:0E:EC:43:30:5B:4A"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://youtube.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.google.android.apps.automotive.youtube",
+          "certificate": {
+            "sha256Fingerprint": "AA:AB:5F:1B:60:B7:5C:78:BC:42:56:7F:CA:48:1A:A4:AE:10:01:6C:35:D3:C5:B0:C1:37:3B:64:79:B8:CD:74"
+          }
+        }
+      }
+    },
+    {
+      "source": {
+        "web": {
+          "site": "https://youtube.com."
+        }
+      },
+      "relation": "delegate_permission/common.handle_all_urls",
+      "target": {
+        "androidApp": {
+          "packageName": "com.automotive.test.youtube",
+          "certificate": {
+            "sha256Fingerprint": "C1:8C:33:5D:D8:1F:33:36:72:7B:5D:1A:1F:69:F0:A2:D0:D8:F9:3A:42:6A:08:2A:56:58:0F:04:87:D7:5C:A5"
+          }
+        }
+      }
+    }
+  ],
+  "maxAge": "18.630785392s"
+}
