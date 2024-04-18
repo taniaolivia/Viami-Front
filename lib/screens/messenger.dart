@@ -626,7 +626,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             showComment:
                                                                                 true,
                                                                             showMessage:
-                                                                                true,
+                                                                                false,
                                                                           )),
                                                                         ),
                                                                     child:
@@ -651,7 +651,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             showComment:
                                                                                 true,
                                                                             showMessage:
-                                                                                true,
+                                                                                false,
                                                                           )),
                                                                         ),
                                                                     child:
@@ -1032,7 +1032,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                               showButton: false,
                                                                               userId: message.senderId,
                                                                               showComment: true,
-                                                                              showMessage: true,
+                                                                              showMessage: false,
                                                                             )),
                                                                           );
                                                                           /*inal String?
@@ -1141,7 +1141,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                             showComment:
                                                                                 true,
                                                                             showMessage:
-                                                                                true,
+                                                                                false,
                                                                           )),
                                                                         );
                                                                       },
