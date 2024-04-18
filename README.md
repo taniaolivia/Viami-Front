@@ -36,10 +36,17 @@ Firebase is a mobile and web application development platform that provides a va
 ## Environment Setup
 
 To set up the environment for the project, follow these steps:
+1. **Clone the repository:** 
+```bash
+git clone https://github.com/taniaolivia/Viami-Front.git
+```
 
-1. Copy the `.env-example` file in the root directory of the project.
-2. Rename the copied file to `.env`.
-3. Fill in the necessary details in the `.env` file. These details will be used to configure the application.
+2. **Navigate to the project directory:**
+    cd Viami-Front
+   
+3. Copy the `.env-example` file in the root directory of the project.
+4. Rename the copied file to `.env`.
+5. Fill in the necessary details in the `.env` file. These details will be used to configure the application.
 
 ## Running the Application
 
