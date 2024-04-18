@@ -2,14 +2,10 @@
 
 ## Project Overview
 
-Welcome to Viami Front, the mobile application development project for both iOS and Android platforms. This project is aimed at developing an application called Viami that will be available in the App Store and Play Store. The application is being developed using Flutter, a UI toolkit from Google that allows for the creation of natively compiled applications for mobile, web, and desktop from a single codebase.
+Welcome to Viami Front, the mobile application development project for both iOS and Android platforms. This project is aimed at developing an application called Viami that will be available in the App Store and Play Store. The application is being developed using Flutter, a UI toolkit from Google that allows for the creation of natively compiled applications for mobile, web, and desktop from a single codebase. Viami application is developed by me Tania Olivia and my colleague Nihel Ouanassi as part of our master's degree project. This flutter project serves as the frontend for the Viami application, which is designed to connect solo travelers and facilitate the discovery of activities in their destination countries.
 
-## Team Members
-
-The developers currently working on this project are:
-
-1. Tania OLIVIA
-2. Nihel OUANASSI
+### Description
+Viami is an application aimed at solo travelers who seek to connect with other travelers and discover activities to do in their destination countries.
 
 ## Payment Method
 
