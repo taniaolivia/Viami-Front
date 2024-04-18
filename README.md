@@ -8,14 +8,6 @@ Viami is an application aimed at solo travelers who seek to connect with other t
 - Tania Olivia
 - Nihel Ouanassi
 
-## Payment Method
-
-The payment method implemented in this application is In-App Purchase. This allows users to buy products directly within the mobile application. For the payment method while using the in-app purchase, we also use RevenueCat.
-
-RevenueCat is a service that simplifies in-app purchase management for mobile applications. It provides a platform for developers to manage subscriptions, in-app purchases, and trials across multiple platforms. It also offers features such as analytics, user management, and revenue recognition.
-
-In the `constant.dart` file inside the `lib` directory, there are `appleApiKey` and `googleApiKey` that need to be filled to test the in-app payment.
-
 ## Directory Structure
 
 The project's directory structure is organized as follows:
@@ -26,6 +18,14 @@ The project's directory structure is organized as follows:
 4. `services`: This directory contains all the services used in the application. Services are used to handle API requests and business logic.
 5. `widgets`: This directory contains all the custom widgets used in the application.
 6. `components`: This directory contains all the reusable components used in the application.
+
+## Payment Method
+
+The payment method implemented in this application is In-App Purchase. This allows users to buy products directly within the mobile application. For the payment method while using the in-app purchase, we also use RevenueCat.
+
+RevenueCat is a service that simplifies in-app purchase management for mobile applications. It provides a platform for developers to manage subscriptions, in-app purchases, and trials across multiple platforms. It also offers features such as analytics, user management, and revenue recognition.
+
+In the `constant.dart` file inside the `lib` directory, there are `appleApiKey` and `googleApiKey` that need to be filled to test the in-app payment.
 
 ## Push Notifications
 
