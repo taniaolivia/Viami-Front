@@ -39,6 +39,7 @@ class _PopularThemePageState extends State<PopularThemePage> {
   int? currentIndex;
   int? clickedThemeId;
   String? clickedThemeName;
+  bool isLoading = false;
 
   List activities = [];
 
@@ -341,6 +342,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
                             margin: const EdgeInsets.fromLTRB(6, 5, 0, 5),
                             child: ElevatedButton(
                               onPressed: () async {
+                                setState(() {
+                                  isLoading = true;
+                                });
+
                                 themeActivityImage = [];
                                 themeActivityName = [];
                                 themeActivityLocation = [];
@@ -350,27 +355,32 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                     await getFirstFiveThemeActivities(
                                         theme.themes[indexTheme].id);
 
-                                List.generate(themeTravel.activities.length,
-                                    (index) {
-                                  themeActivityImage.add(
-                                      themeTravel.activities[index].imageName);
-                                  themeActivityName
-                                      .add(themeTravel.activities[index].name);
-                                  themeActivityLocation.add(
-                                      themeTravel.activities[index].location);
-                                  themeActivityId.add(
-                                      themeTravel.activities[index].activityId);
-                                }).toList();
+                                if (themeTravel.activities.isNotEmpty) {
+                                  List.generate(themeTravel.activities.length,
+                                      (index) {
+                                    themeActivityImage.add(themeTravel
+                                        .activities[index].imageName);
+                                    themeActivityName.add(
+                                        themeTravel.activities[index].name);
+                                    themeActivityLocation.add(
+                                        themeTravel.activities[index].location);
+                                    themeActivityId.add(themeTravel
+                                        .activities[index].activityId);
+                                  }).toList();
 
-                                setState(() {
-                                  clicked = "theme";
-                                  currentIndex = indexTheme;
-                                  clickedThemeId = theme.themes[indexTheme].id;
-                                  clickedThemeName =
-                                      theme.themes[indexTheme].theme;
+                                  setState(() {
+                                    clicked = "theme";
+                                    currentIndex = indexTheme;
+                                    clickedThemeId =
+                                        theme.themes[indexTheme].id;
+                                    clickedThemeName =
+                                        theme.themes[indexTheme].theme;
 
-                                  activities = themeTravel.activities;
-                                });
+                                    activities = themeTravel.activities;
+
+                                    isLoading = false;
+                                  });
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                   padding: const EdgeInsets.all(8),
@@ -400,8 +410,10 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(
-                                        getIconDataFromName(
-                                            theme.themes[indexTheme].icon),
+                                        indexTheme < theme.themes.length
+                                            ? getIconDataFromName(
+                                                theme.themes[indexTheme].icon)
+                                            : Icons.restaurant,
                                         color: clicked == "theme" &&
                                                 currentIndex == indexTheme
                                             ? Colors.white
@@ -409,19 +421,22 @@ class _PopularThemePageState extends State<PopularThemePage> {
                                     const SizedBox(
                                       width: 5,
                                     ),
-                                    AutoSizeText(
-                                      toBeginningOfSentenceCase(
-                                          theme.themes[indexTheme].theme)!,
-                                      maxLines: 1,
-                                      minFontSize: 11,
-                                      maxFontSize: 13,
-                                      style: TextStyle(
-                                          fontFamily: "Poppins",
-                                          color: clicked == "theme" &&
-                                                  currentIndex == indexTheme
-                                              ? Colors.white
-                                              : const Color(0xFF6A778B)),
-                                    )
+                                    indexTheme < theme.themes.length
+                                        ? AutoSizeText(
+                                            toBeginningOfSentenceCase(theme
+                                                .themes[indexTheme].theme)!,
+                                            maxLines: 1,
+                                            minFontSize: 11,
+                                            maxFontSize: 13,
+                                            style: TextStyle(
+                                                fontFamily: "Poppins",
+                                                color: clicked == "theme" &&
+                                                        currentIndex ==
+                                                            indexTheme
+                                                    ? Colors.white
+                                                    : const Color(0xFF6A778B)),
+                                          )
+                                        : Container()
                                   ]),
                             ));
                       }))

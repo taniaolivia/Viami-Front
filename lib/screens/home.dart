@@ -7,7 +7,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:viami/components/locationPermission.dart';
 import 'package:viami/components/pageTransition.dart';
-import 'package:viami/models-api/travelActivity/travelsActivities.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/screens/activityDetails.dart';
 import 'package:viami/screens/faq.dart';
@@ -100,7 +99,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 }
 
                 if (!snapshot.hasData) {
-                  return Text('');
+                  return const Text('');
                 }
 
                 var user = snapshot.data!;
@@ -122,13 +121,27 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   const Padding(
                       padding: EdgeInsets.fromLTRB(20, 0, 20, 5),
                       child: AutoSizeText(
-                        "Trouvez votre partenaire pour voyager ?",
+                        "Trouvez votre partenaire pour voyager",
                         minFontSize: 22,
                         maxFontSize: 25,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                             color: Color(0xFF0A2753),
                             fontWeight: FontWeight.bold),
+                      )),
+                  const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+                        child: AutoSizeText(
+                          "Activités",
+                          minFontSize: 18,
+                          maxFontSize: 20,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF0A2753)),
+                        ),
                       )),
                   const PopularThemePage(),
                   const RecommendationActivityPage(),
@@ -179,7 +192,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                   if (snapshot.hasError || !snapshot.hasData) {
                                     return Text('${snapshot.error}',
                                         textAlign: TextAlign.center,
-                                        style: TextStyle(color: Colors.black));
+                                        style: const TextStyle(
+                                            color: Colors.black));
                                   }
 
                                   var currentLocation = snapshot.data!;

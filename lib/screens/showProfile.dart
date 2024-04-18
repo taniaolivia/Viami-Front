@@ -6,10 +6,12 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:viami/components/interestComponent.dart';
 import 'package:viami/components/languageComponent.dart';
+import 'package:viami/components/pageTransition.dart';
 import 'package:viami/components/profileComment.dart';
 import 'package:viami/components/profileData.dart';
 import 'package:viami/models-api/user/user.dart';
 import 'package:viami/models-api/userImage/usersImages.dart';
+import 'package:viami/screens/menus.dart';
 import 'package:viami/services/user/user.service.dart';
 import 'package:viami/services/userImage/usersImages.service.dart';
 
@@ -19,11 +21,14 @@ class ShowProfilePage extends StatefulWidget {
   final String userId;
   final bool showButton;
   final bool showComment;
+  final bool showMessage;
+
   const ShowProfilePage(
       {Key? key,
       required this.userId,
       required this.showButton,
-      required this.showComment})
+      required this.showComment,
+      required this.showMessage})
       : super(key: key);
 
   @override
@@ -208,8 +213,14 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                             Radius.circular(10))),
                                                     child: IconButton(
                                                         onPressed: () {
-                                                          Navigator.pushNamed(
-                                                              context, "/home");
+                                                          widget.showButton ==
+                                                                  true
+                                                              ? Navigator
+                                                                  .pushNamed(
+                                                                      context,
+                                                                      "/home")
+                                                              : Navigator.pop(
+                                                                  context);
                                                         },
                                                         icon: const Icon(
                                                           Icons.arrow_back_ios,
@@ -217,7 +228,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                               0, 0, 0, 0.4),
                                                           size: 20,
                                                         ))))),
-                                        widget.showButton == false
+                                        widget.showMessage == true
                                             ? SizedBox(
                                                 height: MediaQuery.of(context)
                                                         .size
@@ -242,9 +253,8 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                                             40))),
                                                         child: IconButton(
                                                             onPressed: () {
-                                                              Navigator.pushNamed(
-                                                                  context,
-                                                                  "/messages");
+                                                              Navigator.pop(
+                                                                  context);
                                                             },
                                                             icon: const Icon(
                                                               Icons
@@ -270,6 +280,106 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                               LanguageComponent(
                                   page: "show", userId: widget.userId),
                               ProfileComment(userId: widget.userId),
+                              Container(
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                    /* FutureBuilder<bool>(
+                                      future: getHasComment(),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.waiting) {
+                                          return Text("");
+                                        } else if (snapshot.hasError) {
+                                          return const Text(
+                                            '',
+                                            textAlign: TextAlign.center,
+                                          );
+                                        } else {
+                                          bool hasLeftComment =
+                                              snapshot.data ?? false;
+
+                                          if (!hasLeftComment &&
+                                              widget.showComment) {
+                                            return */
+
+                                    Column(
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              20, 5, 20, 5),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.grey,
+                                              width: 1.0,
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                          ),
+                                          child: TextField(
+                                            controller: commentController,
+                                            maxLines: 3,
+                                            decoration: const InputDecoration(
+                                              hintText:
+                                                  'Laissez un commentaire...',
+                                              hintStyle:
+                                                  TextStyle(fontSize: 15),
+                                              border: InputBorder.none,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 10.0),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.blue),
+                                          onPressed: () async {
+                                            String comment =
+                                                commentController.text;
+
+                                            if (comment != "") {
+                                              await UserCommentService()
+                                                  .addComment(
+                                                      widget.userId,
+                                                      userId!,
+                                                      comment,
+                                                      token.toString());
+
+                                              _showCommentSentDialog();
+
+                                              commentController.clear();
+                                            } else {
+                                              _showCommentBlankDialog();
+                                            }
+                                          },
+                                          child: const Text(
+                                            'Envoyer',
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                    /*} else if (hasLeftComment &&
+                                              widget.showComment) {
+                                            return const AutoSizeText(
+                                              'Vous avez déjà laissé un commentaire pour ce voyageur.',
+                                              minFontSize: 18,
+                                              maxFontSize: 20,
+                                              style: TextStyle(
+                                                  fontWeight:
+                                                      FontWeight.normal),
+                                            );
+                                          } else {
+                                            return Container(
+                                              child: const Text(""),
+                                            );
+                                          }
+                                        }
+                                      },
+                                    ),*/
+                                  ])),
+                              const SizedBox(height: 20),
                               const Align(
                                   alignment: Alignment.topLeft,
                                   child: AutoSizeText(
@@ -358,103 +468,7 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                                                                 fit: BoxFit.contain,
                                                                 alignment: Alignment.center)))));
                                       })),
-                              const SizedBox(height: 100),
-                              Container(
-                                  padding: const EdgeInsets.all(20.0),
-                                  child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        FutureBuilder<bool>(
-                                          future: getHasComment(),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState ==
-                                                ConnectionState.waiting) {
-                                              return Text("");
-                                            } else if (snapshot.hasError) {
-                                              return const Text(
-                                                '',
-                                                textAlign: TextAlign.center,
-                                              );
-                                            } else {
-                                              bool hasLeftComment =
-                                                  snapshot.data ?? false;
-
-                                              if (!hasLeftComment &&
-                                                  widget.showComment) {
-                                                return Column(
-                                                  children: [
-                                                    Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          color: Colors.grey,
-                                                          width: 1.0,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8.0),
-                                                      ),
-                                                      child: TextField(
-                                                        controller:
-                                                            commentController,
-                                                        maxLines: 3,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          hintText:
-                                                              'Laissez un commentaire...',
-                                                          border:
-                                                              InputBorder.none,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const SizedBox(
-                                                        height: 10.0),
-                                                    ElevatedButton(
-                                                      onPressed: () async {
-                                                        String comment =
-                                                            commentController
-                                                                .text;
-                                                        await UserCommentService()
-                                                            .addComment(
-                                                                userId!,
-                                                                widget.userId,
-                                                                comment,
-                                                                token
-                                                                    .toString());
-
-                                                        _showCommentSentDialog();
-
-                                                        commentController
-                                                            .clear();
-                                                      },
-                                                      child:
-                                                          const Text('Envoyer'),
-                                                    ),
-                                                  ],
-                                                );
-                                              } else if (hasLeftComment &&
-                                                  widget.showComment) {
-                                                return AutoSizeText(
-                                                  'Vous avez déjà laissé un commentaire pour ce voyageur...',
-                                                  minFontSize: 20,
-                                                  maxFontSize: 22,
-                                                  style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.normal),
-                                                );
-                                              } else {
-                                                return Container(
-                                                  child: Text(""),
-                                                );
-                                              }
-                                            }
-                                          },
-                                        ),
-                                        const SizedBox(height: 10),
-                                      ]))
+                              const SizedBox(height: 150),
                             ]),
                           )),
                     ])));
@@ -490,8 +504,12 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Commentaire envoyé'),
-          content: Text('Votre commentaire a été envoyé avec succès.'),
+          surfaceTintColor: Colors.white,
+          title: const Text(
+            'Commentaire envoyé',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+          ),
+          content: const Text('Votre commentaire a été envoyé avec succès.'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -503,10 +521,51 @@ class _ShowProfilePageState extends State<ShowProfilePage> {
                         userId: widget.userId,
                         showButton: widget.showButton,
                         showComment: widget.showComment,
+                        showMessage: true,
                       ),
                     ));
               },
-              child: Text('OK'),
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showCommentBlankDialog() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          surfaceTintColor: Colors.white,
+          title: const Text(
+            'Commentaire vide',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),
+          ),
+          content: const Text('Veuillez ajouter un commentaire !'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (BuildContext context) => ShowProfilePage(
+                        userId: widget.userId,
+                        showButton: widget.showButton,
+                        showComment: widget.showComment,
+                        showMessage: true,
+                      ),
+                    ));
+              },
+              child: const Text(
+                'OK',
+                style: TextStyle(color: Colors.blue),
+              ),
             ),
           ],
         );

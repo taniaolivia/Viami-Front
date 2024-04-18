@@ -67,7 +67,8 @@ class MenuWidget extends StatelessWidget {
                           child: Icon(
                             Icons.person,
                             size: 30,
-                          ))));
+                          ),
+                        )));
         });
   }
 }

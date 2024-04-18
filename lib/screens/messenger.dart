@@ -612,27 +612,62 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                         .userImages
                                                                         .length !=
                                                                     0
-                                                                ? CircleAvatar(
-                                                                    backgroundImage:
-                                                                        NetworkImage(
-                                                                            "${image.userImages[0].image}"),
-                                                                    maxRadius:
-                                                                        25,
-                                                                  )
-                                                                : CircleAvatar(
-                                                                    backgroundColor:
-                                                                        const Color
-                                                                            .fromARGB(
-                                                                            255,
-                                                                            220,
-                                                                            234,
-                                                                            250),
-                                                                    foregroundImage:
-                                                                        NetworkImage(
-                                                                            "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
-                                                                    maxRadius:
-                                                                        25,
-                                                                  );
+                                                                ? GestureDetector(
+                                                                    onTap: () =>
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          FadePageRoute(
+                                                                              page: ShowProfilePage(
+                                                                            showButton:
+                                                                                false,
+                                                                            userId:
+                                                                                message.senderId,
+                                                                            showComment:
+                                                                                true,
+                                                                            showMessage:
+                                                                                false,
+                                                                          )),
+                                                                        ),
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundImage:
+                                                                          NetworkImage(
+                                                                              "${image.userImages[0].image}"),
+                                                                      maxRadius:
+                                                                          25,
+                                                                    ))
+                                                                : GestureDetector(
+                                                                    onTap: () =>
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          FadePageRoute(
+                                                                              page: ShowProfilePage(
+                                                                            showButton:
+                                                                                false,
+                                                                            userId:
+                                                                                message.senderId,
+                                                                            showComment:
+                                                                                true,
+                                                                            showMessage:
+                                                                                false,
+                                                                          )),
+                                                                        ),
+                                                                    child:
+                                                                        CircleAvatar(
+                                                                      backgroundColor: const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          220,
+                                                                          234,
+                                                                          250),
+                                                                      foregroundImage:
+                                                                          NetworkImage(
+                                                                              "${dotenv.env['CDN_URL']}/assets/noprofile.png"),
+                                                                      maxRadius:
+                                                                          25,
+                                                                    ));
 
                                                             if (userIndex < 2) {
                                                               if (users
@@ -989,7 +1024,18 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                                 overlay.size,
                                                                           );
 
-                                                                          final String?
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            FadePageRoute(
+                                                                                page: ShowProfilePage(
+                                                                              showButton: false,
+                                                                              userId: message.senderId,
+                                                                              showComment: true,
+                                                                              showMessage: false,
+                                                                            )),
+                                                                          );
+                                                                          /*inal String?
                                                                               choice =
                                                                               await showMenu<String>(
                                                                             context:
@@ -1002,9 +1048,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                                 child: Text('Voir le profil'),
                                                                               ),
                                                                             ],
-                                                                          );
+                                                                          );*/
 
-                                                                          if (choice ==
+                                                                          /*if (choice ==
                                                                               'go_to_profile') {
                                                                             Navigator.push(
                                                                               context,
@@ -1015,7 +1061,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                                 showComment: true,
                                                                               )),
                                                                             );
-                                                                          }
+                                                                          }*/
                                                                         },
                                                                         child:
                                                                             CircleAvatar(
@@ -1054,7 +1100,7 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                               overlay.size,
                                                                         );
 
-                                                                        final String?
+                                                                        /*final String?
                                                                             choice =
                                                                             await showMenu<String>(
                                                                           context:
@@ -1067,9 +1113,9 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                               child: Text('Voir le profil'),
                                                                             ),
                                                                           ],
-                                                                        );
+                                                                        );*/
 
-                                                                        if (choice ==
+                                                                        /*if (choice ==
                                                                             'go_to_profile') {
                                                                           Navigator
                                                                               .push(
@@ -1081,7 +1127,23 @@ class _MessengerPageState extends State<MessengerPage> {
                                                                               showComment: true,
                                                                             )),
                                                                           );
-                                                                        }
+                                                                        }*/
+
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          FadePageRoute(
+                                                                              page: ShowProfilePage(
+                                                                            showButton:
+                                                                                false,
+                                                                            userId:
+                                                                                message.senderId,
+                                                                            showComment:
+                                                                                true,
+                                                                            showMessage:
+                                                                                false,
+                                                                          )),
+                                                                        );
                                                                       },
                                                                       child:
                                                                           CircleAvatar(
@@ -1456,7 +1518,6 @@ class _MessengerPageState extends State<MessengerPage> {
                               },
                               context: currentContext!,
                             );
-                            print(showPremium);
 
                             if (!discussionMessages!.groups[index].usersRead!
                                 .contains(userId)) {

@@ -12,8 +12,7 @@ import '../models/menu_items.dart';
 import 'menu.dart';
 
 class DrawerPage extends StatefulWidget {
-  final bool? tokenExpired;
-  const DrawerPage({super.key, this.tokenExpired});
+  const DrawerPage({super.key});
 
   @override
   State<DrawerPage> createState() => _DrawerPageState();
@@ -26,7 +25,6 @@ class _DrawerPageState extends State<DrawerPage> {
   String? token = "";
   String? userId = "";
   String? userProfile;
-  bool? tokenExpired;
 
   Future<User> getUser() {
     Future<User> getConnectedUser() async {
