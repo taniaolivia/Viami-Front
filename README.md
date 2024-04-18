@@ -33,9 +33,7 @@ Firebase Cloud Messaging (FCM) is used for push notifications. FCM is a cross-pl
 
 Firebase is a mobile and web application development platform that provides a variety of services, including a real-time database, authentication, cloud storage, and hosting. Firebase Notifications is a service that allows for the sending of notifications to mobile and web applications. It is built on top of FCM and provides a simple and easy-to-use interface for sending notifications.
 
-## Environment Setup
-
-To set up the environment for the project, follow these steps:
+## Setup
 1. **Clone the repository:** 
 ```bash
 git clone https://github.com/taniaolivia/Viami-Front.git
@@ -44,9 +42,10 @@ git clone https://github.com/taniaolivia/Viami-Front.git
 2. **Navigate to the project directory:**
     cd Viami-Front
    
-3. Copy the `.env-example` file in the root directory of the project.
-4. Rename the copied file to `.env`.
-5. Fill in the necessary details in the `.env` file. These details will be used to configure the application.
+3. To set up the environment for the project, follow these steps:
+    - Copy the `.env-example` file in the root directory of the project.
+    - Rename the copied file to `.env`.
+    - Fill in the necessary details in the `.env` file. These details will be used to configure the application.
 
 ## Running the Application
 
