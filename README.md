@@ -56,6 +56,10 @@ This command will build and run the application on the connected device or emula
 
 Please ensure that you have Flutter and Dart installed on your machine before running this command.
 
+## Stopping the Application
+
+To stop the application running you can just click "q" to quit.
+
 ## License
 
 This project is licensed under the terms of the MIT license.
